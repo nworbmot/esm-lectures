@@ -1,0 +1,391 @@
+% NB: use pdflatex to compile NOT pdftex.  Also make sure youngtab is
+% there...
+
+% converting eps graphics to pdf with ps2pdf generates way too much
+% whitespace in the resulting pdf, so crop with pdfcrop
+% cf. http://www.cora.nwra.com/~stockwel/rgspages/pdftips/pdftips.shtml
+
+
+
+
+\documentclass[10pt,aspectratio=169,dvipsnames]{beamer}
+\usetheme[color/block=transparent]{metropolis}
+
+\usepackage[absolute,overlay]{textpos}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[scale=2]{ccicons}
+
+\usepackage[official]{eurosym}
+
+%use this to add space between rows
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+
+
+\setbeamerfont{alerted text}{series=\bfseries}
+\setbeamercolor{alerted text}{fg=Mahogany}
+\setbeamercolor{background canvas}{bg=white}
+
+
+\newcommand{\R}{\mathbb{R}}
+
+\def\l{\lambda}
+\def\m{\mu}
+\def\d{\partial}
+\def\cL{\mathcal{L}}
+\def\co2{CO${}_2$}
+
+
+
+% for sources http://tex.stackexchange.com/questions/48473/best-way-to-give-sources-of-images-used-in-a-beamer-presentation
+
+\setbeamercolor{framesource}{fg=gray}
+\setbeamerfont{framesource}{size=\tiny}
+
+
+\newcommand{\source}[1]{\begin{textblock*}{5cm}(10.5cm,8.35cm)
+    \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
+        \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
+    \end{beamercolorbox}
+\end{textblock*}}
+
+\usepackage{hyperref}
+
+
+%\usepackage[pdftex]{graphicx}
+
+
+\graphicspath{{graphics/}}
+
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png,.jpg}
+
+
+
+\def\goat#1{{\scriptsize\color{green}{[#1]}}}
+
+
+
+\let\olditem\item
+\renewcommand{\item}{%
+\olditem\vspace{5pt}}
+
+\title{Energy System Modelling\\ Summer Semester 2019, Lecture 1}
+%\subtitle{---}
+\author{
+  {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
+  \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
+}
+
+\date{\vspace{.3cm}6th June 2019}
+
+
+\titlegraphic{%
+  \vspace{6cm}
+  \hspace{10cm}
+    \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{frame}
+
+  \frametitle{Table of Contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+
+\section{Variable Renewable Energy (VRE)}
+
+
+
+\begin{frame}
+  \frametitle{Solar time series}
+
+  Unlike the load, the solar feed-in is much more variable, dropping to zero and not reaching full output (when aggregated over all of Germany).
+
+
+  \centering
+  \includegraphics[width=13cm]{DE-solar-H}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Solar time series: weekly}
+
+  If we take a weekly average we see higher solar in the summer.
+
+  \centering
+  \includegraphics[width=13cm]{DE-solar-W}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Solar duration curve}
+
+
+
+  \centering
+  \includegraphics[width=13cm]{DE-solar-duration}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Solar density function}
+
+  \centering
+  \includegraphics[width=13cm]{DE-solar-density}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Solar spectrum}
+
+  If we Fourier transform, the \alert{seasonal} and \alert{daily} patterns become visible.
+
+  \centering
+  \includegraphics[width=13cm]{DE-solar-spectrum}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Wind time series}
+
+  Wind is variable, like solar, but the variations are on different time scales. It drops close to zero and rarely reaches full output (when aggregated over all of Germany).
+
+  \centering
+  \includegraphics[width=13cm]{DE-onwind-H}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Wind time series: weekly}
+
+  If we take a weekly average we see higher wind in the winter and
+  some periodic patterns over 2-3 weeks (\alert{synoptic scale}).
+
+  \centering
+  \includegraphics[width=13cm]{DE-onwind-W}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Wind duration curve}
+
+
+
+  \centering
+  \includegraphics[width=13cm]{DE-onwind-duration}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Wind density function}
+
+  \centering
+  \includegraphics[width=13cm]{DE-onwind-density}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Wind spectrum}
+
+  If we Fourier transform, the \alert{seasonal}, \alert{synoptic} (2-3 weeks) and \alert{daily} patterns become visible.
+
+  \centering
+  \includegraphics[width=13cm]{DE-onwind-spectrum}
+
+\end{frame}
+
+
+\section{Balancing a single country}
+
+
+
+\begin{frame}
+  \frametitle{Power mismatch}
+
+  Suppose we now try and cover the electrical demand with the
+  generation from wind and solar.
+
+  How much wind do we need? We have three time series:
+  \begin{itemize}
+  \item $\{ d_t\}, d_t \in \R$ the load (varying between 35 GW and 80 GW)
+  \item $\{ w_t\}, w_t \in [0,1]$ the wind availability (how much a 1 MW wind turbine produces)
+  \item $\{ s_t\}, s_t \in [0,1]$ the solar availability  (how much a 1 MW solar turbine produces)
+  \end{itemize}
+
+  We try $W$ MW of wind and $S$ MW of solar. Now the effective \alert{residual load} or \alert{mismatch} is
+  \begin{equation*}
+    m_t = d_t - Ww_t - Ss_t
+  \end{equation*}
+
+  We choose $W$ and $S$ such that on \alert{average} we cover all the load
+  \begin{equation*}
+    \langle m_t \rangle = 0
+  \end{equation*}
+  and so that the 70\% of the energy comes from wind and 30\% from solar ($W = 147$ GW and $S = 135$ GW).
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Mismatch time series}
+
+
+  \centering
+  \includegraphics[width=13cm]{DE-mismatch-H}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Mismatch duration curve}
+
+
+
+  \centering
+  \includegraphics[width=13cm]{DE-mismatch-duration}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Mismatch density function}
+
+  \centering
+  \includegraphics[width=13cm]{DE-mismatch-density}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Mismatch spectrum}
+
+  If we Fourier transform, the synoptic (from wind) and daily patterns (from demand and solar) become visible. Seasonal variations appear to cancel out.
+
+  \centering
+  \includegraphics[width=13cm]{DE-mismatch-spectrum}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{How to deal with the mismatch?}
+
+  The problem is that
+    \begin{equation*}
+    \langle m_t \rangle = 0
+  \end{equation*}
+    is not good enough! We need to meet the demand in every single hour.
+
+    This means:
+    \begin{itemize}
+      \item If $m_t > 0$, i.e. we have unmet demand, then we need
+        backup generation from \alert{dispatchable} sources
+        e.g. hydroelectricity reservoirs, fossil/biomass fuels.
+      \item If $m_t < 0$, i.e. we have over-supply, then we have to
+        shed / spill / \alert{curtail} the renewable energy.
+    \end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Mismatch}
+
+
+  \centering
+  \includegraphics[width=13cm]{mismatch-2011-03-01-2011-03-31}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mismatch}
+
+
+  \centering
+  \includegraphics[width=13cm]{mismatch-2011-07-01-2011-07-31}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mismatch}
+
+
+  \centering
+  \includegraphics[width=13cm]{mismatch-2011-12-01-2011-12-31}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Mismatch duration curve}
+
+
+  \centering
+  \includegraphics[width=13cm]{mismatch-duration}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{What to do?}
+
+  Backup energy costs money and may also cause CO${}_2$ emissions.
+
+  Curtailing renewable energy is also a waste.
+
+  We'll look in the next lectures at \alert{four solutions}:
+  \begin{enumerate}
+  \item \alert{Smoothing} stochastic variations of renewable feed-in \alert{over continental areas}, e.g. the whole of Europe.
+  \item Using \alert{electricity storage} to shift energy from times of surplus to times of deficit.
+  \item Shifting demand to different times, when renewables are abundant, i.e. \alert{demand-side management} (DSM).
+    \item Consuming the electricity in \alert{other sectors}, e.g. transport or heating, where there are further possibilities for DSM (battery electric vehicles, heat pumps)  and cheap storage possibilities (e.g. thermal storage or power-to-gas as hydrogen or methane).
+  \end{enumerate}
+
+
+
+\end{frame}
+
+\end{document}
