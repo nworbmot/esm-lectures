@@ -110,6 +110,535 @@
 \end{frame}
 
 
+
+\section{Electricity Consumption}
+
+\begin{frame}
+  \frametitle{Why is electricity useful?}
+
+  Electricity is a versatile form of energy carried by electrical
+  charge which can be consumed in a wide variety of ways (with selected examples):
+  \begin{itemize}
+  \item Lighting (lightbulbs, halogen lamps, televisions)
+  \item Mechanical work (hoovers, washing machines, electric vehicles)
+  \item Heating (cooking, resistive room heating, heat pumps)
+  \item Cooling (refrigerators, air conditioning)
+  \item Electronics (computation, data storage, control systems)
+  \item Industry (electrochemical processes)
+  \end{itemize}
+
+  Compare the convenience and versatility of electricity with another
+  energy carrier: the chemical energy stored in natural gas (methane),
+  which can only be accessed by burning it.
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Power: Flow of energy}
+
+  \alert{Power} is the rate of consumption of energy.
+
+  It is measured in \alert{Watts}:
+  \begin{equation*}
+     1 \textrm{ Watt } = 1 \textrm{ Joule per second }
+  \end{equation*}
+  The symbol for Watt is W, 1 W = 1 J/s.
+
+  \centering
+  1 kilo-Watt = 1 kW = 1,000 W
+
+  1 mega-Watt = 1 MW = 1,000,000 W
+
+  1 giga-Watt = 1 GW = 1,000,000,000 W
+
+  1 tera-Watt = 1 TW = 1,000,000,000,000 W
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Power: Examples of consumption}
+
+  At full power, the following items consume:
+
+  \ra{1.1}
+  \begin{table}[!t]
+    \begin{tabular}{lr}
+      \toprule
+      Item & Power\\
+      \midrule
+      New efficient lightbulb & 10 W \\
+      Old-fashioned lightbulb & 70 W \\
+      Single room air-conditioning & 1.5 kW \\
+      Kettle & 2 kW \\
+      Factory & $\sim$1-500 MW \\
+      CERN & 200 MW \\
+            Germany total demand & 35-80 GW \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Energy}
+
+  In the electricity sector, energy is usually measured in
+  `Watt-hours', Wh.
+
+  1 kWh = power consumption of 1 kW for one hour
+
+  E.g. a 10 W lightbulb left on for two hours will consume
+
+  10 W * 2 h = 20 Wh
+
+  It is easy to convert this back to the SI unit for energy, Joules:
+
+  1 kWh = (1000 W) * (1 h) = (1000 J/s)*(3600 s) = 3.6 MJ
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Electricity spot market: trading of energy}
+
+  Energy is traded in MWh; current price around 30-40~\euro/MWh, but sinking thanks to renewables and the \alert{merit order effect}:
+
+  \includegraphics[width=14cm]{price_development}
+
+  \source{Agora Energiewende}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Consumption metering}
+
+\begin{columns}[T]
+\begin{column}{6.5cm}
+\includegraphics[width=7.5cm,angle=270]{stromzaehler}
+\end{column}
+\begin{column}{4cm}
+
+  \vspace{1cm}
+
+  \begin{itemize}
+  \item Look for your electricity meter at home
+  \item Mine here shows 42470.3 kWh
+  \item Check what the value is a week later
+  \end{itemize}
+
+\end{column}
+\end{columns}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Electricity bill}
+
+  My bill for 2014-5: 1900 kWh for a year, at a cost of \euro 570, which
+  corresponds to 0.3 \euro/kWh or 300 \euro/MWh. But the spot market price is 30 \euro/MWh, so what's going on??
+
+  \centering
+  \includegraphics[width=10cm,angle=180]{bill}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Household price breakdown}
+
+  Although the wholesale price is going down, other taxes, grid
+  charges and renewables subsidy (EEG surcharge) have kept the price
+  high.
+
+  \centering
+  \includegraphics[width=11cm]{household_price}
+
+  HOWEVER the EEG is only high because it is paying for solar panels
+  bought at a time when they were still comparatively expensive; but
+  through the German subsidy, production volumes were high and the
+  learning curve has brought the costs down exponentially.
+
+  \source{Agora Energiewende}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Yearly energy to power}
+
+  Germany consumes around 600 TWh per year, written 600 TWh/a.
+
+  What is the \emph{average} power consumption?
+
+  \begin{align*}
+    600\textrm{ TWh/a} & = \frac{(600\textrm{ TW}) * (1\textrm{ h})}{(365*24 \textrm{ h})} \\
+    & =  \frac{600}{8760} \textrm{ TW} \\
+    & = 68.5 \textrm{ GW}
+  \end{align*}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Discrete Consumers Aggregation}
+
+  The discrete actions of individual consumers smooth out
+  statistically if we aggregate over many consumers.
+
+  \centering
+  \includegraphics[width=10cm]{demand_smoothing}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Load curve properties}
+
+  The Germany load curve (around 500 TWh/a) shows \alert{daily}, \alert{weekly} and
+  \alert{seasonal} patterns; religious festivals are also visible.
+
+  \centering
+  \includegraphics[width=13cm]{DE-load-H}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Load duration curve}
+
+  For some analysis it is useful to construct a \alert{duration curve}
+  by stacking the hourly values from highest to lowest.
+
+  \centering
+  \includegraphics[width=13cm]{DE-load-duration}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Load density function}
+
+  Similarly we can also build the \alert{probability density function} $pdf(x)$, $\int dx pdf(x) = 1$:
+
+  \centering
+  \includegraphics[width=13cm]{DE-load-density}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Fourier transform to see spectrum}
+
+  For a periodic, continuous, complex signal $f(t)$, we can decompose it in  frequency space to see which frequencies dominate the signal. This is called a \alert{Fourier transform/series}.
+
+  For period $T$ (in our case a year) the function $f: [0,T] \rightarrow \mathbb{C}$ can be decomposed
+  \begin{equation*}
+     f(t) = \sum_{n=-\infty}^{n=\infty} a_n e^{-\frac{i2\pi nt}{T}}
+  \end{equation*}
+
+  To recover the values of the \alert{frequency amplitudes} $a_n$, integrate over $T$
+  \begin{equation*}
+     a_n = \frac{1}{T} \int_0^T dt \left[ f(t)  e^{\frac{i2\pi nt}{T}} \right]
+  \end{equation*}
+
+
+  For a real-valued function $f: [0,T] \rightarrow \mathbb{R}$, $a_{-n} = a_n^*$.
+
+  For a periodic, \alert{discrete} signal $f_n$, the \alert{Fast Fourier Transform} (FFT) is a computationally advantageous algorithm and is implemented in many programming libraries (see tutorial).
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Load spectrum}
+
+  If we Fourier transform, the \alert{seasonal}, \alert{weekly} and \alert{daily} frequencies are clearly visible.
+
+  \centering
+  \includegraphics[width=13cm]{DE-load-spectrum}
+
+\end{frame}
+
+
+
+\section{Electricity Generation}
+
+
+\begin{frame}
+  \frametitle{How is electricity generated?}
+
+  \alert{Conservation of Energy}: Energy cannot be created or destroyed:
+  it can only be converted from one form to another.
+
+  There are several `primary' sources of energy which are converted
+  into electrical energy in modern power systems:
+  \begin{itemize}
+  \item Chemical energy, accessed by combustion (coal, gas, oil, biomass)
+  \item Nuclear energy, accessed by fission reactions, perhaps one day by fusion too
+  \item Hydroelectric energy, allowing water to flow downhill (gravitational potential energy)
+  \item Wind energy (kinetic energy of air)
+  \item Solar energy (accessed with photovoltaic (PV) panels or
+    concentrating solar thermal power (CSP))
+  \item Geothermal energy
+  \end{itemize}
+  NB: The definition of `primary' is somewhat arbitrary.
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Power: Examples of generation}
+
+  At full power, the following items generate:
+
+  \ra{1.1}
+  \begin{table}[!t]
+    \begin{tabular}{lr}
+      \toprule
+      Item & Power\\
+      \midrule
+      Solar panel on house roof & 15 kW \\
+      Wind turbine & 3 MW \\
+      Coal power station & 1 GW \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Generators}
+
+  With the exception of solar photovoltaic panels (and electrochemical
+  energy and a few other minor exceptions), all generators convert to
+  electrical energy via rotational kinetic energy and electromagnetic
+  induction in an \emph{alternating current generator}.
+
+  %https://en.wikipedia.org/wiki/Fossil-fuel_power_station#/media/File:Coal_fired_power_plant_diagram.svg
+
+  \centering
+  \includegraphics[width=10cm]{Coal_fired_power_plant_diagram}
+
+  \source{Wikipedia}
+%  https://de.wikipedia.org/wiki/Drehstrom-Synchronmaschine#/media/File:Walchenseekraftwerk-1_Turbinenhalle.jpg
+% Walchenseekraftwerk-1_Turbinenhalle.jpg
+
+
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Example of electricity generation across major EU countries in 2013}
+
+
+  \centering
+  \includegraphics[width=11cm]{european_countries-energy}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Electricity generation in Germany per year}
+
+  In 15 years Germany has gone from a system dominated by nuclear and
+  fossil fuels, to one with 33\% renewables in electricity consumption.
+
+  \centering
+  \includegraphics[width=11cm]{germany_yearly_electricity}
+
+  \source{Author's own representation based on \url{https://www.energy-charts.de/energy_en.htm}}
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Efficiency}
+
+  When fuel is consumed, much/most of the energy of the fuel is lost
+  as waste heat rather than being converted to electricity.
+
+  The thermal energy, or calorific value, of the fuel is given in
+  terms of MWh${}_{\textrm{th}}$, to distinguish it from the
+  electrical energy MWh${}_{\textrm{el}}$.
+
+  The ratio of input thermal energy to output electrical energy is the
+  \alert{efficiency}.
+
+  \ra{1.1}
+  \begin{table}[!t]
+    \begin{tabular}{lrrrrr}
+      \toprule
+      Fuel & Calorific energy & Per unit efficiency & Electrical energy \\
+       & MWh\(_{\text{th}}\)/tonne & MWh\(_{\text{el}}\)/MWh\(_{\text{th}}\) & MWh\(_{\text{el}}\)/tonne \\
+\midrule
+Lignite & 2.5 & 0.4 & 1.0 \\
+Hard Coal & 6.7 & 0.45 & 2.7\\
+Gas (CCGT) & 15.4 & 0.58 & 8.9\\
+Uranium (unenriched) & 150000 & 0.33 & 50000 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+
+
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Fuel costs to marginal costs}
+
+
+  The cost of a fuel is often given in \euro/kg or \euro/MWh\(_{\text{th}}\).
+
+  Using the efficiency, we can convert this to
+  \euro/MWh\(_{\text{el}}\).
+
+  For the full marginal cost, we have to
+  also add the CO$_2$ price and the variable operation and maintenance
+  (VOM) costs.
+
+
+  \ra{1.1}
+  \begin{table}[!t]
+    \begin{tabular}{lrrrrr}
+      \toprule
+      Fuel &  Per unit efficiency & Cost per thermal & Cost per elec. \\
+      &  MWh\(_{\text{el}}\)/MWh\(_{\text{th}}\)  & \euro/MWh\(_{\text{th}}\) & \euro/MWh\(_{\text{el}}\)\\
+\midrule
+Lignite  & 0.4  & 4.5 & 11\\
+Hard Coal  & 0.45   & 11 & 24\\
+Gas (CCGT) & 0.58  & 19 & 33\\
+Uranium & 0.33 & 3.3 & 10\\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{CO2 emissions per MWh}
+
+  The \co2 emissions of the fuel.
+
+  \ra{1.1}
+  \begin{table}[!t]
+    \begin{tabular}{lrrr}
+      \toprule
+Fuel & t\(_{\text{CO2}}\)/t & t\(_{\text{C02}}\)/MWh\(_{\text{th}}\) & t\(_{\text{CO2}}\)/MWh\(_{\text{el}}\)\\
+\midrule
+Lignite &  0.9 & 0.36 & 0.9 \\
+Hard Coal  & 2.4 & 0.36 & 0.8 \\
+Gas (CCGT) & 3.1 & 0.2 & 0.35\\
+Uranium & 0 & 0 & 0 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  Current \co2 price in EU Emissions Trading Scheme (ETS) is around \euro 25/t${}_{\textrm{CO2}}$
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{CO2 and import costs change over time...}
+
+  \centering
+  \includegraphics[width=14cm]{import_costs.png}
+
+  \source{\href{https://www.agora-energiewende.de/presse/neuigkeiten-archiv/2018-war-ein-ausnahmejahr-der-energiewende-aber-eines-mit-gemischter-bilanz/}{Agora Energiewende Jahresrückblick 2018}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{...which affects the marginal costs of generation}
+
+    \centering
+  \includegraphics[width=13cm]{grenzkosten.png}
+
+  \source{\href{https://www.agora-energiewende.de/presse/neuigkeiten-archiv/2018-war-ein-ausnahmejahr-der-energiewende-aber-eines-mit-gemischter-bilanz/}{Agora Energiewende Jahresrückblick 2018}}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{CO2 emissions from electricity sector}
+
+  Despite the increase in renewables in the electricity sector, \co2
+  emission have not been reduced substantially in Germany in recent years. This is
+  partly because German exports have also increased. Also, other sectors haven not succeeded in reducing emissions.
+
+  \centering
+  \includegraphics[width=13cm]{co2}
+
+  \source{Agora Energiewende}
+\end{frame}
+
+
+
+
+
+\begin{frame}
+  \frametitle{Capacity Factors and Full Load Hours}
+
+
+  A generator's \alert{capacity factor} is the average power generation divided by the power capacity.
+
+  For variable renewable generators it depends on weather, generator model and
+  curtailment; for dispatchable generators it depends on market
+  conditions and maintenance schedules.
+
+  A generator's \alert{full load hours} are the equivalent number of hours at full capacity the generator required to produce its yearly energy yield.  The two quantities are related:
+  \begin{equation*}
+    \textrm{full load hours} = \textrm{per unit capacity factor} \cdot 365 \cdot 24 = \textrm{per unit capacity factor} \cdot 8760
+  \end{equation*}
+
+
+  Typical values for Germany:
+  \begin{table}[!t]
+    \begin{tabular}{lrr}
+      \toprule
+Fuel & capacity factor [\%] & full load hours \\
+\midrule
+wind & 20-35 & 1600-3000 \\
+solar & 10-12 & 800-1000 \\
+nuclear & 70-90 & 6000-8000 \\
+open-cycle gas & 20 & 1500 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+
+\end{frame}
+
+
+
+
 \section{Variable Renewable Energy (VRE)}
 
 
