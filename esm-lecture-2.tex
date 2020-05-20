@@ -128,7 +128,7 @@
   \end{itemize}
 
   Compare the convenience and versatility of electricity with another
-  energy carrier: the chemical energy stored in natural gas (methane),
+  energy carrier: the chemical energy stored in natural gas (mostly methane),
   which can only be accessed by burning it.
 
 \end{frame}
@@ -208,11 +208,12 @@
 \begin{frame}
   \frametitle{Electricity spot market: trading of energy}
 
-  Energy is traded in MWh; current price around 30-40~\euro/MWh, but sinking thanks to renewables and the \alert{merit order effect}:
+  Energy is traded in MWh; current price around 40-50~\euro/MWh. Was sinking until 2016 thanks to renewables and the \alert{merit order effect}, but rising since 2016 due to rising \alert{CO$_2$ price}:
 
-  \includegraphics[width=14cm]{price_development}
+  \centering
+  \includegraphics[width=11.4cm]{strompreis-2019.png}
 
-  \source{Agora Energiewende}
+  \source{\href{https://www.agora-energiewende.de/fileadmin2/Projekte/2019/Jahresauswertung_2019/171_A-EW_Jahresauswertung_2019_WEB.pdf}{Agora Energiewende Jahresauswertung 2019}}
 \end{frame}
 
 
@@ -263,14 +264,15 @@
   high.
 
   \centering
-  \includegraphics[width=11cm]{household_price}
+  \includegraphics[width=12cm]{electricity-residential-price-2019.png}
 
+  \raggedright
   HOWEVER the EEG is only high because it is paying for solar panels
   bought at a time when they were still comparatively expensive; but
   through the German subsidy, production volumes were high and the
   learning curve has brought the costs down exponentially.
 
-  \source{Agora Energiewende}
+  \source{\href{https://www.agora-energiewende.de/fileadmin2/Projekte/2019/Jahresauswertung_2019/AGORA_State_of_Affairs_German_Power_Sector_2019_Webinar_28012020.pdf}{Agora Energiewende, 2019}}
 
 \end{frame}
 
@@ -335,7 +337,7 @@
 \begin{frame}
   \frametitle{Load density function}
 
-  Similarly we can also build the \alert{probability density function} $pdf(x)$, $\int dx pdf(x) = 1$:
+  Similarly we can also build the \alert{probability density function} $pdf(x)$, $\int dx \, pdf(x) = 1$:
 
   \centering
   \includegraphics[width=13cm]{DE-load-density}
@@ -361,6 +363,29 @@
   For a real-valued function $f: [0,T] \rightarrow \mathbb{R}$, $a_{-n} = a_n^*$.
 
   For a periodic, \alert{discrete} signal $f_n$, the \alert{Fast Fourier Transform} (FFT) is a computationally advantageous algorithm and is implemented in many programming libraries (see tutorial).
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Fourier transform: exercise}
+
+  To remind yourself of how Fourier transforms work, check the formula for $a_n$ by inserting the expansion of $f(t)$ into the formula for $a_n$.
+
+  First hint: remember Euler's formula:
+  \begin{equation*}
+    e^{i\theta} = \cos \theta + i \sin \theta
+  \end{equation*}
+
+  Second hint: think about integrating a periodic signal over its period:
+  \begin{equation*}
+    \frac{1}{T} \int_0^T dt \cos  \frac{2\pi nt}{T} =  \left\{
+    \begin{array}{@{}ll@{}}
+      1, & \text{if}\ n=0 \\
+      0, & \text{otherwise}
+        \end{array}\right.
+  \end{equation*}
+
+
 
 \end{frame}
 
@@ -459,15 +484,10 @@
 
 
 \begin{frame}
-  \frametitle{Electricity generation in Germany per year}
-
-  In 15 years Germany has gone from a system dominated by nuclear and
-  fossil fuels, to one with 33\% renewables in electricity consumption.
+  \frametitle{Renewables reached 40\% of gross electricity generation in Germany in 2019}
 
   \centering
-  \includegraphics[width=11cm]{germany_yearly_electricity}
-
-  \source{Author's own representation based on \url{https://www.energy-charts.de/energy_en.htm}}
+    \includegraphics[width=11cm]{fig2-gross-power-production-germany-1990-2019.png}
 \end{frame}
 
 
@@ -568,35 +588,57 @@ Uranium & 0 & 0 & 0 \\
 
 
 \begin{frame}
+  \frametitle{You calculate: What CO$_2$ price to switch gas and lignite?}
+
+  What CO$_2$ price, i.e. x \euro/t${}_{\textrm{CO2}}$, is required so
+  that the marginal cost of gas (CCGT) is lower than lignite?
+
+  NB: It helps to track units.
+
+  \pause
+
+  We need to solve for the switch point by adding the CO$_2$ price to the fuel cost.  Left is lignite, right is gas:
+  \begin{equation*}
+    11 \textrm{ \euro/MWh}_{\textrm{el}} + (0.9 \textrm{ tCO}_2/\textrm{MWh}_{\textrm{el}}) \cdot (x \textrm{ \euro/tCO}_2)
+    =    33 \textrm{ \euro/MWh}_{\textrm{el}} + (0.35 \textrm{ tCO}_2/\textrm{MWh}_{\textrm{el}}) \cdot (x \textrm{ \euro/tCO}_2)
+  \end{equation*}
+
+  Solve:
+  \begin{equation*}
+    x = \frac{33 - 11}{0.9 - 0.35} = 40
+  \end{equation*}
+
+\end{frame}
+
+
+\begin{frame}
   \frametitle{CO2 and import costs change over time...}
 
   \centering
-  \includegraphics[width=14cm]{import_costs.png}
+  \includegraphics[width=14cm]{import_costs-2019.png}
 
-  \source{\href{https://www.agora-energiewende.de/presse/neuigkeiten-archiv/2018-war-ein-ausnahmejahr-der-energiewende-aber-eines-mit-gemischter-bilanz/}{Agora Energiewende Jahresrückblick 2018}}
+ \source{\href{https://www.agora-energiewende.de/fileadmin2/Projekte/2019/Jahresauswertung_2019/AGORA_State_of_Affairs_German_Power_Sector_2019_Webinar_28012020.pdf}{Agora Energiewende, 2019}}
 \end{frame}
 
 \begin{frame}
   \frametitle{...which affects the marginal costs of generation}
 
     \centering
-  \includegraphics[width=13cm]{grenzkosten.png}
+  \includegraphics[width=14cm]{marginal_costs-2019.png}
 
-  \source{\href{https://www.agora-energiewende.de/presse/neuigkeiten-archiv/2018-war-ein-ausnahmejahr-der-energiewende-aber-eines-mit-gemischter-bilanz/}{Agora Energiewende Jahresrückblick 2018}}
+\source{\href{https://www.agora-energiewende.de/fileadmin2/Projekte/2019/Jahresauswertung_2019/AGORA_State_of_Affairs_German_Power_Sector_2019_Webinar_28012020.pdf}{Agora Energiewende, 2019}}
 \end{frame}
 
 
 \begin{frame}
   \frametitle{CO2 emissions from electricity sector}
 
-  Despite the increase in renewables in the electricity sector, \co2
-  emission have not been reduced substantially in Germany in recent years. This is
-  partly because German exports have also increased. Also, other sectors haven not succeeded in reducing emissions.
+  \co2
+  emissions in electricity generation stagnated for years because of coal, which is slowly being pushed out by the \co2 price and in the longer term by the Kohleausstieg.
 
   \centering
-  \includegraphics[width=13cm]{co2}
-
-  \source{Agora Energiewende}
+  \includegraphics[width=11cm]{co2-strom-2019.png}
+  \source{\href{https://www.agora-energiewende.de/fileadmin2/Projekte/2019/Jahresauswertung_2019/171_A-EW_Jahresauswertung_2019_WEB.pdf}{Agora Energiewende Jahresauswertung 2019}}
 \end{frame}
 
 
@@ -654,6 +696,26 @@ open-cycle gas & 20 & 1500 \\
 
 \end{frame}
 
+
+\begin{frame}
+  \frametitle{How do we derive solar time series?}
+
+  We take times series weather data for the solar radiation (also
+  called irradiation or insolation) at each location in W/m$^2$.  This
+  is often provided for a horizontal surface, so we need to convert
+  for the angles of the solar panel to the horizontal, and account for
+  factors that affect the energy conversion (losses, outside
+  temperature). We have a software library \alert{atlite} that takes
+  care of this. See \url{https://model.energy} or
+  \url{https://renewables.ninja} for live examples.
+
+  \centering
+  \includegraphics[width=10cm]{figure5.png}
+
+  \source{\href{https://www.volker-quaschning.de/articles/fundamentals1/index.php}{Volker Quaschning}}
+
+
+\end{frame}
 
 \begin{frame}
   \frametitle{Solar time series: weekly}
@@ -714,6 +776,40 @@ open-cycle gas & 20 & 1500 \\
 \end{frame}
 
 
+
+\begin{frame}
+  \frametitle{How do we derive wind time series?}
+
+  We take times series weather data for the wind speeds at hub height (e.g. 60-100m) at each
+  location in ms$^{-1}$. In theory the power in the wind goes like
+  $v^3$, but in practice high wind speeds are rare and it is not
+  economic to build the generator so large.
+
+  \centering
+  \includegraphics[width=10cm]{1200px-Powercurve.png}
+
+  \source{\href{https://de.wikipedia.org/wiki/Datei:Powercurve.png}{Wikipedia}}
+
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{How do we derive wind time series?}
+
+  Wind speeds are typically distributed according to a Weibull probability distribution.
+  Although the wind speeds are clustered at the lower end, most of the energy is generated between 5 and 15 ms$^{-1}$.
+
+  \centering
+  \includegraphics[width=10cm]{Lee_Ranch_Wind_Speed_Frequency.png}
+
+  \source{\href{https://commons.wikimedia.org/wiki/File:Lee_Ranch_Wind_Speed_Frequency.svg}{Wikipedia}}
+
+
+\end{frame}
+
+
+
 \begin{frame}
   \frametitle{Wind time series: weekly}
 
@@ -762,7 +858,7 @@ open-cycle gas & 20 & 1500 \\
 \end{frame}
 
 
-\section{Balancing a single country}
+\section{Balancing a Single Country}
 
 
 
@@ -772,7 +868,7 @@ open-cycle gas & 20 & 1500 \\
   Suppose we now try and cover the electrical demand with the
   generation from wind and solar.
 
-  How much wind do we need? We have three time series:
+  How much wind and solar do we need? We have three time series:
   \begin{itemize}
   \item $\{ d_t\}, d_t \in \R$ the load (varying between 35 GW and 80 GW)
   \item $\{ w_t\}, w_t \in [0,1]$ the wind availability (how much a 1 MW wind turbine produces)
@@ -915,7 +1011,7 @@ open-cycle gas & 20 & 1500 \\
 
   Curtailing renewable energy is also a waste.
 
-  We'll look in the next lectures at \alert{four solutions}:
+  We'll look in the next lectures at \alert{four other solutions}:
   \begin{enumerate}
   \item \alert{Smoothing} stochastic variations of renewable feed-in \alert{over continental areas}, e.g. the whole of Europe.
   \item Using \alert{electricity storage} to shift energy from times of surplus to times of deficit.
