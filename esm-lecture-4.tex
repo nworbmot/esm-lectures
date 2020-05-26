@@ -8,7 +8,7 @@
 
 
 
-\documentclass[10pt,dvipsnames]{beamer}
+\documentclass[10pt,aspectratio=169,dvipsnames]{beamer}
 
 \usetheme[color/block=transparent]{metropolis}
 
@@ -54,7 +54,7 @@
 \setbeamerfont{framesource}{size=\tiny}
 
 
-\newcommand{\source}[1]{\begin{textblock*}{4cm}(8.0cm,8.0cm)
+\newcommand{\source}[1]{\begin{textblock*}{5cm}(10.5cm,8.35cm)
     \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
         \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
     \end{beamercolorbox}
@@ -64,6 +64,9 @@
 
 
 \usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+
+
 \usepackage[europeanresistors,americaninductors]{circuitikz}
 
 
@@ -84,20 +87,28 @@
 \renewcommand{\item}{%
 \olditem\vspace{5pt}}
 
-\title{Energy System Modelling\\ Summer Semester 2019, Lecture 3}
+\title{Energy System Modelling\\ Summer Semester 2020, Lecture 4}
 %\subtitle{---}
 \author{
   {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
   \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
 }
 
-\date{\vspace{.3cm}6th June 2019}
+\date{}
 
-
-\titlegraphic{%
-  \vspace{6cm}
-  \hspace{6.7cm}
+\titlegraphic{
+  \vspace{0cm}
+  \hspace{10cm}
     \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+
+\vspace{5.1cm}
+
+  {\footnotesize
+
+  Unless otherwise stated, graphics and text are Copyright \copyright Tom Brown, 2020.
+  Graphics and text for which no other attribution are given are licensed under a
+  \href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons
+  Attribution 4.0 International Licence}. \ccby}
 }
 
 \begin{document}
@@ -113,21 +124,259 @@
 \end{frame}
 
 
+
+\section{3-node example from last time}
+
+
+\begin{frame}
+  \frametitle{Solving 3-node example}
+
+  Last time we looked at an example where energy conservation at each
+  vertex (Kirchhoff's Current Law, KCL) was not enough information to
+  solve the power flow, since there are multiple paths in the network.
+  Assume equal reactances $x_\ell = x$ on each edge.
+
+  \vspace{.3cm}
+
+  \begin{columns}
+    \column[c]{.5\textwidth}
+
+
+    \centering
+
+  %https://tex.stackexchange.com/questions/270543/draw-a-graph-in-latex-with-tikz
+  \begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw,fill=yellow}]
+      \node (1) at (0,3) {$+6$};
+      \node (2) at (3,3) {$0$};
+      \node (3) at (1.5,0) {$-6$};
+    \end{scope}
+
+    \begin{scope}[>={Stealth[black]},
+        every node/.style={fill=white,circle},
+        every edge/.style={draw=red,very thick}]
+      \path [->] (1) edge node {$?$} (2);
+      \path [->] (2) edge node {$?$} (3);
+      \path [->] (3) edge node {$?$} (1);
+    \end{scope}
+  \end{tikzpicture}
+
+
+      \column[c]{.5\textwidth}
+
+      Formalise by labelling the nodes and edges:
+
+      \vspace{.5cm}
+
+\begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw,fill=cyan}]%text=white}]
+      \node (1) at (0,2.5) {1};
+      \node (2) at (2.5,2.5) {2};
+      \node (3) at (1.25,.3) {3};
+    \end{scope}
+
+    \begin{scope}[>={Stealth[black]},
+        every node/.style={fill=white,circle},
+        every edge/.style={draw=black,very thick}]
+      \path [->] (1) edge node {1} (2);
+      \path [->] (2) edge node {2} (3);
+      \path [->] (3) edge node {3} (1);
+    \end{scope}
+  \end{tikzpicture}
+
+      \vspace{.5cm}
+
+We have $p_i = (6,0,-6)$. (Check $\sum_i p_i = 0$.)
+
+Goal is to find $f_\ell$ for $\ell = 1,2,3$.
+
+  \end{columns}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Solving 3-node example: Kirchhoff's Current Law (KCL)}
+  \begin{columns}
+
+      \column[c]{.5\textwidth}
+
+      \vspace{.2cm}
+
+\begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw,fill=cyan}]%text=white}]
+      \node (1) at (0,2.5) {1};
+      \node (2) at (2.5,2.5) {2};
+      \node (3) at (1.25,.3) {3};
+    \end{scope}
+
+    \begin{scope}[>={Stealth[black]},
+        every node/.style={fill=white,circle},
+        every edge/.style={draw=black,very thick}]
+      \path [->] (1) edge node {1} (2);
+      \path [->] (2) edge node {2} (3);
+      \path [->] (3) edge node {3} (1);
+    \end{scope}
+  \end{tikzpicture}
+
+      \vspace{.3cm}
+
+      Kirchhoff's Current Law gives us:
+  \begin{equation*}
+    p_i = \sum_\ell K_{i\ell} f_\ell \hspace{2cm} \forall i
+  \end{equation*}
+
+  The incidence matrix $K$ is given by:
+        \begin{equation*}
+\mathbf{K}_{i \ell}=\left(\begin{matrix}
+ 1 & 0 & -1\\
+ -1 & 1 & 0\\
+ 0 & -1 & 1
+\end{matrix}\right)
+\end{equation*}
+      \column[c]{.5\textwidth}
+        So we get:
+        \begin{align*}
+          p_1 & = 6 = f_1 - f_3 \\
+          p_2 & = 0 = f_2 - f_1 \\
+          p_3 & = -6 = f_3 - f_2
+        \end{align*}
+        Sum of KCL equations is always zero, so
+        reduce to $N-1 = 2$ independent equations:
+        \begin{align*}
+          6 & = f_1 - f_3 \\
+          0 & = f_2 - f_1
+        \end{align*}
+        Not enough information to solve!
+
+        Need more information from KVL and reactances.
+
+  \end{columns}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+  \frametitle{Solving 3-node example: Kirchhoff's Voltage Law (KVL)}
+  \begin{columns}
+
+      \column[c]{.5\textwidth}
+
+      \vspace{.2cm}
+
+\begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw,fill=cyan}]%text=white}]
+      \node (1) at (0,2.5) {1};
+      \node (2) at (2.5,2.5) {2};
+      \node (3) at (1.25,.3) {3};
+    \end{scope}
+
+    \begin{scope}[>={Stealth[black]},
+        every node/.style={fill=white,circle},
+        every edge/.style={draw=black,very thick}]
+      \path [->] (1) edge node {1} (2);
+      \path [->] (2) edge node {2} (3);
+      \path [->] (3) edge node {3} (1);
+    \end{scope}
+  \end{tikzpicture}
+
+      \vspace{.1cm}
+
+      One formulation of Kirchhoff's Voltage Law gives us $L-N+1$ equations for cycles:
+  \begin{equation*}
+    \sum_\ell C_{\ell c} x_\ell f_\ell = 0 \hspace{2cm} \forall c
+  \end{equation*}
+  The cycle matrix $C$ is given by:
+        \begin{equation*}
+\mathbf{C}_{\ell c}=\left(\begin{matrix}
+ 1 \\
+ 1\\
+ 1
+\end{matrix}\right)
+\end{equation*}
+      \column[c]{.5\textwidth}
+        For equal reactances $x_\ell = x$ we get:
+        \begin{align*}
+          \sum_\ell C_{\ell 1} x_\ell f_\ell = x(f_1 + f_2 + f_3) = 0
+        \end{align*}
+        Together with KCL equations we now have 3 independent equations for 3 unknowns. Solve:
+        \begin{align*}
+          f_1 & = 2 \\
+          f_2 & = 2 \\
+          f_3 & = -4
+        \end{align*}
+
+  \end{columns}
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Solving 3-node example: Solution}
+
+  \vspace{.3cm}
+
+  \begin{columns}
+
+      \column[c]{.5\textwidth}
+
+  Solution:
+  \vspace{.3cm}
+
+    \centering
+  %https://tex.stackexchange.com/questions/270543/draw-a-graph-in-latex-with-tikz
+  \begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw,fill=yellow}]
+      \node (1) at (0,3) {$+6$};
+      \node (2) at (3,3) {$0$};
+      \node (3) at (1.5,0) {$-6$};
+    \end{scope}
+
+    \begin{scope}[>={Stealth[black]},
+        every node/.style={fill=white,circle},
+        every edge/.style={draw=red,very thick}]
+      \path [->] (1) edge node {$2$} (2);
+      \path [->] (2) edge node {$2$} (3);
+      \path [->] (3) edge node {$-4$} (1);
+    \end{scope}
+  \end{tikzpicture}
+
+  \raggedright
+
+      \column[c]{.5\textwidth}
+
+      Along 2-edge path reactance is double the 1-edge path, so half as much power flows along the 2-edge path as the 1-edge path.
+
+      \vspace{.5cm}
+  NB: For directed graph, sign determines direction of flow.
+
+  \end{columns}
+\end{frame}
+
+
+
+
 \section{Full power flow equations}
 
 
 \begin{frame}
-  \frametitle{Goal}
+  \frametitle{Goal: Understand the physical origin of these equations}
 
   Last time we said we can (in the linear approximation) express the
-  flow on each line in terms of the voltage angle at the end buses (a
-  relative of $V = IR$) for a line $\ell$ with reactance $x_\ell$ as
+  flow $f_\ell$ on each line in terms of the voltage angles $\theta_i$
+  at the end buses for a line $\ell$ with
+  reactance $x_\ell$ as
   \begin{equation*}
     f_\ell = \frac{\theta_i - \theta_j}{x_\ell} = \frac{1}{x_\ell}\sum_{i} K_{i\ell} \theta_i
   \end{equation*}
+   This is a relative of Ohm's Law in DC circuits, $I = \frac{V_1 - V_2}{R}$.
 
 
-  Now we explain where this comes from, and the linear approximation
+  Now we explain the physics of where this comes from, and the linear approximation
   that leads to it.
 
   This is also useful when we consider the synchronisation of
@@ -157,12 +406,12 @@
 \begin{frame}
   \frametitle{Why alternating current?}
 
-  Battle of currents! Edison versus Westinghouse/Tesla, etc.
+  Battle of currents! Edison versus Westinghouse/Tesla in late 1880s, early 1890s, etc.
 
   \url{https://en.wikipedia.org/wiki/War_of_Currents}
 
   AC won, because it's easy to transform AC to a higher voltage, so
-  you can transmit a given power with a lower current and thus avoid
+  you can transmit a given power $P = VI$ with a lower current and thus avoid
   the $I^2R$ resistive losses in power lines.
 
   Reason: $\frac{d}{dt}$ in $\mathcal{E} = \frac{d\Phi}{dt}$; use a
@@ -171,7 +420,7 @@
   potential difference.
 
   Frequency of 50~Hz is uniform across Europe (except for
-  train-electricity, e.g. in Germany 16.7~Hz). 60~Hz in USA, half of
+  train-electricity, e.g. in Germany 16.7~Hz). 60~Hz in USA, western half of
   Japan, etc.
 \end{frame}
 
@@ -180,7 +429,7 @@
 \begin{frame}[fragile]
   \frametitle{Frankfurt: Home of Long-Distance AC Transmission}
 
-  First long-distance high-voltage alternating-current transmission in 1891 from hydro
+  First long-distance high-voltage alternating-current transmission in 1891 from hydroelectric
   plant in Lauffen to Frankfurt for the Elektrotechnische Ausstellung (176~km, 15~kV).
 
   \begin{columns}[T]
@@ -204,8 +453,8 @@
 \begin{frame}
   \frametitle{Sinuisoidal waves}
 
-  The voltage is usually written in terms of the frequency $\omega =
-  2\pi f$ and the \alert{Root-Mean-Squared (RMS)} voltage magnitude $V_{\textrm{rms}}$
+  The voltage is usually written in terms of the \alert{angular frequency} $\omega =
+  2\pi f$ (radians per second) rather than frequency $f$ (Hertz) and the \alert{Root-Mean-Squared (RMS)} voltage magnitude $V_{\textrm{rms}}$
   \begin{equation*}
     V(t) = V_{\textrm{peak}} \sin(\omega t) = \sqrt{2} V_{\textrm{rms}} \sin(\omega t)
   \end{equation*}
@@ -248,6 +497,17 @@
 \end{frame}
 
 
+\begin{frame}
+  \frametitle{Resistive loads}
+
+  In terms of the waveforms, the current has no phase shift from the voltage.
+
+  \centering
+  \includegraphics[width=11cm]{vi-r.pdf}
+
+\end{frame}
+
+
 
 \begin{frame}
   \frametitle{Capacitive loads}
@@ -273,6 +533,23 @@
 
 
 
+\begin{frame}
+  \frametitle{Capacitive loads}
+
+  Current peaks before the voltage (it \alert{leads} the voltage),
+  since first charge must accumulate on the plates; once the charge is
+  on the plates, the current drops to zero and the voltage peaks.
+
+  \begin{columns}
+    \column[c]{.7\textwidth}
+  \includegraphics[width=10cm]{vi-c.pdf}
+    \column[c]{.3\textwidth}
+  \includegraphics[width=4cm]{capacitor.png}
+  \end{columns}
+\end{frame}
+
+
+
 
 \begin{frame}
   \frametitle{Inductive loads}
@@ -294,6 +571,22 @@
   We write $X_{L} = \omega L$ for the \alert{inductive reactance}, in analogy to the resistance.
 
 
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Inductive loads}
+
+  Now current peaks after the voltage (it \alert{lags} the voltage),
+  since the flow of current in the solenoid resists the changing voltage.
+
+  \begin{columns}
+    \column[c]{.7\textwidth}
+  \includegraphics[width=10cm]{vi-l.pdf}
+    \column[c]{.3\textwidth}
+  \includegraphics[width=4cm]{600px-Solenoid_and_Ampere_Law_-_2.png}
+  \end{columns}
 \end{frame}
 
 
@@ -498,6 +791,16 @@
 \end{frame}
 
 
+\begin{frame}
+  \frametitle{Roots of unity for $N=3$}
+
+  For $N=3$, check they add up to zero:
+
+  \centering
+  \includegraphics[width=8cm]{f8UGvjRAqV-3rd-roots-of-unity.png}
+
+  \source{\href{https://brilliant.org/wiki/roots-of-unity/}{brilliant.org}}
+\end{frame}
 
 
 \begin{frame}
@@ -527,7 +830,7 @@
   \includegraphics[width=9cm]{circuit}
   \end{center}
 
-  \source{Wikipedia}
+  \source{\href{https://en.wikipedia.org/wiki/Three-phase_electric_power}{Wikipedia}}
 
 \end{frame}
 
@@ -564,7 +867,24 @@ To find the flows, it is sufficient to know the \alert{impedances} of
 the lines and the \alert{voltages} at each node.
 
 \column[c]{.45\textwidth}
-\includegraphics[scale=0.12]{graph19.png}
+
+\begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw,fill=cyan}]%text=white}]
+      \node (4) at (0,2.5) {4};
+      \node (2) at (2.5,2.5) {2};
+      \node (3) at (1.25,.3) {3};
+      \node (1) at (4.2,4.2) {1};
+    \end{scope}
+
+    \begin{scope}[>={Stealth[black]},
+        every node/.style={fill=white,circle},
+        every edge/.style={draw=black,very thick}]
+      \path [->] (1) edge node {1} (2);
+      \path [->] (2) edge node {2} (3);
+      \path [->] (3) edge node {4} (4);
+      \path [->] (2) edge node {3} (4);
+    \end{scope}
+  \end{tikzpicture}
 \end{columns}
 
 
@@ -610,6 +930,7 @@ the lines and the \alert{voltages} at each node.
   \end{equation*}
 
 
+  Only $N-1$ of these equations are independent for a connected network, since $\sum_i K_{i\ell} = 0$.
 \end{frame}
 
 
@@ -619,8 +940,7 @@ the lines and the \alert{voltages} at each node.
   KVL says that the sum of voltage differences across edges for any
   closed cycle must add up to zero.
 
-  If the voltage at any node is given by $\theta_i$ (this is infact
-  the voltage \alert{angle} - more next week) then the voltage difference across edge $\ell$ is
+  If the voltage angle at any node is given by $\theta_i$ then the voltage difference across edge $\ell$ is
   \begin{equation*}
     \sum_i K_{i\ell} \theta_i
   \end{equation*}
@@ -640,28 +960,50 @@ the lines and the \alert{voltages} at each node.
 \begin{frame}
   \frametitle{Kirchhoff's Voltage Law (KVL)}
 
-  If we express the flow on each line in terms of the voltage angle (a
-  relative of $V = IR$) then for a line $\ell$ with reactance $x_\ell$
-  \begin{equation*}
-    f_\ell = \frac{\theta_i - \theta_j}{x_\ell} = \frac{1}{x_\ell}\sum_{i} K_{i\ell} \theta_i
-  \end{equation*}
+  Physics gives us the expression of the flow $f_\ell$ on each line $\ell$ with reactance $x_\ell$ in terms of the voltage angles at the nodes $\theta_i$  (a
+  relative of $V = IR$)
+  \begin{equation}
+    f_\ell = \frac{\theta_i - \theta_j}{x_\ell} = \frac{1}{x_\ell}\sum_{i} K_{i\ell} \theta_i \label{eq:1}
+  \end{equation}
+      [NB: This restricts the $L$ variables $f_\ell$ to depend only on the $N$ voltage angles $\theta_i$. Since the flow doesn't change under a constant shift $\theta_i \to \theta_i + c$, we can choose   a \alert{slack} or \alert{reference bus} such that  $\theta_1 = 0$, so there are only $N-1$ independent variables.]
 
-  KVL now becomes
-  \begin{equation*}
-    \sum_\ell C_{\ell c} x_\ell f_\ell = 0 \hspace{2cm} \forall c
-  \end{equation*}
+      \vspace{.5cm}
+
+
+  KVL now becomes $L-N+1$ binding constraints on the line flows $f_\ell$
+  \begin{equation}
+    \sum_\ell C_{\ell c} x_\ell f_\ell = 0 \hspace{2cm} \forall c  \label{eq:2}
+  \end{equation}
+  [NB: Equations \eqref{eq:1} and  \eqref{eq:2} are equivalent and both restrict our $L$ variables $f_\ell$ to an $N-1$ dimensional subspace.]
 
 \end{frame}
 
+\begin{frame}
+  \frametitle{Solving the equations via the line flows}
 
+  Now we have $N-1$ equations for the flows $f_\ell$ from KCL:
+  \begin{equation*}
+    p_i = \sum_\ell K_{i\ell} f_\ell \hspace{2cm}\forall i \in \{ 1, \dots N-1 \}
+  \end{equation*}
+  and $L-N+1$ equations from KVL:
+  \begin{equation*}
+    \sum_\ell C_{\ell c} x_\ell f_\ell = 0 \hspace{2cm}\forall c \in \{ 1, \dots L-N+1 \}
+  \end{equation*}
+
+  So $L$ independent linear equations for $L$ variables $f_\ell$.
+
+  Can solve with e.g. LU decomposition using specialised sparse solvers, with polynomial complexity in $L$. (For dense matrices complexity $O(L^a)$ where $2 < a < 3$.)
+
+  This formulation is useful for the optimisation later, but we can solve a smaller dimensional linear system with $N-1$ variables using the voltage angles.
+\end{frame}
 
 \begin{frame}
-  \frametitle{Solving the equations}
+  \frametitle{Solving the equations via the voltage angles}
 
   If we combine
-    \begin{equation*}
-    f_\ell  = \frac{1}{x_\ell}\sum_{i} K_{i\ell} \theta_i
-  \end{equation*}
+    \begin{equation}
+    f_\ell  = \frac{1}{x_\ell}\sum_{i} K_{i\ell} \theta_i \label{eq:3}
+  \end{equation}
     with Kirchhoff's Current Law we get
     \begin{equation*}
     p_i = \sum_{\ell} K_{i\ell}f_\ell =   \sum_{\ell} K_{i\ell} \frac{1}{x_\ell}\sum_{j} K_{j\ell} \theta_j
@@ -674,13 +1016,16 @@ the lines and the \alert{voltages} at each node.
     \begin{equation*}
       p_i = \sum_{j} L_{ij} \theta_j
     \end{equation*}
-    We can solve this for the $\theta_i$ and thus find the flows.
+    This is a set of $N-1$ sparse linear equations for the $\theta_j$ ($N-1$ since $\sum_i L_{ij} = 0$).
+    We can solve this for the $\theta_i$ and then find the flows using equation \eqref{eq:3}. Polynomial complexity in $N$.
 
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{Solving the equations}
+  \frametitle{Solving the equations via the PTDF}
+
+  If we are repeating the calculation for a fixed network multiple times with different power injections, it can make sense to do the full matrix inversion.
 
   Given $p_i$ at every node, we want to find the flows $f_\ell$. We
   have the equations
@@ -752,6 +1097,26 @@ the lines and the \alert{voltages} at each node.
 
 \end{frame}
 
+
+
+\begin{frame}
+  \frametitle{Check the Moore-Penrose pseudo-inverse}
+
+  Let's check the Moore-Penrose pseudo-inverse really gives us an inverse:
+  \begin{align*}
+    \sum_{j} L_{ij}L^\dagger_{jk} &= \sum_j \sum_n \l_n e^n_i e^n_j  \sum_{m | \l_m \neq 0} \frac{1}{\l_m} e^m_j e^m_k \\
+&= \sum_n \l_n e^n_i  \sum_{m | \l_m \neq 0} \frac{1}{\l_m} e^m_k \sum_j   e^n_j e^m_j \\
+    & =   \sum_{m | \l_m \neq 0} \frac{\l_m}{\l_m} e^m_i e^m_k\\
+    & =   \sum_{m | \l_m \neq 0}  e^m_i e^m_k
+  \end{align*}
+  From line 2 to 3 we use the orthogonality of the eigenvectors.
+
+  This is almost the identity. It has eigenvalues 1 for each eigenvector $e^n_k$ except for zero eigenvectors of $L$ with $\l_n = 0$, which it annihilates.
+
+\end{frame}
+
+
+
 \begin{frame}
   \frametitle{4-node example}
 
@@ -783,11 +1148,81 @@ the lines and the \alert{voltages} at each node.
 \end{equation*}
 
 \column[c]{.5\textwidth}
-\includegraphics[scale=0.12]{graph19.png}
+
+\begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw,fill=cyan}]%text=white}]
+      \node (4) at (0,2.5) {4};
+      \node (2) at (2.5,2.5) {2};
+      \node (3) at (1.25,.3) {3};
+      \node (1) at (4.2,4.2) {1};
+    \end{scope}
+
+    \begin{scope}[>={Stealth[black]},
+        every node/.style={fill=white,circle},
+        every edge/.style={draw=black,very thick}]
+      \path [->] (1) edge node {1} (2);
+      \path [->] (2) edge node {2} (3);
+      \path [->] (3) edge node {4} (4);
+      \path [->] (2) edge node {3} (4);
+    \end{scope}
+  \end{tikzpicture}
 \end{columns}
 
 
 \end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{4-node example}
+
+  \begin{columns}
+\column[c]{.65\textwidth}
+\begin{align*}
+\sum_i \mathbf{PTDF}_{\ell i}p_i & =\left(\begin{matrix}
+0 & -1 & -1 & -1\\
+0 & 0 & -2/3 & -1/3\\
+0 & 0 & -1/3 & -2/3\\
+0 & 0 & 1/3 & -1/3
+\end{matrix}\right)\left(\begin{matrix}
+50\\
+50 \\
+0\\
+-100
+\end{matrix}\right) \\
+& =\left(\begin{matrix}
+50\\
+33.3 \\
+66.7 \\
+33.3
+\end{matrix}\right)
+\end{align*}
+
+\column[c]{.35\textwidth}
+
+\begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw,fill=yellow}]
+      \node (4) at (0,2.5) {-100};
+      \node (2) at (2.5,2.5) {+50};
+      \node (3) at (1.25,.3) {0};
+      \node (1) at (4.2,4.2) {+50};
+    \end{scope}
+
+    \begin{scope}[>={Stealth[black]},
+                every node/.style={fill=white,circle},
+        every edge/.style={draw=red,very thick}]
+      \path [->] (1) edge node {50} (2);
+      \path [->] (2) edge node {33.3} (3);
+      \path [->] (3) edge node {33.3} (4);
+      \path [->] (2) edge node {66.7} (4);
+    \end{scope}
+  \end{tikzpicture}
+\end{columns}
+
+
+\end{frame}
+
 
 
 
@@ -813,11 +1248,69 @@ the lines and the \alert{voltages} at each node.
 \end{equation*}
 
 \column[c]{.5\textwidth}
-\includegraphics[scale=0.12]{graph19.png}
+\begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw,fill=cyan}]%text=white}]
+      \node (4) at (0,2.5) {4};
+      \node (2) at (2.5,2.5) {2};
+      \node (3) at (1.25,.3) {3};
+      \node (1) at (4.2,4.2) {1};
+    \end{scope}
+
+    \begin{scope}[>={Stealth[black]},
+        every node/.style={fill=white,circle},
+        every edge/.style={draw=black,very thick}]
+      \path [->] (1) edge node {1} (2);
+      \path [->] (2) edge node {2} (3);
+      \path [->] (3) edge node {4} (4);
+      \path [->] (2) edge node {3} (4);
+    \end{scope}
+  \end{tikzpicture}
+
 \end{columns}
 
 
 \end{frame}
+
+
+\begin{frame}
+  \frametitle{PTDF as sensitivity: example of 3rd column for node 3}
+  \begin{columns}
+    \column[c]{.5\textwidth}
+    Focus on 3rd column of PTDF and look at power flow with $p_3 = +1$ and slack $p_1 = -1$. Coefficients determined by resulting flow:
+\begin{equation*}
+\mathbf{PTDF}_{\ell 3}=\left(\begin{matrix}
+ &  & -1 &\\
+ &  & -2/3 & \\
+ &  & -1/3 & \\
+ &  & 1/3 &
+\end{matrix}\right)
+\end{equation*}
+
+\column[c]{.5\textwidth}
+
+\begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw,fill=yellow}]
+      \node (4) at (0,2.5) {0};
+      \node (2) at (2.5,2.5) {0};
+      \node (3) at (1.25,.3) {+1};
+      \node (1) at (4.2,4.2) {-1};
+    \end{scope}
+
+    \begin{scope}[>={Stealth[black]},
+                every node/.style={fill=white,circle},
+        every edge/.style={draw=red,very thick}]
+      \path [->] (1) edge node {-1} (2);
+      \path [->] (2) edge node {-2/3} (3);
+      \path [->] (3) edge node {1/3} (4);
+      \path [->] (2) edge node {-1/3} (4);
+    \end{scope}
+  \end{tikzpicture}
+\end{columns}
+
+
+\end{frame}
+
+
 \section{Consequences of limiting power transfers}
 
 
@@ -901,10 +1394,11 @@ the lines and the \alert{voltages} at each node.
     \end{equation*}
     Curtailment corresponds to the case where $g_{i,s,t} < G_{i,s,t} G_{i,s}$:
 
+     \centering
   \begin{tikzpicture}
-\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=11cm]{scigrid-curtailment}};
-\draw (3,2.7) node{$g_{i,s,t}$};
-\draw (3,3.7) node{$G_{i,s,t}G_{i,s}$};
+\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=10cm]{scigrid-curtailment}};
+\draw (3,2.75) node{$g_{i,s,t}$};
+\draw (3,3.4) node{$G_{i,s,t}G_{i,s}$};
 \draw (3,4.7) node{$G_{i,s}$};
   \end{tikzpicture}
 
@@ -924,7 +1418,7 @@ the lines and the \alert{voltages} at each node.
   Consider backup energy in a simplified European grid:
 
   \centering
-  \includegraphics[trim=0 4cm 0 4cm,width=10cm,clip=true]{europe_map}
+  \includegraphics[trim=0 4cm 0 4cm,width=9cm,clip=true]{europe_map}
 
 \end{frame}
 
@@ -936,13 +1430,13 @@ the lines and the \alert{voltages} at each node.
   Germany needed backup generation for 31\% of total load:
 
   \centering
-  \includegraphics[width=7cm]{mismatch-duration-DE}
+  \includegraphics[width=6.3cm]{mismatch-duration-DE}
 
-
+  \raggedright
   Europe needed Backup generation for only 24\% of the total load:
 
   \centering
-  \includegraphics[width=7cm]{mismatch-duration-EU}
+  \includegraphics[width=6.3cm]{mismatch-duration-EU}
 
 \end{frame}
 
@@ -953,7 +1447,7 @@ the lines and the \alert{voltages} at each node.
   \href{http://www.sciencedirect.com/science/article/pii/S0960148113005351}{Transmission needs across a fully renewable European power system} by Rodriguez, Becker, Andresen, Heide, Greiner, Renewable Energy, 2014
 
   \centering
-  \includegraphics[width=10cm]{sarah_balancing.png}
+  \includegraphics[width=6cm]{sarah_balancing.png}
 
 
 \end{frame}
