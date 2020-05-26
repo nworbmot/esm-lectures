@@ -368,7 +368,7 @@ Goal is to find $f_\ell$ for $\ell = 1,2,3$.
 
   Last time we said we can (in the linear approximation) express the
   flow $f_\ell$ on each line in terms of the voltage angles $\theta_i$
-  at the end buses for a line $\ell$ with
+  at the nodes for a line $\ell$ with
   reactance $x_\ell$ as
   \begin{equation*}
     f_\ell = \frac{\theta_i - \theta_j}{x_\ell} = \frac{1}{x_\ell}\sum_{i} K_{i\ell} \theta_i
@@ -863,8 +863,8 @@ what are the flows in lines 1-4?
 
 \vspace{.1cm}
 
-To find the flows, it is sufficient to know the \alert{impedances} of
-the lines and the \alert{voltages} at each node.
+To find the flows, it is sufficient to know the \alert{reactances} of
+the lines $x_\ell$ and the \alert{voltages angles} $\theta_i$ at each node.
 
 \column[c]{.45\textwidth}
 
@@ -910,7 +910,7 @@ the lines and the \alert{voltages} at each node.
   \alert{Question}: How do the flows $f_\ell$ in the network relate to the nodal power
   imbalances?
 
-  \alert{Answer}: According to the impedances (generalisation of
+  \alert{Answer}: According to the reactances (generalisation of
   resistance for oscillating voltage/current) and the corresponding
   voltages.
 
@@ -965,7 +965,7 @@ the lines and the \alert{voltages} at each node.
   \begin{equation}
     f_\ell = \frac{\theta_i - \theta_j}{x_\ell} = \frac{1}{x_\ell}\sum_{i} K_{i\ell} \theta_i \label{eq:1}
   \end{equation}
-      [NB: This restricts the $L$ variables $f_\ell$ to depend only on the $N$ voltage angles $\theta_i$. Since the flow doesn't change under a constant shift $\theta_i \to \theta_i + c$, we can choose   a \alert{slack} or \alert{reference bus} such that  $\theta_1 = 0$, so there are only $N-1$ independent variables.]
+      [NB: This restricts the $L$ variables $f_\ell$ to depend only on the $N$ voltage angles $\theta_i$. Since the flow doesn't change under a constant shift $\theta_i \to \theta_i + c$, we can choose   a \alert{slack} or \alert{reference node} such that  $\theta_1 = 0$, so there are only $N-1$ independent variables.]
 
       \vspace{.5cm}
 
@@ -1065,7 +1065,7 @@ the lines and the \alert{voltages} at each node.
      f_\ell  & = \frac{1}{x_\ell}\sum_{i} K_{i\ell}( \theta_i  + c) = \frac{1}{x_\ell}\sum_{i} K_{i\ell}( \theta_i )
     \end{align*}
 
-    Typically choose a \alert{slack} or \alert{reference bus} such that  $\theta_1 = 0$.
+    Typically choose a \alert{slack} or \alert{reference node} such that  $\theta_1 = 0$.
 
 
 \end{frame}
@@ -1230,10 +1230,10 @@ the lines and the \alert{voltages} at each node.
   \frametitle{PTDF as sensitivity}
 
   Can also `experimentally' determine the Power Transfer Distribution
-  Factors (PTDF) by choosing a slack bus (in this case bus 1).
+  Factors (PTDF) by choosing a slack node (in this case node 1).
 
   Each column (labelled by $i$) is then the resulting line flows if we have
-  a simple power transfer from bus $i$ to the slack $p_i = 1$ and $p_1
+  a simple power transfer from node $i$ to the slack $p_i = 1$ and $p_1
   = -1$.
 
   \begin{columns}
@@ -1348,7 +1348,7 @@ the lines and the \alert{voltages} at each node.
 
   We will now generalise and adjust our notation.
 
-  From lecture 2 we had for a single node:
+  From lecture 3 we had for a single node:
   \begin{equation*}
     - p_t = m_t -b_t + c_t = d_t - Ww_t - Ss_t -b_t + c_t = 0
   \end{equation*}
