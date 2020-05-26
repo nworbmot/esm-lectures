@@ -1,0 +1,624 @@
+% NB: use pdflatex to compile NOT pdftex.  Also make sure youngtab is
+% there...
+
+% converting eps graphics to pdf with ps2pdf generates way too much
+% whitespace in the resulting pdf, so crop with pdfcrop
+% cf. http://www.cora.nwra.com/~stockwel/rgspages/pdftips/pdftips.shtml
+
+
+
+
+\documentclass[10pt,aspectratio=169,dvipsnames]{beamer}
+\usetheme[color/block=transparent]{metropolis}
+
+
+\usepackage[absolute,overlay]{textpos}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+
+\usepackage{tikz}
+
+
+\usepackage[scale=2]{ccicons}
+
+\usepackage[official]{eurosym}
+
+
+%use this to add space between rows
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+
+
+\newcommand{\R}{\mathbb{R}}
+
+
+\setbeamerfont{alerted text}{series=\bfseries}
+\setbeamercolor{alerted text}{fg=Mahogany}
+\setbeamercolor{background canvas}{bg=white}
+
+
+
+\def\l{\lambda}
+\def\m{\mu}
+\def\d{\partial}
+\def\cL{\mathcal{L}}
+\def\co2{CO${}_2$}
+\def\bra#1{\left\langle #1\right|}
+\def\ket#1{\left| #1\right\rangle}
+\newcommand{\braket}[2]{\langle #1 | #2 \rangle}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\def\corr#1{\Big\langle #1 \Big\rangle}
+\def\corrs#1{\langle #1 \rangle}
+
+
+
+% for sources http://tex.stackexchange.com/questions/48473/best-way-to-give-sources-of-images-used-in-a-beamer-presentation
+
+\setbeamercolor{framesource}{fg=gray}
+\setbeamerfont{framesource}{size=\tiny}
+
+
+\newcommand{\source}[1]{\begin{textblock*}{5cm}(10.5cm,8.35cm)
+    \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
+        \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
+    \end{beamercolorbox}
+\end{textblock*}}
+
+\usepackage{hyperref}
+
+\usepackage{tikz}
+
+
+\usepackage[europeanresistors,americaninductors]{circuitikz}
+
+
+%\usepackage[pdftex]{graphicx}
+
+
+\graphicspath{{graphics/}}
+
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png,.jpg,.gif}
+
+
+
+\def\goat#1{{\scriptsize\color{green}{[#1]}}}
+
+
+
+\let\olditem\item
+\renewcommand{\item}{%
+\olditem\vspace{5pt}}
+
+
+\title{Energy System Modelling\\ Summer Semester 2019, Lecture 5}
+%\subtitle{---}
+\author{
+  {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
+  \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
+}
+
+\date{\vspace{.3cm}13th June 2019}
+
+
+\titlegraphic{%
+  \vspace{6cm}
+  \hspace{6.7cm}
+    \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{frame}
+
+  \frametitle{Table of Contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+
+\section{Optimisation: Motivation}
+
+
+
+\begin{frame}
+  \frametitle{What to do about variable renewables?}
+
+  Backup energy costs money and may also cause CO${}_2$ emissions.
+
+  Curtailing renewable energy is also a waste.
+
+  We consider \alert{four options} to deal with variable renewables:
+  \begin{enumerate}
+  \item Smoothing stochastic variations of renewable feed-in over \alert{larger areas}, e.g. the whole of European continent.
+  \item Using \alert{storage} to shift energy from times of surplus to deficit.
+  \item \alert{Shifting demand} to different times, when renewables are abundant.
+    \item Consuming the electricity in \alert{other sectors}, e.g. transport or heating.
+  \end{enumerate}
+
+\alert{Optimisation} in energy networks is a tool to assess these options.
+
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Why optimisation?}
+
+  In the energy system we have lots of \alert{degrees of freedom}:
+  \begin{enumerate}
+  \item Power plant and storage dispatch
+  \item Renewables curtailment
+  \item Dispatch of network elements (e.g. High Voltage Direct Current (HVDC) lines)
+    \item Capacities of everything when considering investment
+  \end{enumerate}
+  but we also have to respect \alert{physical constraints}:
+  \begin{enumerate}
+    \item Meet energy demand
+  \item Do not overload generators or storage
+    \item Do not overload network
+  \end{enumerate}
+  and we want to do this while \alert{minimising costs}. Solution: \alert{optimisation}.
+
+\end{frame}
+
+
+\section{Optimisation: Introduction}
+
+
+\begin{frame}
+  \frametitle{A simple optimisation problem}
+
+  Consider the following problem. We have a function $f(x,y)$ of two variables $x,y\in \mathbb{R}$
+  \begin{equation*}
+    f(x,y) = 3x
+  \end{equation*}
+  and we want to find the maximum of this function in the $x-y$ plane
+  \begin{equation*}
+    \max_{x,y\in \mathbb{R}} f(x,y)
+  \end{equation*}
+  subject to the following constraints
+  \begin{align}
+    x + y & \leq 4 \\
+    x & \geq 0 \\
+    y & \geq 1
+  \end{align}
+
+  \pause
+  \alert{Optimal solution:} $x^* = 3, y^* = 1, f(x^*,y^*) = 9$.
+
+  NB: We would have gotten the same solution if we had removed the 2nd constraint - it is \alert{non-binding}.
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Another simple optimisation problem}
+
+  We can also have equality constraints. Consider the maximum of this function in the $x-y-z$ space
+  \begin{equation*}
+    \max_{x,y,z\in \mathbb{R}} f(x,y,z) =  (3x + 5z)
+  \end{equation*}
+  subject to the following constraints
+  \begin{align*}
+    x + y & \leq 4 \\
+    x & \geq 0 \\
+    y & \geq 1 \\
+    z & = 2
+  \end{align*}
+
+  \pause
+  \alert{Optimal solution:} $x^* = 3, y^* = 1, z^* = 2, f(x^*,y^*,z^*) = 19$.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Energy system mapping to an optimisation problem}
+
+  This optimisation problem has the same basic form as our energy system considerations:
+  \ra{1.05}
+  \begin{table}[!t]
+    \begin{tabular}{p{6cm}p{0.5cm}p{6cm}}
+      \toprule
+      \alert{Objective function to minimise} & \vspace{.4cm}$\leftrightarrow$  &  \alert{Minimise total costs} \\
+      \alert{Optimisation variables} & \vspace{.4cm} $\leftrightarrow$ &  \alert{Physical degrees of freedom (power plant dispatch, etc.)} \\
+      \alert{Constraints} &\vspace{.4cm}  $\leftrightarrow$  &  \alert{Physical constraints (overloading, etc.)} \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  Before we apply optimisation to the energy system, we'll do some \alert{theory}.
+
+\end{frame}
+
+
+
+
+\section{Optimisation: Theory}
+
+\begin{frame}
+  \frametitle{Optimisation problem}
+
+
+We have an \alert{objective function} $f: \R^k \to \R$
+\begin{equation*}
+  \max_{x} f(x)
+\end{equation*}
+[$x = (x_1, \dots x_k)$] subject to some \alert{constraints} within $\R^k$:
+\begin{align*}
+  g_i(x) & = c_i \hspace{1cm}\leftrightarrow\hspace{1cm} \l_i \hspace{1cm} i = 1,\dots n \\
+  h_j(x) & \leq d_j \hspace{1cm}\leftrightarrow\hspace{1cm} \m_j \hspace{1cm} j = 1,\dots m
+\end{align*}
+
+$\l_i$ and $\m_j$ are the \alert{Karush-Kuhn-Tucker (KKT) multipliers} (basically Lagrange multipliers) we introduce for
+each constraint equation. Each one measures the change in the objective value of the optimal solution obtained by relaxing the constraint by a small amount. They are also known as the \alert{shadow prices} of the constraints.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Feasibility}
+
+  The space $X \subset \R^k$ which satisfies
+\begin{align*}
+  g_i(x) & = c_i \hspace{1cm}\leftrightarrow\hspace{1cm} \l_i \hspace{1cm} i = 1,\dots n \\
+  h_j(x) & \leq d_j \hspace{1cm}\leftrightarrow\hspace{1cm} \m_j \hspace{1cm} j = 1,\dots m
+\end{align*}
+is called the \alert{feasible space}.
+
+It will have dimension lower than $k$ if there are independent
+equality constraints.
+
+It may also be empty (e.g. for $k=1$, $x \geq 1, x \leq 0$ in $\R^1$), in which
+case the optimisation problem is called \alert{infeasible}.
+
+It can be \alert{convex} or \alert{non-convex}.
+
+If all the constraints are affine, then the feasible space is a convex polygon.
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Lagrangian}
+
+
+We now study the \alert{Lagrangian function}
+\begin{equation*}
+   \cL(x,\l,\m) = f(x) - \sum_i \l_i \left[g_i(x) - c_i\right]  - \sum_j \m_j \left[h_j(x) - d_j\right]
+\end{equation*}
+
+We've built this function using the variables $\l_i$ and $\m_j$ to
+better understand the optimal solution of $f(x)$ given the
+constraints.
+
+The optima of $\cL(x,\mathbf{\l},\m)$ tell us important information
+about the optima of $f(x)$ given the constraints.
+
+It is entirely analogous to the physics Lagrangian $L(x,\dot{x},\l)$
+except we have no explicit time dependence $\dot{x}$ and  we have additional
+constraints which are inequalities.
+
+We can already see that if $\frac{\d \cL}{\d \l_i} = 0$ then the
+equality constraint $g_i(x) = c$ will be satisfied.
+
+[Beware: $\pm$ signs appear differently in literature, but have been chosen here such that $\l_i = \frac{\d \cL}{\d c_i}$ and $\m_j
+  = \frac{\d \cL}{\d d_j}$.]
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{KKT conditions}
+
+The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an optimal solution $x^*,\m^*,\l^*$ always satisfies (up to some regularity conditions):
+\begin{enumerate}
+\item \alert{Stationarity}: For $\ell = 1,\dots k$
+  \begin{equation*}
+  \frac{\d \cL}{\d x_\ell} =   \frac{\d f}{\d x_\ell} - \sum_i \l_i^* \frac{\d g_i}{\d x_\ell}  - \sum_j \m_j^* \frac{\d h_j}{\d x_\ell} = 0
+  \end{equation*}
+    \item \alert{Primal feasibility}:
+      \begin{align*}
+        g_i(x^*) & = c_i \\
+        h_j(x^*) &\leq d_j
+      \end{align*}
+    \item \alert{Dual feasibility}: $\m_j^* \geq 0$
+    \item \alert{Complementary slackness}: $\m_j^* (h_j(x^*) - d_j) = 0$
+\end{enumerate}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+  \frametitle{Complementarity slackness for inequality constraints}
+
+
+  We have for each inequality constraint
+  \begin{align*}
+    \m_j^* & \geq  0 \\
+    \m_j^*(h_j(x^*) - d_j) & = 0
+  \end{align*}
+
+  So \alert{either} the inequality constraint is binding
+  \begin{align*}
+    h_j(x^*)  = d_j
+  \end{align*}
+  and we have $\m_j^* \geq 0$.
+
+  \alert{Or} the inequality constraint is NOT binding
+  \begin{align*}
+    h_j(x^*)  < d_j
+  \end{align*}
+  and we therefore MUST have $\m_j^* = 0$.
+
+  If the inequality constraint is non-binding, we can remove it from the optimisation problem, since it has no effect on the optimal solution.
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Nota Bene}
+
+  \begin{enumerate}
+  \item The KKT conditions are only \alert{sufficient} for optimality
+    of the solution under certain conditions, e.g. linearity of the
+    problem.
+  \item Since at the optimal solution we have $g_i(x^*) = c_i$ for equality constraints and
+    $\m_j^*(h_j(x^*) - d_j) = 0$, we have
+    \begin{equation*}
+         \cL(x^*,\l^*,\m^*) = f(x^*)
+    \end{equation*}
+
+
+  \end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{How we will use the KKT conditions}
+
+  Usually we will have enough constraints to determine the $k$ values
+  $x_\ell^*$ for $\ell=1,\dots k$ uniquely, i.e. $k$ independent constraints will be binding and the objective function is never constant along any constraint.
+
+  We will use the KKT conditions, primarily stationarity, to determine
+  the values of the $k$ KKT multipliers for the independent binding constraints.
+
+  \alert{Dimensionality check}: we need to find $k$ KKT multipliers and we have $k$ equations from stationarity to find them. Good!
+
+  The remaining KKT multipliers are either zero (for non-binding
+  constraints) or dependent on the $k$ independent KKT multipliers in the case of dependent constraints.
+
+  (There are also degenerate cases where the optimum is not at a single point, where things will be more complicated, e.g. when objective function is constant along a constraint.)
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Return to simple optimisation problem}
+
+  We want to find the maximum of this function in the $x-y$ plane
+  \begin{equation*}
+    \max_{x,y\in \mathbb{R}} f(x,y) = 3x
+  \end{equation*}
+  subject to the following constraints (now with KKT multipliers)
+  \begin{align*}
+    x + y & \leq 4  \hspace{1cm}\leftrightarrow\hspace{1cm} \m_1 \\
+    -x & \leq 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \m_2\\
+    -y & \leq -1  \hspace{1cm}\leftrightarrow\hspace{1cm} \m_3
+  \end{align*}
+  We know the optimal solution in the \alert{primal variables} $x^* = 3, y^* = 1, f(x^*,y^*) = 9$.
+
+  What about the \alert{dual variables} $\m_i$?
+
+  Since the second constraint is not binding, by complementarity
+  $\m_2^*(-x^* - 0) = 0$ we have $\m_2^* = 0$. To find $\m_1^*$ and
+  $\m_3^*$ we have to do more work.
+
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Simple problem with KKT conditions}
+
+  We use stationarity for the optimal point:
+  \begin{align*}
+    0 & = \frac{\d \cL}{\d x } =   \frac{\d f}{\d x} - \sum_i \l_i^* \frac{\d g_i}{\d x}  - \sum_j \m_j^* \frac{\d h_j}{\d x} = 3 - \m_1^* + \m_2^* \\
+    0 & = \frac{\d \cL}{\d y } =   \frac{\d f}{\d y} - \sum_i \l_i^* \frac{\d g_i}{\d y}  - \sum_j \m_j^* \frac{\d h_j}{\d y} = - \m_1^* + \m_3^*
+  \end{align*}
+  From which we find:
+  \begin{align*}
+    \m_1^* & = 3 - \m_2^* = 3 \\
+    \m_3^* & = \m_1^* = 3
+  \end{align*}
+
+  Check interpretation: $\m_j = \frac{\d \cL}{\d d_j}$ with $d_j \to d_j + \varepsilon$.
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Return to another simple optimisation problem}
+
+  We want to find the maximum of this function in the $x-y-z$ space
+  \begin{equation*}
+    \max_{x,y,z\in \mathbb{R}} f(x,y) = 3x + 5z
+  \end{equation*}
+  subject to the following constraints (now with KKT multipliers)
+  \begin{align*}
+    x + y & \leq 4  \hspace{1cm}\leftrightarrow\hspace{1cm} \m_1 \\
+    -x & \leq 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \m_2\\
+    -y & \leq -1  \hspace{1cm}\leftrightarrow\hspace{1cm} \m_3 \\
+    z & = 2  \hspace{1cm}\leftrightarrow\hspace{1cm} \l
+  \end{align*}
+  We know the optimal solution in the \alert{primal variables} $x^* = 3, y^* = 1, z^* = 2, f(x^*,y^*,z^*) = 19$.
+
+  What about the \alert{dual variables} $\m_i,\l$?
+
+  We get same solutions to $\m_1^* = 3, \m_2^* = 0, \m_3^* =3$ because they're not coupled to $z$ direction. What about $\l^*$?
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Another simple problem with KKT conditions}
+
+  We use stationarity for the optimal point:
+  \begin{align*}
+    0 & = \frac{\d \cL}{\d z } =   \frac{\d f}{\d z} - \sum_i \l_i^* \frac{\d g_i}{\d z}  - \sum_j \m_j^* \frac{\d h_j}{\d z} = 5 - \l^*
+  \end{align*}
+  From which we find:
+  \begin{align*}
+    \l^* & = 5
+  \end{align*}
+
+  Check interpretation: $\l_i = \frac{\d \cL}{\d c_i}$ with $c_i \to c_i + \varepsilon$.
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{An example for you to do}
+
+  Find the values of $x^*,y^*,\m_i^*$
+  \begin{equation*}
+    \max_{x,y\in \mathbb{R}} f(x,y) = y
+  \end{equation*}
+  subject to the following constraints
+  \begin{align*}
+    y + x^2 & \leq 4  \hspace{1cm}\leftrightarrow\hspace{1cm} \m_1 \\
+    y - 3x & \leq 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \m_2\\
+    -y & \leq 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \m_3
+  \end{align*}
+\end{frame}
+
+
+\section{Optimisation: Solution Algorithms}
+
+
+\begin{frame}
+  \frametitle{Optimisation solution algorithms}
+
+  In general finding the solution to optimisation problems is hard,
+  at worst $NP$-hard. Non-linear,
+  non-convex and/or discrete (i.e. some variables can only take
+  discrete values) problems are particularly troublesome.
+
+  There is specialised software for solving particular classes of
+  problems (linear, quadratic, discrete etc.).
+
+  Since we will mostly focus on linear problems, the main two
+  algorithms of relevance are:
+  \begin{itemize}
+  \item The \alert{simplex algorithm}
+  \item The \alert{interior-point algorithm}
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Simplex algorithm}
+
+    \begin{columns}[T]
+\begin{column}{6.5cm}
+
+  \includegraphics[width=6cm]{480px-Simplex-method-3-dimensions.png}
+\end{column}
+\begin{column}{7.5cm}
+
+  The simplex algorithm works for linear problems by building the feasible space, which is a multi-dimensional polyhedron, and searching its surface for the solution.
+
+  If the problem has a solution, the optimum can be assumed to always occur at (at least) one of the vertices of the polyhedron. There is a finite number of vertices.
+
+  The algorithm starts at a feasible vertex. If it's not the optimum, the objective function will increase along one of the edges leading away from the vertex. Follow that edge to the next vertex.
+
+  Repeat until the optimum is found.
+
+  \alert{Complexity:} On \emph{average} over given set of problems can solve in polynomial time, but worst cases can always be found with exponential time.
+\end{column}
+  \end{columns}
+
+\source{\href{https://en.wikipedia.org/wiki/Simplex_algorithm\#/media/File:Simplex-method-3-dimensions.png}{Wikipedia}}
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Interior point methods}
+
+    \begin{columns}[T]
+\begin{column}{6.5cm}
+
+  \includegraphics[width=7.5cm]{1024px-Karmarkar.png}
+\end{column}
+\begin{column}{7.5cm}
+
+  Interior point methods can be used on more general non-linear problems. They search the interior of the feasible space rather than its surface.
+
+  They achieve this by extremising the objective function plus a \alert{barrier term} that penalises solutions that come close to the boundary.
+
+  As the penality becomes less severe the algorithm converges to the optimum point at the boundary.
+
+  \vspace{.5cm}
+  \alert{Complexity:} For linear problems, Karmakar's version of the interior point method can run in polynomial time.
+\end{column}
+  \end{columns}
+
+\source{\href{https://en.wikipedia.org/wiki/Interior-point_method\#/media/File:Karmarkar.svg}{Wikipedia}}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Interior point methods: Barrier method}
+
+ Take a problem
+  \begin{equation*}
+    \min_{\{x_i, i=1,\dots n\}} f(x)
+  \end{equation*}
+such that for
+\begin{align*}
+  c_j(x) & = 0 \leftrightarrow \l_j, j = 1\dots k \\
+  x & \geq 0
+\end{align*}
+Any optimisation problem can be brought into this form. Introduce the \alert{barrier function}
+\begin{equation*}
+ B(x,\mu) = f(x) - \m \sum_{i=1}^n \ln(x_i)
+\end{equation*}
+where $\mu$ is the small and positive \alert{barrier parameter} (a scalar). Note that the barrier term penalises solutions when $x$ comes close to 0 by becoming large and positive.
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Interior point methods: Barrier method}
+
+  The problem
+\begin{equation*}
+  \min_{\{x_i, i=1,\dots n\}} \left[ f(x) - \m \sum_{i=1}^n \ln(x_i)  \right]
+\end{equation*}
+such that
+\begin{align*}
+  c_j(x) & = 0 \leftrightarrow \l_j, j = 1\dots k
+\end{align*}
+can now be solved using the extremisation of the Lagrangian like we did for KKT sufficiency.
+
+Solve the following equation system iteratively using the Newton method to find the $x_i$ and $\lambda_j$:
+\begin{align*}
+    \nabla_i f(x) - \m  \frac{1}{x_i} + \sum_j \lambda_j \nabla_i c_j(x) & = 0 \\
+  c_j(x) & = 0
+\end{align*}
+
+See this \href{https://www.youtube.com/watch?v=zm4mfr-QT1E}{nice video} for more details and visuals.
+\end{frame}
+
+
+\end{document}
