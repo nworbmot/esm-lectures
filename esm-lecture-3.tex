@@ -115,7 +115,7 @@
 \end{frame}
 
 
-\section{Single location versus country versus continent}
+\section{Single Location Versus Country Versus Continent}
 
 
 
@@ -225,7 +225,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Statistical comparison}
+  \frametitle{Fourier spectrum: weekly variations suppressed}
 
 % from ~/energy/playground/pypsa-eur/notebooks/fourier_of_synoptic.ipynb
 %  (tom3) tom@darth:~/energy/playground/pypsa-eur/notebooks$ cp german_wind.pdf ../../../courses/ei2-2019/graphics-ei2/fourier_german_wind.pdf
@@ -364,10 +364,10 @@
 
   \begin{itemize}
   \item Integration over a larger area smooths out the fluctuations of
-    renewables, particularly wind
-  \item Wind backs up wind
+    renewables, particularly wind.
+  \item Wind backs up wind.
   \item This means we need \alert{less backup energy}.
-  \item and \alert{less backup capacity}.
+  \item And \alert{less backup capacity}.
   \end{itemize}
 
 
@@ -429,7 +429,7 @@ Energy 69 (2014) 236e246
 
 \end{frame}
 
-\section{Networks}
+\section{Electricity Networks}
 
 
 
@@ -440,7 +440,7 @@ Energy 69 (2014) 236e246
 %https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Electricity_grid_simple-_North_America.svg/640px-Electricity_grid_simple-_North_America.svg.png
 
   Electricity can be transported over long distances with low losses using the
-  high voltage transmission grid:
+  high voltage transmission grid (losses go like $I^2R$, power transmission like $VI$, so reduce $I$ by raising $V$):
 
   \centering
   \includegraphics[width=14cm]{Electricity_grid_simple-_North_America}
@@ -629,7 +629,7 @@ Energy 69 (2014) 236e246
 \frametitle{Definition of a network}
 Our definition (Newman): A \alert{network} (graph) is a collection of \alert{vertices} (nodes) joined by \alert{edges} (links).\\
 \vspace{0.5in}
-More precise definition (Bollob\`as): A graph $G$ is an ordered pair of disjoint sets $(V,E)$ such that $E$ (the edges) is a subset of the set $V^{(2)}$ of unordered pairs of $V$ (the vertices).
+More precise definition (Bollob\`as): An undirected graph $G$ is an ordered pair of disjoint sets $(V,E)$ such that $E$ (the edges) is a subset of the set $V^{(2)}$ of unordered pairs of $V$ (the vertices).
 \end{frame}
 
 
@@ -646,8 +646,8 @@ More precise definition (Bollob\`as): A graph $G$ is an ordered pair of disjoint
 \end{itemize}
 Definition from graph theory:
 \begin{itemize}
-\item $n=6$ vertices: \alert{order} of the graph\\
-\item $m=7$ edges: \alert{size} of the graph
+\item $N=6$ vertices: \alert{order} of the graph\\
+\item $L=7$ edges: \alert{size} of the graph
 \end{itemize}
     \column[c]{.60\textwidth}
 \includegraphics[scale=0.15]{graph1a.png}
@@ -747,6 +747,24 @@ We can assign a \alert{weight} or \alert{strength} assigned to each edge.
 Weights can be both positive or negative.
 \end{frame}
 %-----%-----%-----%-----%-----%-----%-----%-----%
+%-----%-----%-----%-----%-----%-----%-----%-----%
+\begin{frame}
+\frametitle{Components of networks}
+\begin{columns}
+\column[c]{.6\textwidth}
+\begin{itemize}
+\item Subgroups of vertices with no connections between the respective groups
+\item \alert{Disconnected} network
+\item Subgroups: \alert{components}
+\item Adjacency matrix: Block-diagonal form
+\end{itemize}
+\column[c]{.4\textwidth}
+\includegraphics[scale=0.12]{graph22.png}\end{columns}
+\end{frame}
+%-----%-----%-----%-----%-----%-----%-----%-----%
+
+
+
 \begin{frame}
 \frametitle{Directed Networks (Digraphs)}
 
@@ -821,7 +839,10 @@ D_{ij} = \begin{cases}k_i  &\mbox{if } i=j\\
 0 & \mbox{otherwise}. \end{cases}
 \end{equation*}
 \begin{columns}
-    \column[c]{.40\textwidth}
+  \column[c]{.40\textwidth}
+
+  It's an $N \times N$ matrix again:
+
 \begin{equation*}
 \mathbf{D}=\left(\begin{matrix}
 3 & 0 & 0 & 0 & 0 & 0\\
@@ -842,7 +863,7 @@ D_{ij} = \begin{cases}k_i  &\mbox{if } i=j\\
 
 \begin{frame}
   \frametitle{Laplacian L}
-  The \alert{Laplacian matrix} is defined for an undirected graph by
+  The \alert{Laplacian matrix} is an $N \times N$ matrix defined for an undirected graph by
 \begin{equation*}
 \mathbf{L} = \mathbf{D} - \mathbf{A}
 \end{equation*}
@@ -860,7 +881,7 @@ D_{ij} = \begin{cases}k_i  &\mbox{if } i=j\\
 \end{equation*}
 \begin{itemize}
 \item $\mathbf{L}$ inherits symmetry from $\mathbf{D}$ and $\mathbf{A}$.
-\item The number of zero eigenvalues equals the number of connected components.
+\item The columns (and rows) sum to zero.
 \item For a set of connected nodes $I$, $\sum_{i\in I} L_{ij} = 0$  $\forall j$.
 \end{itemize}
     \column[c]{.40\textwidth}
@@ -868,6 +889,98 @@ D_{ij} = \begin{cases}k_i  &\mbox{if } i=j\\
   \end{columns}
 \end{frame}
 
+
+
+\begin{frame}
+  \frametitle{Eigenvalues and eigenvectors of Laplacian L}
+
+  The number of zero eigenvalues equals the number of connected components.
+
+  For our connected graph, the single zero eigenvector is $(1,1,\dots 1)$:
+\begin{equation*}
+\mathbf{L}=\left(\begin{matrix}
+3 & -1 & -1 & 0 & 0 & -1\\
+-1 & 2 & -1 & 0 & 0 & 0\\
+-1 & -1 & 3 & -1 & 0 & 0\\
+0 & 0 & -1 & 3 & -1 & -1\\
+0 & 0 & 0 & -1 & 1 & 0\\
+-1 & 0 & 0 & -1 & 0 & 2
+\end{matrix}\right)  \left(\begin{matrix}
+1 \\
+1 \\
+1 \\
+1 \\
+1 \\
+1
+\end{matrix}\right)= \left(\begin{matrix}
+0 \\
+0 \\
+0 \\
+0 \\
+0 \\
+0
+\end{matrix}\right)
+\end{equation*}
+
+Multiplying this eigenvector sums the rows, which gives zero.
+
+The image of the matrix is made of differences across the nodes, so is $N-1$ dimensional.
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Eigenvalues and eigenvectors of Laplacian L}
+
+  For a graph with two connected components, the Laplacian becomes block diagonal for the components, since there are no edges linking the components in the adjacency matrix:
+
+\vspace{.5cm}
+
+\begin{columns}
+\column[c]{.5\textwidth}
+
+  \begin{equation*}
+\mathbf{L}=\left(\begin{matrix}
+2 & -1 & -1 &  &  & \\
+-1 & 2 & -1 &  &  & \\
+-1 & -1 & 2 &  &  & \\
+ &  &  &2 & -1 & -1\\
+ &  &  &-1 & 2 & -1\\
+ &  &  &-1 & -1 & 2 \\
+\end{matrix}\right)
+  \end{equation*}
+
+\column[c]{.5\textwidth}
+
+\begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw,fill=cyan}]%text=white}]
+      \node (1) at (0,2) {1};
+      \node (2) at (2,2) {2};
+      \node (3) at (1,0) {3};
+      \node (4) at (3,1) {4};
+      \node (5) at (2,-1) {5};
+      \node (6) at (4,-1) {6};
+    \end{scope}
+
+    \begin{scope}[>={Stealth[black]},
+        every node/.style={fill=white,circle},
+        every edge/.style={draw=black,very thick}]
+      \path (1) edge (2);
+      \path (2) edge (3);
+      \path (3) edge (1);
+      \path (4) edge (5);
+      \path (5) edge (6);
+      \path (6) edge (4);
+    \end{scope}
+  \end{tikzpicture}
+\end{columns}
+
+\vspace{.5cm}
+
+Verify that the two zero eigenvectors are $(1,1,1,0,0,0)$ and $(0,0,0,1,1,1)$ corresponding to the connected components.
+
+\end{frame}
 
 \begin{frame}
   \frametitle{The incidence matrix}
@@ -893,7 +1006,24 @@ K_{i\ell} = \begin{cases}
 \end{matrix}\right)
 \end{equation*}
     \column[c]{.5\textwidth}
-\includegraphics[scale=0.12]{graph19.png}
+
+\begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw,fill=cyan}]%text=white}]
+      \node (4) at (0,2.5) {4};
+      \node (2) at (2.5,2.5) {2};
+      \node (3) at (1.25,.3) {3};
+      \node (1) at (4.2,4.2) {1};
+    \end{scope}
+
+    \begin{scope}[>={Stealth[black]},
+        every node/.style={fill=white,circle},
+        every edge/.style={draw=black,very thick}]
+      \path [->] (1) edge node {1} (2);
+      \path [->] (2) edge node {2} (3);
+      \path [->] (3) edge node {4} (4);
+      \path [->] (2) edge node {3} (4);
+    \end{scope}
+  \end{tikzpicture}
 \end{columns}
 \end{frame}
 
@@ -918,6 +1048,37 @@ K_{i\ell} = \begin{cases}
     L_{ij} = \sum_\ell K_{i\ell}K_{j\ell}
   \end{equation*}
   for $i=j$ and $i\neq j$.
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Incidence matrix properties}
+
+  Let's verify:
+  \begin{equation*}
+    L_{ij} = \sum_\ell K_{i\ell}K_{j\ell}
+  \end{equation*}
+
+  For $i=j$ we get
+  \begin{equation*}
+    L_{ii} = \sum_\ell \left(K_{i\ell}\right)^2
+  \end{equation*}
+  The summands are only non-zero if the line $\ell$ is attached to $i$, so we get the degree
+  \begin{equation*}
+    L_{ii} = k_i
+  \end{equation*}
+  Correct!
+
+  For $i\neq j$ we have
+  \begin{equation*}
+    L_{ij} = \sum_\ell K_{i\ell}K_{j\ell}
+  \end{equation*}
+  If there is no line between $i$ and $j$, then both sides are zero.
+
+  If there is a line between $i$ and $j$ one of $K_{i\ell}$ and $K_{j\ell}$ is $+1$, while the other is $-1$, so we get $L_{ij} = -1$. Correct!
+
 
 \end{frame}
 
@@ -948,14 +1109,70 @@ K_{i\ell} = \begin{cases}
 \end{matrix}\right)
 \end{equation*}
 
-  This corresponds to a \alert{closed cycle} in the graph, since the
-  edges form a path that returns to its starting point. Each point in
-  the cycle has an edge that ends there and an edge that starts there.
+  This corresponds to a \alert{cycle} in the graph. A cycle is a path
+  through the network that returns to its starting node. Each node
+  in the cycle has an edge that ends there and an edge that starts
+  there, so is annihilated by $K$.
 
   The matrix $K$ can be interpreted as a \alert{boundary operator}. A
   cycle has no boundary in 0-d. There is a general theory called
   \alert{homology theory}, which can compute topological invariants of
   manifolds called \alert{homology groups}.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{A cycle}
+
+\begin{columns}
+    \column[c]{.5\textwidth}
+
+    For our graph:
+\begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw,fill=cyan}]%text=white}]
+      \node (4) at (0,2.5) {4};
+      \node (2) at (2.5,2.5) {2};
+      \node (3) at (1.25,.3) {3};
+      \node (1) at (4.2,4.2) {1};
+    \end{scope}
+
+    \begin{scope}[>={Stealth[black]},
+        every node/.style={fill=white,circle},
+        every edge/.style={draw=black,very thick}]
+      \path [->] (1) edge node {1} (2);
+      \path [->] (2) edge node {2} (3);
+      \path [->] (3) edge node {4} (4);
+      \path [->] (2) edge node {3} (4);
+    \end{scope}
+  \end{tikzpicture}
+
+\column[c]{.5\textwidth}
+The combination  of edges $(0,1,-1,1)^t$ corresponds to the cycle:
+
+\vspace{.5cm}
+
+\begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw,fill=cyan}]%text=white}]
+      \node (4) at (0,2.5) {4};
+      \node (2) at (2.5,2.5) {2};
+      \node (3) at (1.25,.3) {3};
+    \end{scope}
+
+    \begin{scope}[>={Stealth[black]},
+        every node/.style={fill=white,circle},
+        every edge/.style={draw=black,very thick}]
+      \path [->] (2) edge (3);
+      \path [->] (3) edge (4);
+      \path [->] (4) edge (2);
+    \end{scope}
+  \end{tikzpicture}
+
+\vspace{.5cm}
+
+NB: The direction of edge 3 is reversed by the minus sign.
+
+\end{columns}
 
 \end{frame}
 
@@ -1044,12 +1261,12 @@ K_{i\ell} = \begin{cases}
 \begin{columns}
 \column[c]{.5\textwidth}
 \begin{itemize}
-\item A collection of trees is called a \alert{forest}.
 \item Trees play an import role for random graph models.
 \item In a tree, there is exactly one path between any pair of vertices.
 \item A tree of $N$ vertices always has exactly $N-1$ edges.
 \item Any connected network with~$N$ vertices and $N-1$ edges is a tree.
   \item Trees have \alert{no cycles}.
+\item A collection of trees is called a \alert{forest}.
 \end{itemize}
     \column[c]{.5\textwidth}
 \includegraphics[scale=0.12]{graph22.png}
@@ -1115,7 +1332,7 @@ $\left[\mathbf{A}^{r}\right]_{ij}>0$.
 \begin{columns}
 \column[c]{.6\textwidth}
 \begin{itemize}
-\item Directed network without closed loops of edges (DAG)
+\item Directed network without cycles of edges (DAG)
 \item Examples: power flow in an electricity grid, citation network of papers
 \item Topological ordering: For every directed edge $i\to j$, vertex $i$ comes before $j$ in the ordering:\\(1,2,3,4,6,9,10,11,12,8,7,5,13)
 \item With a topological ordering, the adjacency matrix of an acyclic directed network is \alert{strictly triangular}
@@ -1124,21 +1341,6 @@ $\left[\mathbf{A}^{r}\right]_{ij}>0$.
 \includegraphics[scale=0.12]{graph13.png}
 \end{columns}
 \end{frame}
-%-----%-----%-----%-----%-----%-----%-----%-----%
-\begin{frame}
-\frametitle{Components of networks}
-\begin{columns}
-\column[c]{.6\textwidth}
-\begin{itemize}
-\item Subgroups of vertices with no connections between the respective groups
-\item \alert{Disconnected} network
-\item Subgroups: \alert{components}
-\item Adjacency matrix: Block-diagonal form
-\end{itemize}
-\column[c]{.4\textwidth}
-\includegraphics[scale=0.12]{graph22.png}\end{columns}
-\end{frame}
-%-----%-----%-----%-----%-----%-----%-----%-----%
 
 
 
@@ -1500,5 +1702,29 @@ the lines and the \alert{voltages} at each node.
 
 \end{frame}
 
+
+
+\begin{frame}
+  \frametitle{Solving the equations}
+
+  Given $p_i$ at every node, we want to find the flows $f_\ell$. We
+  have the equations
+    \begin{align*}
+      p_i & = \sum_{j} L_{ij} \theta_j \\
+     f_\ell  & = \frac{1}{x_\ell}\sum_{i} K_{i\ell} \theta_i
+    \end{align*}
+
+    Basic idea: invert $L$ to get $\theta_i$ in terms of $p_i$
+    \begin{equation*}
+      \theta_i  = \sum_{k} (L^{-1})_{ik} p_k
+    \end{equation*}
+    then insert to get the flows as a linear function of the power injections $p_i$
+    \begin{equation*}
+    f_\ell   = \frac{1}{x_\ell}\sum_{i,k} K_{i\ell}  (L^{-1})_{ik} p_k = \sum_k \textrm{PTDF}_{\ell k} p_k
+    \end{equation*}
+    called the \alert{Power Transfer Distribution Factors} (PTDF).
+
+    The catch: $L$ is not invertible because of the zero eigenvalues. More next time!
+\end{frame}
 
 \end{document}
