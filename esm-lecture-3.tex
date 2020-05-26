@@ -674,7 +674,7 @@ A_{ij} = \begin{cases} 1 &\mbox{if there is an edge between vertices i and j} \\
 \end{equation*}
 \begin{itemize}
 \item Diagonal elements are zero.
-\item Symmetric matrix.
+\item Symmetric matrix for an undirected graph.
 \item If there are $N$ vertices, it's an $N\times N$ matrix.
 \end{itemize}
     \column[c]{.4\textwidth}
@@ -867,6 +867,7 @@ D_{ij} = \begin{cases}k_i  &\mbox{if } i=j\\
 \begin{equation*}
 \mathbf{L} = \mathbf{D} - \mathbf{A}
 \end{equation*}
+\vspace{-0.3cm}
 \begin{columns}
     \column[c]{.60\textwidth}
 \begin{equation*}
@@ -879,8 +880,9 @@ D_{ij} = \begin{cases}k_i  &\mbox{if } i=j\\
 -1 & 0 & 0 & -1 & 0 & 2
 \end{matrix}\right)
 \end{equation*}
+\vspace{-0.3cm}
 \begin{itemize}
-\item $\mathbf{L}$ inherits symmetry from $\mathbf{D}$ and $\mathbf{A}$.
+\item $\mathbf{L}$ inherits symmetry from $\mathbf{D}$ and $\mathbf{A}$ for the undirected graph.
 \item The columns (and rows) sum to zero.
 \item For a set of connected nodes $I$, $\sum_{i\in I} L_{ij} = 0$  $\forall j$.
 \end{itemize}
@@ -894,7 +896,7 @@ D_{ij} = \begin{cases}k_i  &\mbox{if } i=j\\
 \begin{frame}
   \frametitle{Eigenvalues and eigenvectors of Laplacian L}
 
-  The number of zero eigenvalues equals the number of connected components.
+  The number of eigenvectors with zero eigenvalues equals the number of connected components.
 
   For our connected graph, the single zero eigenvector is $(1,1,\dots 1)$:
 \begin{equation*}
@@ -1056,6 +1058,7 @@ K_{i\ell} = \begin{cases}
   \end{equation*}
   for $i=j$ and $i\neq j$.
 
+  NB: $K$ is defined for a directed graph, but $L$ for the undirected version. The information on the direction of the edges is lost in the formula $L = KK^t$.
 \end{frame}
 
 
