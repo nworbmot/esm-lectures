@@ -283,7 +283,7 @@
 
   Our residual demand or mismatch is now
   \begin{equation*}
-    m(t) = d(t) - G G(t) = -D\sin\left(\frac{2\pi}{T} t\right)
+    m(t) = d(t) - G G(t) = D - D \left(1 + \sin\left(\frac{2\pi}{T} t\right)\right) =  -D\sin\left(\frac{2\pi}{T} t\right)
   \end{equation*}
 
   For $D =1, T = 2\pi$:
@@ -303,9 +303,10 @@
   \end{equation*}
   i.e.
   \begin{equation*}
-    g_r(t) = m(t) = -D\sin\left(\frac{2\pi}{T} t\right)
+    g_r(t) =  d(t) - G G(t) = m(t) =   -D\sin\left(\frac{2\pi}{T} t\right)
   \end{equation*}
-  This will have power capacities $G_{r,\textrm{discharge}} = G_{r,\textrm{charge}} = D$.
+  This will have power capacities $G_{r,\textrm{discharge}} = G_{r,\textrm{charge}} = D$.   For $D =1, T = 2\pi$:
+
 
   \centering
   \includegraphics[width=9cm]{storage-power}
@@ -381,7 +382,7 @@
   \begin{align*}
     e_{i,r,t} = e_{i,r,t-1} + g_{i,r,t,\textrm{store}} -  g_{i,r,t,\textrm{dispatch}}
   \end{align*}
-  needs to be amended for \alert{efficiencies} $\eta$ (corresponding to \alert{losses} $1-\eta$)
+  needs to be amended for \alert{efficiencies} $\eta\in [0,1]$ (corresponding to \alert{losses} $1-\eta$)
   \begin{align*}
     e_{i,r,t} = \eta_0e_{i,r,t-1} + \eta_1g_{i,r,t,\textrm{store}} -  \eta_2^{-1} g_{i,r,t,\textrm{dispatch}}
   \end{align*}
@@ -449,6 +450,8 @@ Parameters are roughly based on
   \alert{You try}: Explore use cases using \url{https://model.energy} for Mexico (solar+battery) and Ireland (wind+hydrogen).
 \end{frame}
 
+
+\section{Power-to-Gas}
 
 \begin{frame}
   \frametitle{Power-to-Gas (P2G)}
@@ -646,7 +649,7 @@ Enthalpy [kJ] & 0 & 0 & -285.8
 
 \begin{frame}
  \frametitle{Recall from Previous Lectures}
- Conceptual options to balance the power system
+ Conceptual options to balance the power system:
  \begin{itemize}
   \item Transmission grid
   \item Storage
@@ -657,23 +660,25 @@ Enthalpy [kJ] & 0 & 0 & -285.8
 \end{frame}
 
 \begin{frame}
-  \frametitle{Basic Idea of Demand-Side Management}
+  \frametitle{Basic Idea of Storage}
 
-From last time: basic idea of storage
+ Basic idea of storage: move supply:
   \vspace{0.5cm}
 
+  \centering
   \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=11cm]{mismatch-2011-07-01-2011-07-07}};
 \draw[red,line width=5,->] (4,3) -- (4,4) -- (6.5,4) -- (6.5,2.5);
   \end{tikzpicture}
-  Modify demand instead of generation!
 \end{frame}
+
 \begin{frame}
   \frametitle{Basic Idea of Demand-Side Management}
 
  Modify demand instead of generation!
   \vspace{0.5cm}
 
+  \centering
   \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=11cm]{mismatch-2011-07-01-2011-07-07}};
 \draw[red,line width=5,<-] (4,3) -- (4,4) -- (6.5,4) -- (6.5,2.5);
@@ -688,67 +693,12 @@ From last time: basic idea of storage
 
   Charge consumers based on the true price of utilities at the time of consumption
 
-  Issues: higher utility cost for consumers, privacy
+  Issues: higher utility cost for consumers, communication infrastructure, synchronisation, cost, privacy, hacking
 
 \end{frame}
 
-
 \begin{frame}
- \frametitle{Economics of Supply and Demand}
- \begin{block}{Definition}
-  Demand is the total amount of a good buyers would purchase under certain conditions
- \end{block}
-
- Law of demand: when the price of a good falls, the demand will rise.
-
- A demand curve is the graphical representation of the relationship between price and quantity demanded
-
- Vice versa for supply: total amount of a good sellers would choose to sell under certain conditions, etc.
-\end{frame}
-
-\begin{frame}
- \frametitle{Elasticity}
- \begin{block}{Definition}
-  Degree of responseness of one variable to another
- \end{block}
- Locally: slope
-     \begin{figure}
-     \includegraphics[width=1.\textwidth]{elasticity.pdf}
-  \end{figure}
-
-\end{frame}
-
-
-\begin{frame}
- \frametitle{How Flexible is the Demand?}
-    \begin{figure}
-     \includegraphics[width=1.\textwidth]{REW_WindDerivatives3.png}
-     \caption{sale/purchase day-ahead market}
-  \end{figure}
-\end{frame}
-
-
-
-\section{Different Cases of DSM}
-\begin{frame}
- \frametitle{Electricity Demand}
-
- Demand curve Germany 12/01/2003
-   \begin{figure}
-     \includegraphics[width=1.\textwidth]{demand-crop.pdf}
-  \end{figure}
-
-\end{frame}
-\begin{frame}
- \frametitle{Different Cases of DSM}
-   \begin{figure}
-     \includegraphics[width=.5\textwidth]{demand-crop.pdf} \includegraphics[width=.5\textwidth]{efficiency-crop.pdf}\\
-      \includegraphics[width=.5\textwidth]{peakshaving-crop.pdf} \includegraphics[width=.5\textwidth]{loadshifting-crop.pdf}
-  \end{figure}
-
-\end{frame}
-\begin{frame}
- \frametitle{Efficiency Measures}
+ \frametitle{Cases of DSM: Efficiency Measures}
  \begin{minipage}[t]{0.5\textwidth}
     \begin{figure}
   \includegraphics[width=1.\textwidth]{efficiency-crop.pdf}
@@ -771,7 +721,7 @@ From last time: basic idea of storage
 \end{frame}
 
 \begin{frame}
- \frametitle{Peak Shaving}
+ \frametitle{Cases of DSM: Peak Shaving}
 
   \begin{minipage}[t]{0.5\textwidth}
      \begin{figure}
@@ -788,7 +738,7 @@ From last time: basic idea of storage
 \end{frame}
 
 \begin{frame}
- \frametitle{Load Shifting}
+ \frametitle{Cases of DSM: Load Shifting}
 
    \begin{minipage}[t]{0.5\textwidth}
      \begin{figure}
@@ -797,66 +747,13 @@ From last time: basic idea of storage
 \end{minipage}\hfill
 \begin{minipage}[t]{0.5\textwidth}
 \begin{itemize}
-\item Shift electrical demand from times of deficits to times of surplusses
+\item Shift electrical demand from times of deficits to times of surpluses
 \item  provide price incentives to cause load shifting via smart meters
 \item different price incentive schemes possible, e.g., time of use prices, seasonal prices, etc.
 \end{itemize}
 \end{minipage}
 
 \end{frame}
-\section{Technical Aspects}
-\begin{frame}
- \frametitle{Technical Aspects of Demand-Side Management}
-   \begin{figure}
-     \includegraphics[width=1.0\textwidth]{smartmeter.jpg}
-  \end{figure}
-\end{frame}
-
-%\begin{frame}
-% \frametitle{Metering Process so far}
-%
-%\end{frame}
-%\begin{frame}
-% \frametitle{Metering Process in the Future}
-%\end{frame}
-
-\begin{frame}
-  \frametitle{Smart Meter}
-  \begin{figure}
-     \includegraphics[width=.4\textwidth]{Intelligenter_zaehler-_Smart_meter.jpg}
-      \includegraphics[width=.7\textwidth]{rogcoil.png}
-  \caption{Wikipedia}
-  \end{figure}
-
-
-\end{frame}
-\begin{frame}
- \frametitle{Rogowski Coil}
- Advantages:
- \begin{itemize}
-  \item low inductance, therefore sensitive to small current changes
-  \item highly linear for a large range of currents
-  \item open loop
-  \item relatively low cost
-  \item simple temperature compensation
- \end{itemize}
- Voltage given by
- \begin{align*}
-  v_t = - \frac{A N \mu_0}{l} \dot{i}
- \end{align*}
-
-\end{frame}
-
-\begin{frame}
- \frametitle{Example}
-  \begin{figure}
-     \includegraphics[width=1.\textwidth]{pathwaysontario.jpg}
-
-  \end{figure}
-
-\end{frame}
-
-\section{Modelling approach for DSM}
 \begin{frame}
  \frametitle{Modelling Approach for DSM}
   \begin{itemize}
@@ -878,105 +775,32 @@ From last time: basic idea of storage
 \end{frame}
 \begin{frame}
 \frametitle{Modelling Approach for DSM}
-   \begin{figure}
-  \begin{center}
- \includegraphics[width=1.0\textwidth]{timeseries-crop.pdf}
+\centering
+\includegraphics[width=12cm]{timeseries-crop.pdf}
  % timeseries-crop.pdf: 0x0 pixel, 0dpi, 0.00x0.00 cm, bb=
-\end{center}
-
- \end{figure}
 \end{frame}
 
 \begin{frame}
 \frametitle{Modelling Approach for DSM}
- \begin{itemize}
- \item Load shifting supports system integration of variable renewables, especially PV
- \end{itemize}
- \begin{figure}
-  \begin{center}
- % backup_vs_shareofrenewables-crop.pdf: 0x0 pixel, 300dpi, 0.00x0.00 cm, bb=
+Load shifting supports system integration of variable renewables, especially PV
+
+% backup_vs_shareofrenewables-crop.pdf: 0x0 pixel, 300dpi, 0.00x0.00 cm, bb=
+\centering
 \includegraphics[width=0.75\textwidth]{optimal_mix-crop.pdf}
- \caption{Kies et al., Energies, 2016}
  % optimal_mix-crop.pdf: 0x0 pixel, 300dpi, 0.00x0.00 cm, bb=
-\end{center}
-
- \end{figure}
+ \source{Kies et al., Energies, 2016}
  \end{frame}
- \section{Consumer Synchronisation via Adaptive Pricing Schemes}
-\begin{frame}
-  \frametitle{Consumer Synchronisation via Adaptive Pricing Schemes}
-
-  Paper: Krause, S. et al., Econophysics of adaptive power markets: When a market does not dampen fluctuations but amplifies them, arXiv:1303.2110
-    \begin{figure}
-     \includegraphics[width=1.\textwidth]{bhd-model-crop.pdf}
-  \end{figure}
-  \end{frame}
-\begin{frame}
-  \frametitle{Consumer Synchronisation via Adaptive Pricing Schemes}
-
-
-demand is described via ($p_t$ - price time series)
-\begin{align*}
- d_{i,t} &= \begin{cases}
-1 \text{ if } p_t \leq p_{i,t},\\
-0 \text{ if } p_t > p_{i,t}
-\end{cases}
-\end{align*}
-
-and the acceptable price ($p_{i,t}$) time series of agent $i$ evolves according to
-\begin {align*}
- p_{i,t+1} &= \begin{cases}
-\text{rand}[0,p_{i,t}] \text{ if } p_t \leq p_{i,t},\\
-\text{rand}[p_{i,t},1], \text{ else with prob. } f\\
-p_{i,t} \text{ otherwise }
-\end{cases}
-\end {align*}
-the parameter f describes the elasticity of the demand
-
-
-correlations modelled via Langevin equation
-\begin{equation*}
-p_{t+1} - p_t = -v_0 (p_t - \bar{p}) + \sigma_0 \xi_t
-\end{equation*}
-
-
-
-\end{frame}
-
-\begin{frame}
- \frametitle{Synchronisation}
-
-   \begin{figure}
-     \includegraphics[width=1.\textwidth]{bhd-timeseries-crop.pdf}
-  \end{figure}
-
- Agents synchronise $\rightarrow$ extreme peak demands. Effect also known as demand response concentration.
-\end{frame}
-\begin{frame}
-  \frametitle{Consumer Synchronisation via Adaptive Pricing Schemes}
-
-    \begin{figure}
-     \includegraphics[width=1.\textwidth]{bhd-density-crop.pdf}
-     \caption{Density of highest acceptable prices (blue), total load consumed at certain prices (red)}
-
-  \end{figure}
-  \end{frame}
-\begin{frame}
-  \frametitle{Consumer Synchronisation via Adaptive Pricing Schemes}
-
-    \begin{figure}
-     \includegraphics[width=.8\textwidth]{bhd-binning-crop.pdf}
-    \caption{Binning of events by price and demand intervals. Dashed line shows average demand. Correlated prices (left), uncorrelated prices (right)}
-  \end{figure}
-  \end{frame}
   \begin{frame}
-   \frametitle{Summary}
+   \frametitle{Demand-Side Management (DSM) Summary}
 
    \begin{itemize}
-    \item Demand-side management can contribute to successful power system operation
+   \item Demand-side management can contribute to successful power system operation
+     \item Efficiency first!
     \item ``Daily'' scale supports PV integration
-    \item Building infrastructure for DSM is cost-intensive and causes additional energy consumption
+    \item Building infrastructure for DSM can be cost-intensive and cause minor additional energy consumption
+      \item Needs a careful consideration of constraints from consumer side
     \item Synchronisation via pricing can amplify fluctuations
+      \item Other concerns: hacking and privacy
    \end{itemize}
 
 
