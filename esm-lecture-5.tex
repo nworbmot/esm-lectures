@@ -127,6 +127,19 @@
 \section{Principles of electricity storage}
 
 
+
+\begin{frame}
+ \frametitle{Recall from Previous Lectures}
+ Conceptual options to balance wind and solar (avoiding need for backup and curtailment):
+ \begin{itemize}
+  \item Transmission grid (last lecture)
+  \item \alert{Storage}
+  \item Demand-side management
+  \item Sector coupling
+ \end{itemize}
+
+\end{frame}
+
 \begin{frame}
   \frametitle{Basic idea of storage}
 
@@ -134,7 +147,7 @@
   places, i.e. in \alert{space}. Electricity storage can shift power in \alert{time}.
 
   \vspace{0.5cm}
-
+  \centering
   \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=11cm]{mismatch-2011-07-01-2011-07-07}};
 \draw[red,line width=5,->] (4,3) -- (4,4) -- (6.5,4) -- (6.5,2.5);
@@ -142,39 +155,100 @@
 
 \end{frame}
 
+
+
+\begin{frame}
+  \frametitle{Storage: Power Versus Energy Capacity}
+
+  For a storage unit, we have to distinguish between the \alert{power capacity} (MW) at which we can discharge (dispatch) or charge the storage, and the \alert{energy capacity} (MWh) it can store.
+
+  \begin{columns}[T]
+    \begin{column}{7cm}
+
+  Examples:
+  \begin{itemize}
+  \item A Tesla battery electric vehicle can charge with a power of 11~kW at home or 100-150~kW at a supercharger. The Model S has an energy capacity of 100 kWh.
+    \item The Hornsdale utility-scale battery in South Australia has a power capacity of 100~MW and an energy capacity of 185~MWh.
+  \end{itemize}
+
+    \end{column}
+    \begin{column}{6cm}
+
+          \includegraphics[trim=0 0cm 0 0cm,width=5cm,clip=true]{tesla-charging.jpg}
+
+\includegraphics[trim=0 0cm 0 0cm,width=5cm,clip=true]{tesla-hornsdale-powerpack-1_33945.jpg}
+    \end{column}
+  \end{columns}
+\end{frame}
+
 \begin{frame}
   \frametitle{Storage consistency}
 
-  Storage units, such as batteries or hydrogen storage, can both
-  dispatch power within a certain capacity:
+  Storage units, such as batteries or hydrogen storage, labelled by $r$, can both
+  dispatch/discharge power within its discharging capacity (in MW):
   \begin{equation*}
-    0 \leq g_{i,s,t,\textrm{dispatch}} \leq G_{i,s,\textrm{dispatch}}
+    0 \leq g_{i,r,t,\textrm{discharge}} \leq G_{i,r,\textrm{discharge}}
   \end{equation*}
-  and consume power to store energy:
+  and consume power to charge the storage within its charging capacity (in MW):
   \begin{equation*}
-    0 \leq g_{i,s,t,\textrm{store}} \leq G_{i,s,\textrm{store}}
+    0 \leq g_{i,r,t,\textrm{charge}} \leq G_{i,r,\textrm{charge}}
   \end{equation*}
-
-  The total power can then be written:
+  The total power (positive when discharging, negative when charging) can then be written:
   \begin{equation*}
-    g_{i,s,t} = g_{i,s,t,\textrm{dispatch}}  - g_{i,s,t,\textrm{store}}
+    g_{i,r,t} = g_{i,r,t,\textrm{discharge}}  - g_{i,r,t,\textrm{charge}}
   \end{equation*}
-
-  There is also a limit on the total energy $e_{i,s,t}$ at each time
+  There is also a limit on the total energy $e_{i,r,t}$ at each time:
   \begin{equation*}
-    0 \leq e_{i,s,t} = e_{i,s,0} -\sum_{t'=1}^{t} g_{i,s,t'} \leq E_{i,s}
+    0 \leq e_{i,r,t} = e_{i,r,0} -\sum_{t'=1}^{t} g_{i,r,t'} \leq E_{i,r}
   \end{equation*}
-  where $E_{i,s}$ is the energy capacity (in MWh). Or in iterative form
+  where $E_{i,r}$ is the energy capacity (in MWh). Or in iterative form
   \begin{align*}
-    0 \leq e_{i,s,t} = e_{i,s,t-1} + g_{i,s,t,\textrm{store}} -  g_{i,s,t,\textrm{dispatch}} \leq E_{i,s}
+    0 \leq e_{i,r,t} = e_{i,r,t-1} + g_{i,r,t,\textrm{charge}} -  g_{i,r,t,\textrm{discharge}} \leq E_{i,r}
   \end{align*}
 
 \end{frame}
 
 \begin{frame}
+  \frametitle{Incorporation in power balance with generation, demand and network}
+
+  We can then incorporate the storage power $g_{i,r,t}$ in our power imbalance for each node $i$ and each time $t$ from last lecture:
+  \begin{equation*}
+    p_{i,t} = \sum_{s} g_{i,s,t} + \sum_{r} g_{i,r,t} - d_{i,t} = \sum_{\ell} K_{i\ell} f_{\ell,t}
+  \end{equation*}
+  ($s$ runs over generation technologies, $r$ over storage technologies, $\ell$ over network lines)
+
+  The nodes are linked in space by the network and in time by the consistency for the storage energy.
+
+  If we expand the storage power $g_{i,r,t}$ into its charging and discharging parts:
+  \begin{equation*}
+    p_{i,t} = \sum_{s} g_{i,s,t} + \sum_{r}\left(g_{i,r,t,\textrm{discharge}}  - g_{i,r,t,\textrm{charge}}\right) - d_{i,t} = \sum_{\ell} K_{i\ell} f_{\ell,t}
+  \end{equation*}
+  we see that the discharging part has the sign of a generator putting power into the system, while the charging part acts like a demand extracting power from the system.
+
+\end{frame}
+\begin{frame}
+  \frametitle{Storage consistency: continuous version}
+
+  In the previous slide we had discrete time points $t\in\{0,1,2,\dots\}$.
+
+  The discrete equation for the total energy (sometimes called the \alert{state of charge}):
+    \begin{equation*}
+    0 \leq e_{i,r,t} = e_{i,r,0} -\sum_{t'=1}^{t} g_{i,r,t'} \leq E_{i,r}
+  \end{equation*}
+    is nothing other than an integration over time $t$.
+
+    So if we write $g_{i,r,t}$ and $e_{i,r,t}$ as continuous functions of $t$, $g_{i,r}(t)$ and $e_{i,r}(t)$, we get an integration:
+    \begin{equation*}
+       0 \leq e_{i,r}(t) = e_{i,r}(0) - \int_0^t g_{i,r}(t') dt'  \leq E_{i,r}
+    \end{equation*}
+
+\end{frame}
+
+
+\begin{frame}
   \frametitle{Continuous example}
 
-  Consider a single node with a constant demand
+  Consider a single node (i.e. no network) with a constant demand
   \begin{equation*}
     d(t) = D
   \end{equation*}
@@ -188,21 +262,34 @@
     \langle G(t) G \rangle = D
   \end{equation*}
 
+  \alert{Question}: What are the power and energy capacities of the ideal storage unit to balance this system?
 \end{frame}
 
-\begin{frame}
-  \frametitle{Mismatch}
 
-  Our mismatch is now
+
+\begin{frame}
+  \frametitle{Continuous example}
+
+  For $D =1, T = 2\pi$:
+
+  \centering
+  \includegraphics[width=14cm]{demand-wind}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Residual demand}
+
+  Our residual demand or mismatch is now
   \begin{equation*}
     m(t) = d(t) - G G(t) = -D\sin\left(\frac{2\pi}{T} t\right)
   \end{equation*}
 
   For $D =1, T = 2\pi$:
-  \begin{tikzpicture}
-\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=11cm]{mismatch-sin}};
-%\draw[red,line width=5,->] (4,3) -- (4,4) -- (6.5,4) -- (6.5,2.5);
-  \end{tikzpicture}
+
+  \centering
+\includegraphics[width=11cm]{mismatch-sin}
 
 
 \end{frame}
@@ -210,19 +297,18 @@
 \begin{frame}
   \frametitle{Storage Power}
 
-  To balance this, we need a storage unit with power profile $g_s(t)$ such that
+  To balance this, we need a storage unit with power profile $g_r(t)$ such that the node balances:
   \begin{equation*}
-    0 = p(t) = m(t) - g_s(t) = d(t) - GG(t) - g_s(t)
+    0 = p(t) =  GG(t) + g_r(t) - d(t) = g_r(t) - m(t)
   \end{equation*}
   i.e.
   \begin{equation*}
-    g_s(t) = m(t) = -D\sin\left(\frac{2\pi}{T} t\right)
+    g_r(t) = m(t) = -D\sin\left(\frac{2\pi}{T} t\right)
   \end{equation*}
-  This will have power capacities $G_{s,\textrm{store}} = G_{s,\textrm{dispatch}} = D$.
-  \begin{tikzpicture}
-\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=10.5cm]{storage-power}};
-%\draw[red,line width=5,->] (4,3) -- (4,4) -- (6.5,4) -- (6.5,2.5);
-  \end{tikzpicture}
+  This will have power capacities $G_{r,\textrm{discharge}} = G_{r,\textrm{charge}} = D$.
+
+  \centering
+  \includegraphics[width=9cm]{storage-power}
 
 \end{frame}
 
@@ -230,23 +316,40 @@
 \begin{frame}
   \frametitle{Storage Energy}
 
-  How much energy capacity $E_{s}$ do we need? The energy profile is:
+  How much energy capacity $E_{r}$ do we need? The energy profile is:
   \begin{equation*}
-    e_s(t) = \int_{0}^{t} (-g_s(t')) dt' = D \int_0^t \sin\left(\frac{2\pi}{T} t'\right) dt' =  \frac{TD}{2\pi}\left[ 1 - \cos\left(\frac{2\pi}{T} t\right)\right]
+    e_r(t) = \int_{0}^{t} (-g_r(t')) dt' = D \int_0^t \sin\left(\frac{2\pi}{T} t'\right) dt' =  \frac{TD}{2\pi}\left[ 1 - \cos\left(\frac{2\pi}{T} t\right)\right]
   \end{equation*}
-  so $E_s = \max_t\{e_s(t)\} = \frac{TD}{\pi}$. Faster oscillations, i.e. shorter periods, $\Rightarrow$ less energy capacity. So for $D =1, T = 2\pi$, maximum is $E_s = 2$:
-  \begin{tikzpicture}
-\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=10.5cm]{storage-energy}};
-%\draw[red,line width=5,->] (4,3) -- (4,4) -- (6.5,4) -- (6.5,2.5);
-  \end{tikzpicture}
+  This peaks at $t=\frac{T}{2}$  so $E_r = \max_t\{e_r(t)\} = \frac{TD}{\pi}$. Faster oscillations, i.e. shorter periods, $\Rightarrow$ less energy capacity. So for $D =1, T = 2\pi$, maximum is $E_r = 2$:
+
+  \centering
+  \includegraphics[width=10cm]{storage-energy}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Fourier coefficients of wind and solar in Germany}
+
+  Although wind and solar are not perfect sine waves, if we decompose
+  the time series in Fourier components, we do see \alert{dominant
+    frequencies} which can help us understand how to dimension
+  storage.
+
+  \vspace{1cm}
+
+  \includegraphics[width=6.9cm]{DE-solar-spectrum}
+  \includegraphics[width=6.9cm]{DE-onwind-spectrum}
 
 
 \end{frame}
 
+
 \begin{frame}
   \frametitle{Storage Energy: concrete examples}
 
-  How does our formula $E_s = \frac{TD}{\pi}$ look for different
+  How does our formula $E_r = \frac{TD}{\pi}$ look for different
   generation technologies with simplified sinusoidal profiles?
 
   Consider a simplified demand of $D = 1$ MW.
@@ -257,9 +360,9 @@
       quantity & symbol & units & solar & wind\\
       \midrule
       generation capacity &$G$ & MW & 2 & 2 \\
-      storage power capacity & $G_s$ & MW & 1 & 1 \\
-      period & $T$ & h & 24 & $7 \cdot 24$\\
-      storage energy capacity & $E_s$ & MWh & 7.6 &  53 \\
+      storage power capacity & $G_r$ & MW & 1 & 1 \\
+      period & $T$ & h & 24 & $7 \cdot 24 = 168$\\
+      storage energy capacity & $E_r$ & MWh & 7.6 &  53 \\
       \bottomrule
     \end{tabular}
   \end{table}
@@ -268,6 +371,7 @@
   NB: In reality of course solar and wind are not perfect sine waves...
 \end{frame}
 
+
 \begin{frame}
   \frametitle{Efficiency and losses}
 
@@ -275,11 +379,11 @@
 
   Second, the iterative integration equation for the storage energy
   \begin{align*}
-    e_{i,s,t} = e_{i,s,t-1} + g_{i,s,t,\textrm{store}} -  g_{i,s,t,\textrm{dispatch}}
+    e_{i,r,t} = e_{i,r,t-1} + g_{i,r,t,\textrm{store}} -  g_{i,r,t,\textrm{dispatch}}
   \end{align*}
   needs to be amended for \alert{efficiencies} $\eta$ (corresponding to \alert{losses} $1-\eta$)
   \begin{align*}
-    e_{i,s,t} = \eta_0e_{i,s,t-1} + \eta_1g_{i,s,t,\textrm{store}} -  \eta_2^{-1} g_{i,s,t,\textrm{dispatch}}
+    e_{i,r,t} = \eta_0e_{i,r,t-1} + \eta_1g_{i,r,t,\textrm{store}} -  \eta_2^{-1} g_{i,r,t,\textrm{dispatch}}
   \end{align*}
   $1-\eta_0$ corresponds to \alert{standing losses} or \alert{self-discharge}, $\eta_1$ to the \alert{charging efficiency} and $\eta_2$ to the \alert{discharging efficiency}.
 
@@ -289,10 +393,10 @@
 \begin{frame}
   \frametitle{Different storage units have different parameters}
 
-  We can relate the power capacity $G_s$ to the energy capacity $E_s$
+  We can relate the power capacity $G_r$ to the energy capacity $E_r$
   with the maximum number of hours the storage unit can be charged at full
-power before the energy capacity is full, $E_s =
-  \textrm{max-hours}*G_s$.
+power before the energy capacity is full, $E_r =
+  \textrm{max-hours}*G_r$.
 
   \ra{1.05}
   \begin{table}[!t]
@@ -304,8 +408,8 @@ power before the energy capacity is full, $E_s =
       $\eta_1$ & 0.9 & 0.75 & 0.9 & 0.9 \\
       $\eta_2$ & 0.9 & 0.58 & 0.9 & 0.9 \\
       max-hours & 2-10 & weeks & 4-10 & depends on size \\
-      euro per kW [$G_s$] &300 &500+450 & depends& low \\
-      euro per kWh [$E_s$] &200 & 10 &depends&low \\
+      euro per kW [$G_r$] &300 &500+450 & depends& low \\
+      euro per kWh [$E_r$] &200 & 10 &depends&low \\
       \bottomrule
     \end{tabular}
   \end{table}
@@ -340,6 +444,9 @@ Parameters are roughly based on
   Battery has lower losses and is cheaper for short storage periods.
 
   Hydrogen has higher losses but is much cheaper for long storage periods (e.g. several days).
+
+
+  \alert{You try}: Explore use cases using \url{https://model.energy} for Mexico (solar+battery) and Ireland (wind+hydrogen).
 \end{frame}
 
 
@@ -357,25 +464,49 @@ Parameters are roughly based on
     \end{column}
     \begin{column}{7cm}
 
-      Power-to-Gas (P2G) describes concepts to use electricity to
+      Power-to-Gas/Liquid (P2G/L) describes concepts to use electricity to
       electrolyse water to \alert{hydrogen} H$_2$ (and oxygen O$_2$).
       We can combine hydrogen with carbon oxides to get
       \alert{hydrocarbons} such as methane CH$_4$ (main component of
       natural gas) or liquid fuels C$_n$H$_m$.
 
-      These can be used for \alert{hard-to-defossilise sectors}:
+      Used for \alert{hard-to-defossilise sectors}:
             \begin{itemize}
             \item
               \alert{dense fuels} for transport (planes, ships)
-            \item \alert{steel-making}
-              \item \alert{chemicals industry}
-              \item \alert{high-temperature heat}
-              \item \alert{heat for buildings}
-                \item \alert{backup energy} for cold low-wind winter periods
+            \item \alert{steel-making} \& \alert{chemicals industry}
+              \item \alert{high-temperature heat} or \alert{heat for buildings}
+                \item \alert{backup energy} for cold low-wind winter periods, i.e. as storage
             \end{itemize}
     \end{column}
   \end{columns}
 
+\end{frame}
+\begin{frame}
+  \frametitle{Power to Transport Fuels}
+
+    \begin{columns}[T]
+    \begin{column}{7cm}
+      \includegraphics[width=7cm]{fuel_density-science.png}
+    \end{column}
+    \begin{column}{7cm}
+      \begin{itemize}
+      \item  Hydrogen has a very good gravimetric density (MJ/kg) but poor volumetric density (MJ/L).
+      \item      Liquid hydrocarbons provide much better volumetric density for e.g. aviation.
+      \item    WARNING: This graphic shows the thermal content of the fuel, but the \alert{conversion efficiency} of e.g. an electric motor for battery electric or fuel cell vehicle is much better than an internal combustion engine.
+      \end{itemize}
+      \end{column}
+    \end{columns}
+    \source{\href{https://doi.org/10.1126/science.aas9793}{Davis et al, 2018}}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Power to Gas Concept as Storage}
+
+ \centering
+ \includegraphics[width=12cm]{solar-hydrogen-system-illustration.jpg}
+
+     \source{Buildipedia}
 \end{frame}
 
 
@@ -383,7 +514,7 @@ Parameters are roughly based on
   \frametitle{Power-to-Gas (P2G)}
 
   \begin{columns}[T]
-    \begin{column}{4.5cm}
+    \begin{column}{5cm}
       \includegraphics[trim=0 0cm 0 0cm,width=4.5cm,clip=true]{salt_caverns.jpg}
 
       \vspace{.4cm}
@@ -391,14 +522,13 @@ Parameters are roughly based on
       \includegraphics[trim=0 0cm 0 0cm,width=4.5cm,clip=true]{Gas-pipeline.jpg}
     \end{column}
 
-    \begin{column}{5cm}
-      Gases and liquids are easy to \alert{store} and \alert{transport} than electricity.
-
-      Storage capacity of the German natural gas network in terms of energy: ca 200 TWh. In addition, losses in the gas network are small.
-
-   (NB: Volumetric energy density of hydrogen, i.e. MWh/m$^3$, is around three times lower than natural gas.)
-
-      Pipelines can carry many GW underground, out of sight.
+    \begin{column}{7cm}
+            \begin{itemize}
+      \item  Gases and liquids are easy to \alert{store} and \alert{transport} than electricity.
+        \item Storage capacity of the German natural gas network in terms of energy: ca 230 TWh. Europe wide it is 1100 TWh (see \href{https://agsi.gie.eu/}{\bf\color{blue}\underline{online table}}). In addition, losses in the gas network are small.
+\item   (NB: Volumetric energy density of hydrogen, i.e. MWh/m$^3$, is around three times lower than natural gas.)
+\item      Pipelines can carry many GW underground, out of sight.
+            \end{itemize}
     \end{column}
 
 \end{columns}
@@ -408,31 +538,47 @@ Parameters are roughly based on
 
 
 
+\begin{frame}
+ \frametitle{German Natural Gas Grid}
+   \begin{figure}
+     \includegraphics[width=6cm]{gasgrid.jpg}
+  \caption{Buildipedia}
+  \end{figure}
+\end{frame}
+
 
 \begin{frame}
- \frametitle{Power to Gas Concept}
-   \begin{figure}
-     \includegraphics[width=.85\textwidth]{solar-hydrogen-system-illustration.jpg}
-  \caption{Buildipedia}
-  \end{figure}
+  \frametitle{German Gas Transmission Network Operators Plan a Hydrogen Network}
+    \begin{columns}[T]
+    \begin{column}{7cm}
+
+      \includegraphics[width=7cm]{fnb_gas_h2_startnetz_2030.jpg}
+    \end{column}
+    \begin{column}{6cm}
+      \begin{itemize}
+      \item       German Gas Transmission Network Operators have published a plan for a new nationwide hydrogen network to take hydrogen between sites of production (e.g. electrolysis near the coast where offshore wind is connected), sites of storage (underground caverns) and consumers of hydrogen (industry, etc.).
+      \item 90\% of planned 2050 hydrogen network converts old natural gas pipelines; only 10\% needs to be built new.
+      \end{itemize}
+    \end{column}
+    \end{columns}
+
+    \source{\href{https://www.fnb-gas.de/fnb-gas/veroeffentlichungen/pressemitteilungen/fernleitungsnetzbetreiber-veroeffentlichen-h2-startnetz-2030/}{Fernleitungsnetzbetreiber}}
 \end{frame}
-\begin{frame}
- \frametitle{German Gas Grid}
-   \begin{figure}
-     \includegraphics[width=.6\textwidth]{gasgrid.jpg}
-  \caption{Buildipedia}
-  \end{figure}
-\end{frame}
+
+
+
 \begin{frame}
   \frametitle{Electrolysis}
 
-  \begin{figure}
-     \includegraphics[width=.8\textwidth]{electrol.jpg}
-  \caption{Hyperphysics, Georgia State University}
-  \end{figure}
+  \centering
+     \includegraphics[width=10cm]{electrol.jpg}
+
+     \source{Hyperphysics, Georgia State University}
 
 
 \end{frame}
+
+
 \begin{frame}
  \frametitle{Thermodynamic Calculation Electrolysis}
   \begin{equation*}
@@ -463,13 +609,10 @@ Enthalpy [kJ] & 0 & 0 & -285.8
 \begin{frame}
   \frametitle{Fuel Cell}
 
-  \begin{figure}
-     \includegraphics[width=.8\textwidth]{fuelcell.jpg}
-  \caption{Hyperphysics, Georgia State University}
-  \end{figure}
+  \centering
+     \includegraphics[width=8cm]{fuelcell.jpg}
 
-
-
+     \source{Hyperphysics, Georgia State University}
 
 \end{frame}
 
@@ -507,7 +650,7 @@ Enthalpy [kJ] & 0 & 0 & -285.8
  \begin{itemize}
   \item Transmission grid
   \item Storage
-  \item \textbf{Demand-side management}
+  \item \alert{Demand-side management}
   \item Sector coupling
  \end{itemize}
 
