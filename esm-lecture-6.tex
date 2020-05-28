@@ -89,20 +89,29 @@
 \olditem\vspace{5pt}}
 
 
-\title{Energy System Modelling\\ Summer Semester 2019, Lecture 5}
+\title{Energy System Modelling\\ Summer Semester 2020, Lecture 6}
 %\subtitle{---}
 \author{
   {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
   \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
 }
 
-\date{\vspace{.3cm}13th June 2019}
+\date{}
 
 
-\titlegraphic{%
-  \vspace{6cm}
-  \hspace{6.7cm}
+\titlegraphic{
+  \vspace{0cm}
+  \hspace{10cm}
     \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+
+\vspace{5.1cm}
+
+  {\footnotesize
+
+  Unless otherwise stated, graphics and text are Copyright \copyright Tom Brown, 2020.
+  Graphics and text for which no other attribution are given are licensed under a
+  \href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons
+  Attribution 4.0 International Licence}. \ccby}
 }
 
 \begin{document}
@@ -166,9 +175,160 @@
 
 \section{Optimisation: Introduction}
 
+\begin{frame}
+  \frametitle{Simplest 1-d optimisation problem}
+
+  Consider the following problem. We have a function $f(x)$ of one variable $x \in \mathbb{R}$
+  \begin{equation*}
+    f(x) = (x-2)^2
+  \end{equation*}
+  Where does it reach a minimum? School technique: find stationary point $\frac{df}{dx} = 0$, i.e. minimum at $x^* = 2$ where $f(x^*)=0$.
+
+  \centering
+  \includegraphics[width=7.5cm]{quadratic}
+\end{frame}
+
+
 
 \begin{frame}
-  \frametitle{A simple optimisation problem}
+  \frametitle{Simplest 1-d optimisation problem}
+
+  Consider the following problem. We have a function $f(x)$ of one variable $x \in \mathbb{R}$
+  \begin{equation*}
+    f(x) = x^3 -4x^2+3x +4
+  \end{equation*}
+  Where does it reach a minimum? School technique fails since has two stationary points, one local minimum and local maximum; must check 2nd derivative for minimum/maximum. Also: function is not bounded as $x \to -\infty$.  No solution!
+
+  \centering
+  \includegraphics[width=7cm]{cubic}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Beware saddle points in higher dimensions}
+
+  Some functions have \alert{saddle points} with zero derivative in all directions (stationary points) but that are neither maxima nor minima, e.g. $f(x,y) = x^2 - y^2$ at $(x,y) = (0,0)$.
+
+  \centering
+  \includegraphics[width=8cm]{Saddle_point.png}
+
+  \source{Wikipedia}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Simplest 1-d optimisation problem}
+
+  Consider the following problem. We have a function $f(x)$ of one variable $x \in \mathbb{R}$
+  \begin{equation*}
+    f(x) = x^4 -4x^2+x +5
+  \end{equation*}
+  Where does it reach a minimum? Now two separate local minima. Function is \alert{not convex} downward. This is a problem for algorithms that only search for minima locally.
+
+  \centering
+  \includegraphics[width=7.5cm]{quartic}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Simplest 1-d optimisation problem with constraint}
+
+  Consider the following problem. We minimise a function of one variable $x \in \mathbb{R}$
+  \begin{equation*}
+      \min_x (x-2)^2
+  \end{equation*}
+  subject to a constraint
+  \begin{equation*}
+       x \geq 1
+  \end{equation*}
+  The constraint has \alert{no effect} on the solution. It is \alert{non-binding}.
+
+  \centering
+  \includegraphics[width=7cm]{quadratic-gt1}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Simplest 1-d optimisation problem with constraint}
+
+  Consider the following problem. We minimise a function of one variable $x \in \mathbb{R}$
+  \begin{equation*}
+      \min_x (x-2)^2
+  \end{equation*}
+  subject to a constraint
+  \begin{equation*}
+       x \geq 3
+  \end{equation*}
+  Now the constraint is \alert{binding} and is \alert{saturated} at the optimum $x^* = 3$.
+
+  \centering
+  \includegraphics[width=7cm]{quadratic-gt3}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Simple 2-d optimisation problem}
+
+  Consider the following problem. We have a function $f(x,y)$ of two variables $x,y\in \mathbb{R}$
+  \begin{equation*}
+    f(x,y) = 3x
+  \end{equation*}
+  and we want to find the maximum of this function in the $x-y$ plane
+  \begin{equation*}
+    \max_{x,y\in \mathbb{R}} f(x,y)
+  \end{equation*}
+  subject to the following constraints
+  \begin{align}
+    x + y & \leq 4 \\
+    x & \geq 0 \\
+    y & \geq 1
+  \end{align}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Simple 2-d optimisation problem}
+
+  Consider $x-y$ plane of our variables:
+
+  \centering
+  \includegraphics[width=7cm]{2dsimple-b.pdf}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Simple 2-d optimisation problem}
+
+  Add constraints (2) and (3):
+
+  \centering
+  \includegraphics[width=7cm]{2dsimple-c.pdf}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Simple 2-d optimisation problem}
+
+  Add constraint (1).   In this allowed space (white area) what is the maximum of $f(x,y) = 3x$?
+
+
+  \centering
+  \includegraphics[width=7cm]{2dsimple-d.pdf}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Simple 2-d optimisation problem}
+
+  $f(x,y) = 3x$ maximised at $x^* = 3, y^* = 1, f(x^*, y^*) = 9$:
+
+  \centering
+  \includegraphics[width=7cm]{2dsimple.pdf}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Simple 2-d optimisation problem}
 
   Consider the following problem. We have a function $f(x,y)$ of two variables $x,y\in \mathbb{R}$
   \begin{equation*}
@@ -185,13 +345,10 @@
     y & \geq 1
   \end{align}
 
-  \pause
   \alert{Optimal solution:} $x^* = 3, y^* = 1, f(x^*,y^*) = 9$.
 
   NB: We would have gotten the same solution if we had removed the 2nd constraint - it is \alert{non-binding}.
 \end{frame}
-
-
 
 
 \begin{frame}
@@ -211,6 +368,8 @@
 
   \pause
   \alert{Optimal solution:} $x^* = 3, y^* = 1, z^* = 2, f(x^*,y^*,z^*) = 19$.
+
+  [This problem is \alert{separable}: can solve for $(x,y)$ and $(z)$ separately.
 \end{frame}
 
 \begin{frame}
@@ -252,7 +411,7 @@ We have an \alert{objective function} $f: \R^k \to \R$
 \end{align*}
 
 $\l_i$ and $\m_j$ are the \alert{Karush-Kuhn-Tucker (KKT) multipliers} (basically Lagrange multipliers) we introduce for
-each constraint equation. Each one measures the change in the objective value of the optimal solution obtained by relaxing the constraint by a small amount. They are also known as the \alert{shadow prices} of the constraints.
+each constraint equation. Each one measures the change in the objective value of the optimal solution obtained by relaxing the constraint by a small amount. Informally $\l_i \sim \frac{\d f}{\d c_i}$ and $\m_j \sim \frac{\d f}{\d d_j}$ at the optimum $x^*$. They are also known as the \alert{shadow prices} of the constraints.
 
 \end{frame}
 
@@ -280,6 +439,17 @@ If all the constraints are affine, then the feasible space is a convex polygon.
 
 \end{frame}
 
+
+\begin{frame}
+  \frametitle{Convexity means fast polynomial algorithms}
+
+  If the feasible space is \alert{convex} it is much easier to search, since for a convex objective function we can keep looking in the direction of improving objective function without worrying about getting stuck in a local maximum.
+
+  \centering
+  \includegraphics[width=12cm]{concave-convex.jpg}
+
+\end{frame}
+
 \begin{frame}
   \frametitle{Lagrangian}
 
@@ -293,22 +463,34 @@ We've built this function using the variables $\l_i$ and $\m_j$ to
 better understand the optimal solution of $f(x)$ given the
 constraints.
 
-The optima of $\cL(x,\mathbf{\l},\m)$ tell us important information
+The stationary points of $\cL(x,\mathbf{\l},\m)$ tell us important information
 about the optima of $f(x)$ given the constraints.
 
-It is entirely analogous to the physics Lagrangian $L(x,\dot{x},\l)$
+[It is entirely analogous to the physics Lagrangian $L(x,\dot{x},\l)$
 except we have no explicit time dependence $\dot{x}$ and  we have additional
-constraints which are inequalities.
+constraints which are inequalities.]
 
 We can already see that if $\frac{\d \cL}{\d \l_i} = 0$ then the
 equality constraint $g_i(x) = c$ will be satisfied.
 
-[Beware: $\pm$ signs appear differently in literature, but have been chosen here such that $\l_i = \frac{\d \cL}{\d c_i}$ and $\m_j
-  = \frac{\d \cL}{\d d_j}$.]
+[Beware: $\pm$ signs appear differently in literature, but have been chosen here such that $\l_i = \frac{\d \cL}{\d c_i}$ and $\m_j = \frac{\d \cL}{\d d_j}$.]
 
 
 \end{frame}
 
+
+
+\begin{frame}
+  \frametitle{Optimum is a saddle point of the Lagrangian}
+
+  The stationary point of $\cL$ is a saddle point in $(x,\l,\m)$ space (here minimising $f(x)$):
+
+  \centering
+  \includegraphics[width=8cm]{conejo-saddle.png}
+
+  \source{Conejo et al, ``Decomposition Techniques'' (2006)}
+
+\end{frame}
 
 
 \begin{frame}
@@ -367,9 +549,9 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
   \frametitle{Nota Bene}
 
   \begin{enumerate}
-  \item The KKT conditions are only \alert{sufficient} for optimality
-    of the solution under certain conditions, e.g. linearity of the
-    problem.
+  \item The KKT conditions are necessary conditions for an optimal solution, but are only \alert{sufficient} for optimality
+    of the solution under certain conditions, e.g. for problems with convex objective, convex differentiable inequality constraints and affine equalities constraints. For linear problems, KKT is sufficient.
+    \item The variables $x_\ell$  are often called the \alert{primary variables}, while $(\l_i,\m_j)$ are the \alert{dual variables}.
   \item Since at the optimal solution we have $g_i(x^*) = c_i$ for equality constraints and
     $\m_j^*(h_j(x^*) - d_j) = 0$, we have
     \begin{equation*}
@@ -442,7 +624,34 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
   Check interpretation: $\m_j = \frac{\d \cL}{\d d_j}$ with $d_j \to d_j + \varepsilon$.
 \end{frame}
 
+\begin{frame}
+  \frametitle{Simple problem with KKT conditions: Check interpretation}
 
+  Check interpretation of $\m_1^* = 3$ by shifting constant $d_1$ for first constraint by $\varepsilon$ and solving:
+  \begin{equation*}
+    \max_{x,y\in \mathbb{R}} f(x,y) = 3x
+  \end{equation*}
+  subject to the following constraints
+  \begin{align*}
+    x + y & \leq 4+ \varepsilon  \hspace{1cm}\leftrightarrow\hspace{1cm} \m_1 \\
+    -x & \leq 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \m_2\\
+    -y & \leq -1  \hspace{1cm}\leftrightarrow\hspace{1cm} \m_3
+  \end{align*}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Simple problem with KKT conditions: Check interpretation}
+
+  $f(x,y) = 3x$ maximised at $x^* = 3+\varepsilon, y^* = 1, f(x^*, y^*) = 9+3\varepsilon$.
+
+  $d_1 \to d_1 + \varepsilon$ causes optimum to shift $f(x^*, y^*) \to f(x^*, y^*) + 3\varepsilon$. Consistent with $\m_1^* = 3$.
+
+  \centering
+  \includegraphics[width=7cm]{2dsimple-v1.pdf}
+
+\end{frame}
 
 
 \begin{frame}
@@ -594,6 +803,51 @@ Any optimisation problem can be brought into this form. Introduce the \alert{bar
  B(x,\mu) = f(x) - \m \sum_{i=1}^n \ln(x_i)
 \end{equation*}
 where $\mu$ is the small and positive \alert{barrier parameter} (a scalar). Note that the barrier term penalises solutions when $x$ comes close to 0 by becoming large and positive.
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Interior point methods: Barrier method}
+
+  Barrier term $-\m ln(x)$ penalises the minimisation the closer we get to $x=0$. As $\mu$ gets smaller it converges on being a near-vertical function at $x=0$.
+
+  \centering
+  \includegraphics[width=7.5cm]{barrier-term.pdf}
+
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Interior point methods: Barrier method: 1-d example}
+
+  Return to our old 1-d example. We minimise a function of one variable $x \in \mathbb{R}$
+  \begin{equation*}
+      \min_x (x-2)^2
+  \end{equation*}
+  subject to a constraint
+  \begin{equation*}
+       x \geq 3
+  \end{equation*}
+  Solution: $x^* = 3$.
+
+  \centering
+  \includegraphics[width=7cm]{quadratic-gt3}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Interior point methods: Barrier method: 1-d example}
+
+  Now instead minimise the barrier problem without any constraint:
+  \begin{equation*}
+     \min_x B(x,\mu) = (x-2)^2 - \m  \ln(x-3)
+  \end{equation*}
+  Solve $\frac{\d B(x,\mu)}{\d x} = 2(x-2) -\frac{\mu}{x-3} = 0$, i.e. at $x^* = 2.5 + 0.5\sqrt{1+2\mu} \to 3$ as $\mu \to 0$.
+
+  \centering
+  \includegraphics[width=8.5cm]{quadratic-barrier}
 \end{frame}
 
 
