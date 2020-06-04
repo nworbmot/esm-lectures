@@ -8,7 +8,7 @@
 
 
 
-\documentclass[10pt,dvipsnames]{beamer}
+\documentclass[10pt,aspectratio=169,dvipsnames]{beamer}
 \usetheme[color/block=transparent]{metropolis}
 
 \usepackage[absolute,overlay]{textpos}
@@ -63,7 +63,8 @@
 \setbeamerfont{framesource}{size=\tiny}
 
 
-\newcommand{\source}[1]{\begin{textblock*}{4cm}(8.0cm,8.0cm)
+
+\newcommand{\source}[1]{\begin{textblock*}{5cm}(10.5cm,8.35cm)
     \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
         \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
     \end{beamercolorbox}
@@ -95,20 +96,29 @@
 \olditem\vspace{5pt}}
 
 
-\title{Energy System Modelling\\ Summer Semester 2019, Lecture 6}
+\title{Energy System Modelling\\ Summer Semester 2020, Lecture 7}
 %\subtitle{---}
 \author{
   {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
   \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
 }
 
-\date{\vspace{.3cm}13th June 2019}
+\date{}
 
 
-\titlegraphic{%
-  \vspace{6cm}
-  \hspace{6.7cm}
+\titlegraphic{
+  \vspace{0cm}
+  \hspace{10cm}
     \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+
+\vspace{5.1cm}
+
+  {\footnotesize
+
+  Unless otherwise stated, graphics and text are Copyright \copyright Tom Brown, 2020.
+  Graphics and text for which no other attribution are given are licensed under a
+  \href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons
+  Attribution 4.0 International Licence}. \ccby}
 }
 
 \begin{document}
