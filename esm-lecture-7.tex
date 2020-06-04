@@ -388,9 +388,9 @@ Now consider the Lagrangian $\cL^\varepsilon$ for the perturbed problem $d_j \to
   \begin{equation*}
     \cL(x^+,\l^+,\m^+)  \approx \cL(x^*,\l^*,\m^*) +  \sum_l (x^+_l - x^*_l) \frac{\d \cL }{\d x_l} \Big|_{y = y^*}+ \sum_i (\l^+_i - \l^*_i) \frac{\d \cL }{\d \l_i} \Big|_{y = y^*}+ \sum_j (\m^+_j - \m^*_j) \frac{\d \cL }{\d \m_j} \Big|_{y = y^*}
   \end{equation*}
-  From stationarity for the original problem we know that $\frac{\d L }{\d x_l} \Big|_{y = y^*} = \frac{\d L }{\d \l_i} \Big|_{y = y^*} = 0$. $\frac{\d L }{\d \m_j} \Big|_{y = y^*} = 0$ for binding inequalities, and for non-binding inequalities $\m^*_j = \m^+_j = 0$. Thus
+  From stationarity for the original problem we know that $\frac{\d \cL }{\d x_l} \Big|_{y = y^*} = \frac{\d \cL }{\d \l_i} \Big|_{y = y^*} = 0$. $\frac{\d \cL }{\d \m_j} \Big|_{y = y^*} = 0$ for binding inequalities, and for non-binding inequalities $\m^*_j = \m^+_j = 0$. Thus
   \begin{equation*}
-    f(x^+)  =   \cL(x^+,\l^+,\m^+) + \m_j^+\varepsilon \approx L(x^*,\l^*,\m^*) + \m_j^*\varepsilon = f(x^*) + \m_j^*\varepsilon
+    f(x^+)  =   \cL(x^+,\l^+,\m^+) + \m_j^+\varepsilon \approx \cL(x^*,\l^*,\m^*) + \m_j^*\varepsilon = f(x^*) + \m_j^*\varepsilon
 \end{equation*}
 
 \end{frame}
@@ -894,10 +894,10 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
 
   Our optimisation variables are $\{x\} = \{d_b\} \cup \{g_s\}$.
 
-  We get from stationarity:
+  We get from KKT stationarity at the optimal point:
   \begin{align*}
-    0 & =   \frac{\d f}{\d d_b} - \sum_b \l^* \frac{\d g}{\d d_b} = U_b'(d_b) - \l^* = 0 \\
-    0 & =   \frac{\d f}{\d g_s} - \sum_s \l^* \frac{\d g}{\d g_s} = -C_s'(g_s) + \l^* = 0
+    0 & =   \frac{\d f}{\d d_b} - \sum_b \l^* \frac{\d g}{\d d_b} = U_b'(d_b^*) - \l^* = 0 \\
+    0 & =   \frac{\d f}{\d g_s} - \sum_s \l^* \frac{\d g}{\d g_s} = -C_s'(g_s^*) + \l^* = 0
   \end{align*}
 
 
@@ -910,10 +910,10 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
 \begin{frame}{KKT and Welfare Maximisation 2/2}
 
   So at the optimal point of maximal total economic welfare we get the
-  same result as if everyone maximises their own welfare separately:
+  same result as if everyone maximises their own welfare separately based on the price $\l^*$:
   \begin{align*}
- U_b'(d_b) =  \l^*  \\
- C_s'(g_s) = \l^*
+ U_b'(d_b^*) =  \l^*  \\
+ C_s'(g_s^*) = \l^*
   \end{align*}
 
   This is the CENTRAL result of microeconomics.
