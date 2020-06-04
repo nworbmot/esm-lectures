@@ -1,0 +1,928 @@
+% NB: use pdflatex to compile NOT pdftex.  Also make sure youngtab is
+% there...
+
+% converting eps graphics to pdf with ps2pdf generates way too much
+% whitespace in the resulting pdf, so crop with pdfcrop
+% cf. http://www.cora.nwra.com/~stockwel/rgspages/pdftips/pdftips.shtml
+
+
+
+
+\documentclass[10pt,dvipsnames]{beamer}
+\usetheme[color/block=transparent]{metropolis}
+
+\usepackage[absolute,overlay]{textpos}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+
+\usepackage{tikz}
+
+
+\usepackage[scale=2]{ccicons}
+
+\usepackage[official]{eurosym}
+
+
+%use this to add space between rows
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+
+
+\newcommand{\R}{\mathbb{R}}
+
+
+
+\setbeamerfont{alerted text}{series=\bfseries}
+\setbeamercolor{alerted text}{fg=Mahogany}
+\setbeamercolor{background canvas}{bg=white}
+
+
+
+\def\l{\lambda}
+\def\m{\mu}
+\def\d{\partial}
+\def\cL{\mathcal{L}}
+\def\co2{CO${}_2$}
+\def\bra#1{\left\langle #1\right|}
+\def\ket#1{\left| #1\right\rangle}
+\newcommand{\braket}[2]{\langle #1 | #2 \rangle}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\def\corr#1{\Big\langle #1 \Big\rangle}
+\def\corrs#1{\langle #1 \rangle}
+
+
+\def\mw{\text{ MW}}
+\def\mwh{\text{ MWh}}
+\def\emwh{\text{ \euro/MWh}}
+
+\newcommand{\ubar}[1]{\text{\b{$#1$}}}
+
+
+% for sources http://tex.stackexchange.com/questions/48473/best-way-to-give-sources-of-images-used-in-a-beamer-presentation
+
+\setbeamercolor{framesource}{fg=gray}
+\setbeamerfont{framesource}{size=\tiny}
+
+
+\newcommand{\source}[1]{\begin{textblock*}{4cm}(8.0cm,8.0cm)
+    \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
+        \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
+    \end{beamercolorbox}
+\end{textblock*}}
+
+\usepackage{hyperref}
+
+\usepackage{tikz}
+
+
+\usepackage[europeanresistors,americaninductors]{circuitikz}
+
+
+%\usepackage[pdftex]{graphicx}
+
+
+\graphicspath{{graphics/}}
+
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png,.jpg,.gif}
+
+
+
+\def\goat#1{{\scriptsize\color{green}{[#1]}}}
+
+
+
+\let\olditem\item
+\renewcommand{\item}{%
+\olditem\vspace{5pt}}
+
+
+\title{Energy System Modelling\\ Summer Semester 2019, Lecture 6}
+%\subtitle{---}
+\author{
+  {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
+  \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
+}
+
+\date{\vspace{.3cm}13th June 2019}
+
+
+\titlegraphic{%
+  \vspace{6cm}
+  \hspace{6.7cm}
+    \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{frame}
+
+  \frametitle{Table of Contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+
+\section{Introduction to Electricity Markets}
+
+
+\begin{frame}
+  \frametitle{The Economic Operation of the Electricity Sector}
+
+
+  Given the many different ways of consuming and generating
+  electricity:
+
+  \begin{itemize}
+    \item   What is the \alert{most efficient} way to deploy consuming and generating
+  assets in the short-run?
+    \item How should we invest in assets in the long-run to \alert{maximise economic welfare}?
+  \end{itemize}
+
+  The operation of electricity markets is intimately related to
+  \alert{optimisation}.
+
+  In the past and still in many countries today, electricity was
+  provided centrally by `vertically-integrated' monopoly utilities
+  that owned generating assets, the electricity networks and
+  retailing.  Given that these utilities owned all the infrastructure,
+  it was hard for third-party generators to compete, even if they were
+  allowed to.
+
+  From the 1980s onwards, countries began to liberalise their
+  electricity sectors, separating generation from transmission, and
+  allowing regulated competition for generation in \alert{electricity markets}.
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Electricity Markets}
+
+  Electricity markets have several important differences compared to
+  other commodity markets.
+
+  At every instant in time, consumption must be balanced with
+  generation.
+
+  If you throw a switch to turn on a light, somewhere a generator will
+  be increasing its output to compensate.
+
+  If the power is not balanced in the grid, the power supply will
+  collapse and there will be blackouts.
+
+  It is not possible to run an electricity market for every single
+  second, for practical reasons (the network must be checked for
+  stability, etc.).
+
+  So electricity is traded in blocks of time, e.g. hourly,
+  14:00-15:00, or quarter-hourly, 14:00-14:15, well in advance of the
+  time when it is actually consumed (based on forecasts).
+
+  Further markets trade in backup balancing power, which step in if the
+  forecasts are wrong.
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Baseload versus Peaking Plant}
+
+  \alert{Load} (= Electrical Demand) is low during night; in Northern Europe in the winter, the peak is in the evening.
+
+  To meet this load profile, cheap \alert{baseload} generation runs the whole time; more expensive \alert{peaking plant} covers the difference.
+
+  \centering
+  \includegraphics[width=9cm]{baseload-peaking}
+
+  \source{Tom Brown}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Effect of varying demand for fixed generation}
+
+  \centering
+  \includegraphics[width=9cm]{demand-supply}
+
+  \source{Tom Brown}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Example market 1/3}
+
+  \centering
+
+  \includegraphics[width=9cm]{germany_generation-price-2015-01-06-2015-01-12}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example market 2/3}
+
+  \centering
+  \includegraphics[width=9cm]{germany_generation-price-2015-03-15-2015-03-31}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example market 3/3}
+
+  \centering
+  \includegraphics[width=9cm]{germany_generation-price-2015-04-07-2015-04-14}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Effect of varying renewables: fixed demand, no wind}
+
+  \centering
+  \includegraphics[width=9cm]{demand-supply-no_wind}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Effect of varying renewables: fixed demand, 35~GW wind}
+
+  \includegraphics[width=9cm]{demand-supply-with_wind}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Spot market price development}
+
+  As a result of so much zero-marginal-cost renewable feed-in, spot
+  market prices steadily decreased until 2016. Since then prices have
+  been rising due to rising gas and CO$_2$ prices.
+
+  \includegraphics[width=11cm]{price_development-2018.png}
+
+  \source{\href{https://www.agora-energiewende.de/fileadmin2/Projekte/2018/Jahresauswertung_2018/Agora-Annual-Review-2018_Energy-Transition-EN.pdf}{Agora Energiewende}}
+\end{frame}
+
+
+
+\section{Optimisation Revision}
+
+\begin{frame}
+  \frametitle{Optimisation problem}
+
+
+We have an \alert{objective function} $f: \R^k \to \R$
+\begin{equation*}
+  \max_{x} f(x)
+\end{equation*}
+[$x = (x_1, \dots x_k)$] subject to some \alert{constraints} within $\R^k$:
+\begin{align*}
+  g_i(x) & = c_i \hspace{1cm}\leftrightarrow\hspace{1cm} \l_i \hspace{1cm} i = 1,\dots n \\
+  h_j(x) & \leq d_j \hspace{1cm}\leftrightarrow\hspace{1cm} \m_j \hspace{1cm} j = 1,\dots m
+\end{align*}
+
+$\l_i$ and $\m_j$ are the \alert{KKT multipliers} (basically Lagrange multipliers) we introduce for
+each constraint equation; it measures the change in the objective value of the optimal solution obtained by relaxing the constraint (shadow price).
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{KKT conditions}
+
+The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an optimal solution $x^*,\m^*,\l^*$ always satisfies (up to some regularity conditions):
+\begin{enumerate}
+\item \alert{Stationarity}: For $l = 1,\dots k$
+  \begin{equation*}
+  \frac{\d \cL}{\d x_l} =   \frac{\d f}{\d x_l} - \sum_i \l_i^* \frac{\d g_i}{\d x_l}  - \sum_j \m_j^* \frac{\d h_j}{\d x_l} = 0
+  \end{equation*}
+    \item \alert{Primal feasibility}:
+      \begin{align*}
+        g_i(x^*) & = c_i \\
+        h_j(x^*) &\leq d_j
+      \end{align*}
+    \item \alert{Dual feasibility}: $\m_j^* \geq 0$
+    \item \alert{Complementary slackness}: $\m_j^* (h_j(x^*) - d_j) = 0$
+\end{enumerate}
+
+\end{frame}
+
+\section{Electricity Markets from Perspective of Single Generators and Consumers}
+
+\begin{frame}{Efficient Markets for the short-run}
+
+
+  Assume investments already made in generators and and consumption assets (factories, machines, etc.).
+
+  Assume all actors are price takers (i.e. nobody can exercise market power) and we have perfect competition.
+
+  How do we allocate production and consumption in the most efficient way?
+
+
+  I.e. we are interested in the \alert{short-run ``static'' efficiency}.
+
+  \vspace{.7cm}
+
+  (In contrast to \alert{long-run ``dynamic'' efficiency} where we also consider optimal investment in assets.)
+\end{frame}
+
+
+
+
+
+\begin{frame}
+  \frametitle{Single Generator: Cost Function}
+
+  Consider now the market from the point of view of a single generator.
+
+  A generator has a \alert{cost or supply function} $C(g)$ in \euro/h,
+  which gives the total operating costs (of fuel, etc.) for a given
+  rate of electricity generation $g$~MW.
+
+  Typically the generator has a higher cost for a higher rate of generation $g$,
+  i.e. the first derivative is positive $C'(g) > 0$. For most generators the rate at which cost increases with rate of production itself increases as the rate of production increases, i.e. $C''(g) > 0$.
+
+\end{frame}
+
+
+\begin{frame}{Cost Function: Example}
+
+
+  A gas generator has a cost function which depends on the
+  rate of electricity generation $g$ [\euro/h] according to
+  \begin{equation*}
+    C(g) = 0.005~g^2  + 9.3~g + 120
+  \end{equation*}
+
+
+  \centering
+  \includegraphics[width=6.3cm]{generator_cost_function}
+
+  \raggedright
+  Note that the slope is always positive and becomes more positive
+  for increasing $g$. The curve does not start at the origin because of startup costs, no load costs, etc.
+\end{frame}
+
+
+
+\begin{frame}{Optimal generator behaviour}
+
+  We assume that the generator is a \alert{price-taker},
+  i.e. they cannot influence the price by changing the amount they
+  generate.
+
+  Suppose the market price is $\lambda$ \euro/MWh. For a generation
+  rate $g$, the revenue is $\l g$ and the generator should adjust their
+generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their profit:
+  \begin{equation*}
+    \max_g \left[ \l g - C(g) \right]
+  \end{equation*}
+
+  This optimisation problem is optimised for $g=g^*$ where
+  \begin{equation*}
+    C'(g^*) \equiv \frac{dC}{dg} (g^*) =  \l
+  \end{equation*}
+
+  [Check units: $\frac{dC}{dg}$ has units $\frac{\textrm{\euro/h}}{\textrm{MW}} = $ \euro/MWh.]
+
+  I.e. the generator increases their output until they make a net loss for any increase of generation.
+
+  $C'(g)$ is known as the \alert{marginal cost curve}, which shows,
+  for each rate of generation $g$ what price $\l$ the generator should be
+  willing to supply at.
+
+
+\end{frame}
+
+
+
+\begin{frame}{Marginal cost function: Example}
+
+  For our example the marginal function is given by
+  \begin{equation*}
+    C'(g) = 0.01~g + 9.3
+  \end{equation*}
+
+  \centering
+  \includegraphics[width=7cm]{marginal_cost_function}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{Generator surplus}
+
+  The area under the curve is generator costs, which as the integral
+  of a derivative, just gives the cost function $C(g)$ again, up to a
+  constant.
+
+
+  The \alert{generator surplus} is the profit the generator makes by
+  having costs below the electricity price.
+
+  \centering
+  \includegraphics[width=7cm]{generator_surplus}
+
+\end{frame}
+
+
+
+\begin{frame}{Limits to generation}
+
+
+  Note that it is quite common for generators to be limited by
+  e.g. their capacity $G$, which may become a \alert{binding}, i.e. limiting factor before the price plays a role, e.g.
+  \begin{equation*}
+    g \leq G  \leftrightarrow \m
+  \end{equation*}
+  In the following case the optimal generation is at
+  $g^* = G = $ 250~MW.   We have a \alert{binding} constraint and can define a \alert{shadow price} $\m$, which indicates the benefit of relaxing the constraint $\m^* = \l - C'(g^*)$.
+
+
+  \centering
+  \includegraphics[width=6.5cm]{generator_surplus-limited}
+
+\end{frame}
+
+
+
+
+\begin{frame}{Consumer behaviour: Theory}
+
+  Suppose for some given period a consumer consumes electricity at a rate of
+  $d$~MW.
+
+
+  Their \alert{utility or value function} $U(d)$ in \euro/h is a
+  measure of their benefit for a given consumption rate $d$.
+
+  For a firm this could be the profit related to this electricity
+  consumption from manufacturing goods.
+
+
+  Typical the consumer has a higher utility for higher $d$, i.e. the
+  first derivative is positive $U'(d) > 0$. By assumption, the rate of
+  value increase with consumption decreases the higher the rate of
+  consumption, i.e. $U''(d) < 0$.
+
+\end{frame}
+
+
+\begin{frame}{Utility: Example}
+
+
+  A widget manufacturer has a utility function which depends on the
+  rate of electricity consumption $d$ [\euro/h] as
+  \begin{equation*}
+    U(d) = 0.0667~d^3  - 8~d^2 + 300~d
+  \end{equation*}
+
+
+  \centering
+  \includegraphics[width=6cm]{utility}
+
+  \raggedright
+  Note that the slope is always positive, but becomes less positive
+  for increasing $d$.
+\end{frame}
+
+
+\begin{frame}{Optimal consumer behaviour}
+
+
+
+  We assume that the consumer is a \alert{price-taker},
+  i.e. they cannot influence the price by changing the amount they
+  consume.
+
+  Suppose the market price is $\lambda$ \euro/MWh. The consumer should
+  adjust their consumption rate $d$ to maximise their \alert{net surplus}
+  \begin{equation*}
+    \max_d \left[U(d) - \l d \right]
+  \end{equation*}
+
+  This optimisation problem is optimised for $d=d^*$ where
+  \begin{equation*}
+    U'(d^*) \equiv \frac{dU}{dd} (d^*) =  \l
+  \end{equation*}
+
+  [Check units: $\frac{dU}{dd}$ has units $\frac{\textrm{\euro/h}}{\textrm{MW}} = $ \euro/MWh.]
+
+  I.e. the consumer increases their consumption until they make a net loss for any increase of consumption.
+
+  $U'(d)$ is known as the \alert{inverse demand curve} or \alert{marginal utility curve}, which shows,
+  for each rate of consumption $d$ what price $\l$ the consumer should be
+  willing to pay.
+
+
+\end{frame}
+
+
+
+\begin{frame}{Inverse demand function: Example}
+  For our example the inverse demand function is given by
+  \begin{equation*}
+    U'(d) = 0.2~d^2 - 16~d + 300
+  \end{equation*}
+
+  \centering
+  \includegraphics[width=6cm]{inverse_demand_function}
+
+  \raggedright
+  It's called the \emph{inverse} demand function, because the demand function is the function you get from reversing the axes.
+\end{frame}
+
+
+\begin{frame}{Inverse demand function: Example}
+
+
+  The \alert{demand function} $D(\l)$ gives the demand $d$ as a function of the price $\l$. $D(U'(d)) = d$.
+
+  For our example the demand function is given by
+  \begin{equation*}
+    D(\l) =  -((\l+20 )/0.2)^{0.5} +40
+  \end{equation*}
+
+  \centering
+  \includegraphics[width=6cm]{demand_function}
+
+\end{frame}
+
+
+
+\begin{frame}{Gross consumer surplus}
+
+  The area under the inverse demand curve is the \alert{gross consumer surplus},
+  which as the integral of a derivative, just gives the utility
+  function $U(d)$ again, up to a constant.
+
+  \centering
+  \includegraphics[width=6cm]{gross_consumer_surplus}
+
+\end{frame}
+
+
+
+\begin{frame}{Net consumer surplus}
+
+  The more relevant \alert{net consumer surplus}, or just
+  \alert{consumer surplus} is the net gain the consumer makes by
+  having utility above the electricity price.
+
+  \centering
+  \includegraphics[width=6cm]{net_consumer_surplus}
+
+\end{frame}
+
+
+\begin{frame}{Limits to consumption}
+
+
+  Note that it is quite common for consumption to be limited by other
+  factors before the electricity price becomes too expensive, e.g. due
+  to the size of electrical machinery. This gives an upper bound
+  \begin{equation*}
+    d \leq D  \leftrightarrow \m
+  \end{equation*}
+  In the following case the optimal consumption is at
+  $d^* = D =$  10~MW. We have a \alert{binding} constraint and can define a \alert{shadow price} $\m$, which indicates the benefit of relaxing the constraint $\m^* = U'(d^*) - \l$.
+
+  \centering
+  \includegraphics[width=6cm]{net_consumer_surplus-limited}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Consumers can delay their consumption}
+
+  Besides changing the amount of electricity consumption, consumers
+  can also shift their consumption in time.
+
+  For example electric storage heaters use cheap electricity at night
+  to generate heat and then store it for daytime.
+
+  The LHC particle accelerator does not run in the winter,
+  when prices are higher (see
+  \url{http://home.cern/about/engineering/powering-cern}).  Summer
+  demand: 200~MW, corresponds to a third of Geneva, equal to peak
+  demand of Rwanda (!); winter only 80~MW.
+
+
+  \centering
+  \includegraphics[width=6cm]{csm_1998_LHCUeberblick_CERN_02_ed178e98ea}
+
+
+  \source{CERN}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Consumers can also move location}
+
+  Aluminium smelting is an electricity-intensive process. Aluminium
+  smelters will often move to locations with cheap and stable
+  electricity supplies, such as countries with lots of hydroelectric
+  power.  For example, 73\% of Iceland's total power consumption in
+  2010 came from aluminium smelting.
+
+  Aluminium costs around US\$ 1500/ tonne to produce. %http://www.lme.com/metals/non-ferrous/aluminium/
+
+  Electricity consumption: 15 MWh/tonne.
+
+  At Germany consumer price of \euro 300 / MWh, this is \euro 4500 / tonne. Uh-oh!!!
+
+  If electricity is 50\% of cost, then need \$750/tonne to go on electricity $\Rightarrow$ 750/15 \$/MWh = 50 \$/MWh.
+
+  %https://arcticecon.wordpress.com/2012/02/15/aluminium-smelting-in-iceland-alcoa-rio-tinto-alcan-century-aluminum-corp/
+  %15.7 kWh of electricity to produce 1 kg of aluminium.  Al203 (alumina) -> Al
+
+  % The Hall-Héroult electrolysis process is the major production route for primary aluminium.
+
+  %Due to the nature of the process, power outages have the potential
+  %to cause damage to production cells as the molten liquids could
+  %solidify in absence of adequate current.  For this reason,
+  %production facilities need to be near secure and reliable sources
+  %of energy.  step before smelting is bauxite -> alumina. Bauxite is
+  %gibbsite Al(OH)3, boehmite γ-AlO(OH), and diaspore α-AlO(OH).
+
+
+%What is notable is that the aluminium industry’s total power usage
+  %amounted to roughly 73% of Iceland’s total power consumption in 2010.
+
+  %https://en.wikipedia.org/wiki/Economy_of_Iceland#Aluminium
+
+  %https://agmetalminer.com/2015/11/24/power-costs-the-production-primary-aluminum/
+
+  %making domestic electricity costs some 44% of the sales price of
+  %ingot and may explain why Chinese smelters combined with low
+  %capacity utilization due to reduced demand are widely reported
+
+  %http://www.crugroup.com/about-cru/cruinsight/Aluminium_Smelter_Power_Tariffs_Winners_and_Losers
+
+%Power typically represents more than a third of an aluminium
+%smelter's operating costs and is the single most important cost
+%variant between smelting assets. As a result access to cheap power is
+%one of the key sources of competitive advantage in primary aluminium
+%smelting.
+
+  % https://en.wikipedia.org/wiki/List_of_aluminium_smelters
+
+  % THere are some in Germany
+
+  \end{frame}
+
+
+\begin{frame}{Summary: Consumers and Generators}
+
+{\bf Generators:}  A generator has a \alert{cost} or \alert{supply function} $C(g)$ in \euro/h, which
+  gives the costs (of fuel, etc.) for a given rate of electricity
+  generation $g$~MW. If the market price is $\lambda$ \euro/MWh, the revenue is $\l g$ and the generator should adjust their
+generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their profit:
+  \begin{equation*}
+    \max_g \left[ \l g - C(g) \right]
+  \end{equation*}
+
+
+{\bf Consumers:} Their \alert{utility} or \alert{value function} $U(d)$ in \euro/h is a
+  measure of their benefit for a given consumption rate $d$. For a given price $\lambda$ they adjust their consumption rate $d$ such that their \alert{net surplus} is maximised:
+    \begin{equation*}
+    \max_d \left[U(d) - \l d \right]
+  \end{equation*}
+
+  \end{frame}
+
+\section{Supply and Demand at a Single Node}
+
+
+\begin{frame}{Setting the quantity and price}
+
+  \alert{Total welfare} (consumer and generator surplus) is maximised
+  if the total quantity of electricity is set where the aggregated marginal cost and
+  marginal utility curves of all generators and consumers meet.
+
+  If the price is also set from this point, then the individual
+  optimal actions of each actor will achieve this result in a perfect
+  decentralised market.
+
+  \centering
+  \includegraphics[width=8cm]{consumer_producer_surplus.pdf}
+
+
+
+
+\end{frame}
+
+
+
+\begin{frame}{The result of optimisation}
+
+  This is the result of maximising the \alert{total economic welfare}, the sum of the consumer and the producer surplus for consumers $b$ with consumption $d_b$ and generators $s$ generating with rate $g_s$:
+  \begin{align*}
+    \max_{\{d_b\}, \{g_s\}}\left[ \sum_b U_b (d_b)  -  \sum_s C_s (g_s) \right]
+  \end{align*}
+  subject to the supply equalling the demand in the balance constraint:
+  \begin{align*}
+    \sum_b d_b -  \sum_s g_s  = 0 \hspace{1cm} \leftrightarrow \hspace{1cm} \l
+  \end{align*}
+  and any other constraints (e.g. limits on generator capacity, etc.).
+
+  Market price $\l$ is the shadow price of the balance constraint,
+  i.e. the cost of supply an extra increment 1~MW of demand.
+
+\end{frame}
+
+
+\begin{frame}{Why decentralised markets work (in theory)}
+
+  We will now show our main result:
+
+      \begin{alertblock}{Welfare-maximisation through decentralised markets}
+        The welfare-maximising combination of production and consumption can be achieved by the decentralised profit-maximising decisions of producers and the utility-maximising decisions of consumers, provided that:
+        \begin{itemize}
+        \item The market price is equal to the constraint marginal value of the overall supply-balance constraint in the welfare maximisation problem
+          \item All producers and consumers are price-takers
+        \end{itemize}
+      \end{alertblock}
+
+\end{frame}
+
+
+
+
+\begin{frame}{KKT and Welfare Maximisation 1/2}
+
+  Apply KKT now to maximisation of total economic welfare:
+  \begin{align*}
+    \max_{\{d_b\}, \{g_s\}} f(\{d_b\}, \{g_s\}) = \left[ \sum_b U_b (d_b)  -  \sum_s C_s (g_s) \right]
+  \end{align*}
+  subject to the balance constraint:
+  \begin{align*}
+    g(\{d_b\}, \{g_s\}) = \sum_b d_b -  \sum_s g_s  = 0 \hspace{1cm} \leftrightarrow \hspace{1cm} \l
+  \end{align*}
+  and any other constraints (e.g. limits on generator capacity, etc.).
+
+  Our optimisation variables are $\{x\} = \{d_b\} \cup \{g_s\}$.
+
+  We get from stationarity:
+  \begin{align*}
+    0 & =   \frac{\d f}{\d d_b} - \sum_b \l^* \frac{\d g}{\d d_b} = U_b'(d_b) - \l^* = 0 \\
+    0 & =   \frac{\d f}{\d g_s} - \sum_s \l^* \frac{\d g}{\d g_s} = -C_s'(g_s) + \l^* = 0
+  \end{align*}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{KKT and Welfare Maximisation 2/2}
+
+  So at the optimal point of maximal total economic welfare we get the
+  same result as if everyone maximises their own welfare separately:
+  \begin{align*}
+ U_b'(d_b) =  \l^*  \\
+ C_s'(g_s) = \l^*
+  \end{align*}
+
+  This is the CENTRAL result of microeconomics.
+
+  If we have further inequality constraints that are binding, then
+  these equations will receive additions with $\m_i^* > 0$.
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Power Production Real Example}
+
+  At this website you can see the forecast of load, wind, solar and conventional generation right now in Germany (\href{https://energy-charts.de/power_de.htm}{link}):
+
+
+  \centering
+    \includegraphics[width=11cm]{strom-170531-14.png}
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Supply-Demand Curve Real Example}
+
+  A real supply-demand curve for Germany-Austria from 2017 (\href{https://www.epexspot.com/en/market-data/dayaheadauction/curve/auction-aggregated-curve/2017-05-31/DE/14/3}{link})
+
+  \centering
+    \includegraphics[width=11cm]{DEAT-170531-14}
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Effect of varying demand for fixed generation}
+
+  \centering
+  \includegraphics[width=9cm]{demand-supply}
+
+  \source{Tom Brown}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Example market 1/3}
+
+  \centering
+
+  \includegraphics[width=9cm]{germany_generation-price-2015-01-06-2015-01-12}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example market 2/3}
+
+  \centering
+  \includegraphics[width=9cm]{germany_generation-price-2015-03-15-2015-03-31}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example market 3/3}
+
+  \centering
+  \includegraphics[width=9cm]{germany_generation-price-2015-04-07-2015-04-14}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Effect of varying renewables: fixed demand, no wind}
+
+  \centering
+  \includegraphics[width=9cm]{demand-supply-no_wind}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Effect of varying renewables: fixed demand, 35~GW wind}
+
+  \includegraphics[width=9cm]{demand-supply-with_wind}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Spot market price development}
+
+  As a result of so much zero-marginal-cost renewable feed-in, spot
+  market prices steadily decreased until 2016. Since then prices have
+  been rising due to rising gas and CO$_2$ prices.
+
+  \includegraphics[width=11cm]{price_development-2018.png}
+
+  \source{\href{https://www.agora-energiewende.de/fileadmin2/Projekte/2018/Jahresauswertung_2018/Agora-Annual-Review-2018_Energy-Transition-EN.pdf}{Agora Energiewende}}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Merit Order Effect}
+
+  To summarise:
+  \begin{itemize}
+  \item Renewables have zero marginal cost
+  \item As a result they enter at the bottom of the merit order, reducing the price at which the market clears
+  \item This pushes non-CHP gas and hard coal out of the market
+  \item This is unfortunate, because among the fossil fuels, gas and
+    hard coal are the most flexible and produce the \emph{lowest} \co2
+    per MWh
+  \item It also massively reduces the profits that nuclear and brown coal make
+  \item Will there be enough backup power plants for times with no wind/solar?
+  \end{itemize}
+
+  This has led to lots of political tension...
+
+\end{frame}
+
+\end{document}

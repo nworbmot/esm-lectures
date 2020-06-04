@@ -1,0 +1,1094 @@
+% NB: use pdflatex to compile NOT pdftex.  Also make sure youngtab is
+% there...
+
+% converting eps graphics to pdf with ps2pdf generates way too much
+% whitespace in the resulting pdf, so crop with pdfcrop
+% cf. http://www.cora.nwra.com/~stockwel/rgspages/pdftips/pdftips.shtml
+
+
+
+
+\documentclass[10pt,aspectratio=169,dvipsnames]{beamer}
+
+\usetheme[color/block=transparent]{metropolis}
+
+\usepackage[absolute,overlay]{textpos}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+
+\usepackage{tikz}
+
+
+\usepackage[scale=2]{ccicons}
+
+\usepackage[official]{eurosym}
+
+
+%use this to add space between rows
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+
+
+\newcommand{\R}{\mathbb{R}}
+
+
+\setbeamerfont{alerted text}{series=\bfseries}
+\setbeamercolor{alerted text}{fg=Mahogany}
+\setbeamercolor{background canvas}{bg=white}
+
+
+
+\def\l{\lambda}
+\def\m{\mu}
+\def\d{\partial}
+\def\cL{\mathcal{L}}
+\def\co2{CO${}_2$}
+\def\bra#1{\left\langle #1\right|}
+\def\ket#1{\left| #1\right\rangle}
+\newcommand{\braket}[2]{\langle #1 | #2 \rangle}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\def\corr#1{\Big\langle #1 \Big\rangle}
+\def\corrs#1{\langle #1 \rangle}
+
+
+\def\mw{\text{ MW}}
+\def\mwh{\text{ MWh}}
+\def\emwh{\text{ \euro/MWh}}
+
+\newcommand{\ubar}[1]{\text{\b{$#1$}}}
+
+
+% for sources http://tex.stackexchange.com/questions/48473/best-way-to-give-sources-of-images-used-in-a-beamer-presentation
+
+\setbeamercolor{framesource}{fg=gray}
+\setbeamerfont{framesource}{size=\tiny}
+
+
+\newcommand{\source}[1]{\begin{textblock*}{5cm}(10.5cm,8.35cm)
+    \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
+        \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
+    \end{beamercolorbox}
+\end{textblock*}}
+
+\usepackage{hyperref}
+
+\usepackage{tikz}
+
+
+\usepackage[europeanresistors,americaninductors]{circuitikz}
+
+
+%\usepackage[pdftex]{graphicx}
+
+
+\graphicspath{{graphics/}}
+
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png,.jpg,.gif}
+
+
+
+\def\goat#1{{\scriptsize\color{green}{[#1]}}}
+
+
+
+\let\olditem\item
+\renewcommand{\item}{%
+\olditem\vspace{5pt}}
+
+\title{Energy System Modelling\\ Summer Semester 2019, Lecture 8}
+%\subtitle{---}
+\author{
+  {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
+  \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
+}
+
+\date{\vspace{.3cm}14th June 2019}
+
+
+\titlegraphic{%
+  \vspace{6cm}
+  \hspace{6.7cm}
+    \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{frame}
+
+  \frametitle{Table of Contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+
+\section{Present value and discounting}
+
+
+\begin{frame}
+  \frametitle{The value of money depends on time}
+
+
+  \alert{Question 1:} What would you prefer: \euro 1000 today, or \euro 1000 in 3 years?
+
+  \pause
+
+  \euro 1000 today can be invested in the bank with an interest rate of 5\%.
+
+  After 3 years you would have
+  \begin{equation*}
+     1000 \cdot (1 + 0.05)^3 = 1158
+  \end{equation*}
+
+  \alert{Answer 1:} Best to take the money today and use the opportunity to invest!
+
+  \vspace{.5cm}
+
+ ``Money in the future is worth less than money today.''
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{The value of money depends on time}
+
+
+  \alert{Question 2:} What would you prefer: \euro 1000 today, or \euro 1300 in 5  years?
+
+  \pause
+
+  If you invested \euro 1000 today, after 5 years you would have only
+  \begin{equation*}
+     1000 \cdot (1 + 0.05)^5 = 1276
+  \end{equation*}
+
+  \alert{Answer 2:} Best to wait for the \euro 1300 in 5 years!
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Present value}
+
+  To allow comparison between income and outgoings in different years, we need to agree on a particular point in time to evaluate the cash flows.
+
+  The simplest and most frequently used time point: today's value, known as the \alert{present value}.
+
+  For an \alert{interest rate} $r$ we multiply the income or outgoings in year $t$ by the \alert{discount factor}
+  \begin{equation*}
+    \frac{1}{(1+r)^t}
+  \end{equation*}
+  to calculate the present value. We have \alert{discounted} the future cash flow.
+
+  Future income or outgoings are \alert{worth less} from today's point of view (as long as $r$ is positive).
+
+  ``Money in the future is worth less than money today.''
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example: present value}
+
+  For our example with interest rate 5\% we can now order the options:
+  \ra{1.1}
+  \begin{table}[!t]
+    \begin{tabular}{rrr}
+      \toprule
+      Income (\euro) & Year & Present value (\euro)  \\
+      \midrule
+      1000  &  3 & $\frac{1000}{(1+0.05)^3} = 863$  \\
+      1000  &  0 & $\frac{1000}{(1+0.05)^0} = 1000$ \\
+      1300  &  5 & $\frac{1300}{(1+0.05)^5} = 1019$ \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+\end{frame}
+
+
+
+\section{Investment calculations}
+
+
+\begin{frame}
+  \frametitle{Motivation: Power plant investment}
+
+  A company is considering investing in a photovoltaic plant on its roof. The key figures:
+
+
+  \begin{columns}[T]
+\begin{column}{6cm}
+
+    \begin{table}[!t]
+    \begin{tabular}{lr}
+      \toprule
+      Size &  100 kW \\
+      Investment cost & 800 \euro kW$^{-1}$ \\
+      Operating cost & 20 \euro kW$^{-1}$ a$^{-1}$\\
+      Feed-In Tariff & 0.1 \euro kWh$^{-1}$\\
+      Full load hours & 1000 \\
+      Period of subsidy & 20 years \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{column}
+\begin{column}{6cm}
+
+    \includegraphics[width=6.5cm]{PV_Anlage_auf_der_Rottweiler_Stadthalle.jpg}
+\end{column}
+  \end{columns}
+
+  \vspace{.5cm}
+
+  The company can invest its money elsewhere for a return of 5\%.
+
+  \alert{Is it worthwhile to invest in the photovoltaic plant?}
+
+  \source{\href{https://www.ise.fraunhofer.de/content/dam/ise/de/documents/publications/studies/DE2018_ISE_Studie_Stromgestehungskosten_Erneuerbare_Energien.pdf}{Fraunhofer ISE Stromgestehungskosten 2018}, \href{https://de.wikipedia.org/wiki/ENRW_Energieversorgung_Rottweil\#/media/Datei:PV_Anlage_auf_der_Rottweiler_Stadthalle.jpg}{Wikipedia}}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Investment calculations}
+
+  An \alert{investment calculation} quantifies the financial costs and benefits of an investment, assuming that future income and outgoings can be predicted.
+
+  It considers
+  \begin{itemize}
+  \item \alert{Capital costs} - Costs for investments and installation
+  \item \alert{Consumption costs} - Fuel, other materials (e.g. lubricants for wind turbine), etc.
+  \item \alert{Operating costs} - Maintenance, wages, insurance, management, etc.
+  \item \alert{Income} - depends on market price, subsidies, and production
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Dynamic investment calculation}
+
+  For a \alert{dynamic investment calculation} we sum the present values of all income and outgoings over the $T$ years of operation taking account of the interest rate $r$ to get the \alert{Net Present Value (NPV)}:
+  \begin{equation*}
+    NPV = \sum_{t=0}^T \frac{ - I_t - V_t - B_t + U_t}{(1+r)^t}
+  \end{equation*}
+  where $I_t$ is the capital expenditure in year $t$, $V_t$ the
+  consumption costs (e.g. for fuel cost $o_t$ and annual production $Q_t$, $V_t = o_t\cdot Q_t$), $B_t$ the operating costs und $U_t$ the income (e.g. average market value $\lambda_t$ times annual production
+  $Q_t$, $U_t = \lambda_t\cdot Q_t$).
+
+  \alert{Conclusion:} If $NPV > 0$, the investment is worthwhile.
+
+  If $NPV < 0$, better to invest with a rate of return of $r$ elsewhere.
+
+  For comparisons between different investments, a higher NPV should be preferred.
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Example: Rooftop photovoltaic unit}
+
+    All cash flows (costs and income) in \euro:
+    \begin{table}[!t]
+    \begin{tabular}{lrrrrr}
+      \toprule
+      year $t$ &  0 & 1 & 2 & $\cdots$ & 20 \\
+      \midrule
+      Capital costs $I_t$ & 80.000  & 0 & 0  & & 0\\
+      Operating costs $B_t$ & 0 & 2.000 & 2.000 & & 2.000  \\
+      Income $U_t$ & 0 & 10.000  & 10.000 & & 10.000 \\
+      \midrule
+      Net cash flow $U_t - I_t - B_t$ & -80.000 & 8.000 & 8.000 & & 8.000 \\
+      \midrule
+      Discount factor $\frac{1}{(1+r)^t}$ & 1 & $\frac{1}{(1+r)}$ & $\frac{1}{(1+r)^2}$ & &  $\frac{1}{(1+r)^{20}}$ \\
+      \bottomrule
+    \end{tabular}
+    \end{table}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{NPV simplification}
+
+  If investments only occur in the first year, and the costs and income for the following years are constant, we can simplify the NPV formula:
+  \begin{equation*}
+    NPV = -I_0 + (U - V - B) \sum_{t=1}^T \frac{1}{(1+r)^t}
+  \end{equation*}
+  The sum $\sum$ is called the \alert{Present Value Factor} $PVF(r,T)$.
+
+  For a geometric series with $|q| < 1$ we have $\sum_{n=0}^\infty q^n = \frac{1}{1-q}$.
+  For $q= (1+r)^{-1}$ we can simplify the formula
+  \begin{align*}
+    PVF(r,T) & =  \sum_{t=1}^T \frac{1}{(1+r)^t} \\
+             & = \left[\frac{1}{(1+r)} - \frac{1}{(1+r)^{T+1}}  \right] \sum_{t=0}^\infty \frac{1}{(1+r)^t}
+              = \left[\frac{1}{(1+r)} - \frac{1}{(1+r)^{T+1}}  \right] \frac{1}{1 - (1+r)^{-1}} \\
+             & = \left[\frac{1}{(1+r)} - \frac{1}{(1+r)^{T+1}}  \right] \frac{1+r}{1 + r  - 1}  = \frac{1}{r} \left[1  - \frac{1}{(1+r)^{T}}  \right]
+  \end{align*}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Example: Rooftop photovoltaic unit}
+
+  For our example with $r= 0.05$
+  \begin{align*}
+    NPV & = -80.000 + (10.000 - 2.000)  \cdot \frac{1}{r} \left[1  - \frac{1}{(1+r)^{T}}  \right] \\
+    & = -80.000 + 8.000*12.5 \\
+    & = 19698
+  \end{align*}
+
+  \alert{Conclusion:} It's worthwile to invest in the photovoltaic unit!
+
+  \pause
+
+  NB: The calculation is very sensitive to the interest rate, e.g. with $r = 0.08$
+  \begin{align*}
+    NPV & = -80.000 + 8.000*9.8 \\
+    & = -1.454
+  \end{align*}
+
+  \alert{Conclusion:} The investment is not worthwhile.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Return On Investment (ROI)}
+
+  The expected return or \alert{Return On Investment (ROI)} is the required interest rate to reach the point $NPV = 0$.
+
+  In our example you can either experiment or use the Newton-Raphson algorithm to determine the ROI $r$
+  \begin{equation*}
+    0 = NPV = -I_0 + (U - V - B) \sum_{t=1}^T \frac{1}{(1+r)^t}
+  \end{equation*}
+
+  In our example we find an ROI of $r=7.75$\%.
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{German example figures for electricity production technologies in 2018}
+
+  WACC is the \alert{Weighted Average Cost of Capital} over the bank interest rate for borrowed capital (Fremdkapital) and the investor's ROI on their own investment (Eigenkapital).
+
+  \centering
+  \includegraphics[width=14cm]{stromgestehungskosten.png}
+
+
+  \source{\href{https://www.ise.fraunhofer.de/content/dam/ise/de/documents/publications/studies/DE2018_ISE_Studie_Stromgestehungskosten_Erneuerbare_Energien.pdf}{Fraunhofer ISE Stromgestehungskosten 2018}}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Warning: Discounting over long time periods}
+
+  Over long time periods the discounting can have a very large effect....
+
+  \begin{columns}[T]
+\begin{column}{9cm}
+  \centering
+  \includegraphics[width=9.5cm]{discounting.pdf}
+\end{column}
+\begin{column}{5cm}
+  \begin{itemize}
+  \item Long-term benefits aren't seen, e.g. long production life of nuclear power plants or benefits of long-lived efficiency measures
+  \item Long-term costs are also suppressed, e.g. decommissioning, waste disposal, climate damages
+  \item This is a \alert{controversial topic!}
+  \end{itemize}
+\end{column}
+  \end{columns}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Programming example: photovoltaic plant}
+
+  \centering
+  \includegraphics[width=10.5cm]{PV_programming_example.png}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Programming example: nuclear plant}
+
+  \centering
+  \includegraphics[width=10.5cm]{nuclear_programming_example.png}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Summary}
+
+  \begin{itemize}
+  \item Future income or costs are worth less from today's point of view
+  \item To calculate the \alert{present value}, multiply the cash flow in year $t$ by the \alert{discount factor}  $\frac{1}{(1+r)^t}$
+  \item To calculate the \alert{net present value (NPV)} for an investment, sum the present values of all income and costs
+  \item If  $NPV > 0$, the investment is worthwhile compared to investing with interest rate $r$
+  \item For two different investments, a higher NPV should be preferred
+  \item \alert{Long-term} costs or benefits are \alert{suppressed} by discounting
+  \end{itemize}
+
+\end{frame}
+
+
+\section{Levelised Cost Of Electricity (LCOE)}
+
+
+
+
+\begin{frame}
+  \frametitle{Levelised Cost Of Energy (LCOE)}
+
+  You can also solve for the market value or feed-in tariff that's
+  necessary to cover all the costs of the investment, i.e. the point
+  where the present value of all income balances the present value of
+  all costs.  You solve for the price $\lambda$ such that
+  \begin{equation*}
+   0 = NPV = -I_0 + (\lambda Q - oQ - B) PVF(r,T)
+  \end{equation*}
+  (using $V = oQ$). We find:
+  \begin{equation*}
+    \lambda = \frac{1}{Q} \left( \frac{I_0}{PVF(r,T)} + B + oQ \right) = \frac{1}{Q} \left( \frac{I_0}{PVF(r,T)} + B  \right) + o
+  \end{equation*}
+
+  In our example we find a price of $\lambda =$ 89 \euro/MWh for $i=0.05$. % One could reduce the feed-in tariff from 100 \euro/MWh to this value!
+
+  This value corresponds to the average long-term costs of the unit, since we've divided the total yearly costs by the total production $Q$. It is called the
+the \alert{Levelised Cost Of Energy (LCOE)}.
+
+  It is also called the  \alert{Long-Run Marginal Cost (LMRC)}, since we've added to the short-run marginal cost $o$ an annualised contribution to the capital cost and the operating costs.
+
+  Check: The higher $I_0$ or $B$ are, the higher the LCOE. The higher $Q$ is, the lower the LCOE.
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Annuity}
+
+  The \alert{annuity} is the annualised investment cost $a = \frac{I_0}{PVF(r,T)}$ and
+  $a(r,T) = \frac{1}{PVF(r,T)}$ is the \alert{annuity factor}, which spreads the capital costs $I_0$ evenly over the operational years of the investment (like a mortgage for a house).
+
+  For a loan $I_0$ from the bank, the bank is compensated for the \alert{opportunity cost} of investing elsewhere at a rate of $r$ by an annual fixed sum $a$ so that the NPV for the bank is zero
+  \begin{equation*}
+    0 = NPV  = -I_0 + \sum_{t=0}^T \frac{a}{(1+r)^t} = -I_0 + PVF(r,T) \frac{I_0}{PVF(r,T)}
+  \end{equation*}
+
+  The formula for the annuity factor is derived from that for the PVF:
+  \begin{equation*}
+     a(r,T)  = \frac{1}{PVF(r,T)} = \frac{ r}{ 1 - (1+r)^{-T}}
+  \end{equation*}
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Examples of annuity factor}
+
+  \begin{columns}[T]
+\begin{column}{6.5cm}
+
+  AF = Annuity Factor, $a(r,T)$
+  \begin{table}[!t]
+	\centering
+	\begin{tabular}{@{}rrr@{}}
+\toprule
+Lifetime $T$  &  Discount Rate $r$ & AF $a(r,T)$ \\
+years & \% & per unit \\
+\midrule
+20 & 0 & 0.05 \\
+20 & 5 & 0.08 \\
+20 & 10 & 0.12 \\
+20 & 20 & 0.21 \\
+40 & 0 & 0.025 \\
+40 & 5 & 0.06 \\
+40 & 10 & 0.10 \\
+40 & 20 & 0.20 \\
+\bottomrule
+	\end{tabular}
+\end{table}
+\end{column}
+\begin{column}{7.5cm}
+  Things to notice:
+  \begin{itemize}
+  \item AF reduce to $1/T$ in limit $r \to 0$
+  \item AF climbs steeply with $r$
+  \item For long lifetimes, AF is similar to short lifetimes for high $r$ - in reality investors try to pay off investments faster than lifetime
+  \item In reality, an investor would provide some capital themselves, e.g. 10-20\% of the capital cost, and borrow the rest from the bank. The weighted average of the investor's desired internal rate of return and that of the bank loan is the \alert{weighted average cost of capital} (WACC).
+  \end{itemize}
+\end{column}
+  \end{columns}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Parameters for different generation technologies}
+
+  Here are some typical investment and operational parameters projected for 2020:
+  \vspace{-.5cm}
+  \begin{table}[!t]
+	\centering
+	\begin{tabular}{@{}lrrrrrrr@{}}
+\toprule
+Source   & Lifetime & Capital Cost &  Fix O\&{}M &  Var O\&{}M & $\eta$ & Fuel Cost & Marg. Cost \\
+& years & \euro kW$^{-1}$  & \euro kW$^{-1}$a$^{-1}$ &  \euro MWh$_{\textrm{el}}^{-1}$ & [\%] & \euro/MWh$_{\textrm{th}}$ & \euro/MWh$_{\textrm{el}}$ \\
+\midrule
+Hard Coal    & 40 & 1200 & 30 & 6 & 39 & 10 & 32 \\
+Gas OCGT     & 30 & 400  & 15 & 3 & 39 & 20 & 54 \\
+Gas CCGT     & 30 & 800  & 20 & 4 & 60 & 20 & 37 \\
+Nuclear      & 40-60 & 6000  & 0 & 6 & 33 & 3.3 & 16 \\
+Wind Onshore & 25 & 1240 & 35 & 0 & & 0 & 0 \\
+Solar PV     & 25 & 750  & 25 & 0 & & 0 & 0 \\
+\bottomrule
+	\end{tabular}
+\end{table}
+O\&{}M = Operation and Maintenance, Var. = Variable, Fix. = Fixed, $\eta$ = efficiency
+
+For a plant with capacity $G_s$ in MW and yearly production $Q$ in MWh$_{\textrm{el}}$, we have $I_0 = 1000 \cdot G_s \cdot (\textrm{Capital Cost})$, $B = 1000\cdot G_s \cdot (\textrm{Fix O\&{}M})$, $V = Q\cdot o$ where o is the marginal cost $o =  (\textrm{Marg. Cost}) = (\textrm{Var O\&{}M}) + (\textrm{Fuel Cost})/\eta$.
+
+\source{\href{https://www.diw.de/documents/publikationen/73/diw_01.c.424566.de/diw_datadoc_2013-068.pdf}{DIW Data Documentation, 2013}}
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{LCOE for dispatchable generators depends on capacity factor}
+
+  The LCOE had the form (Marg. Cost) + (Yearly Fixed Costs)/(Yearly Production). Therefore it decreases with increasing capacity factor:
+
+  \begin{columns}[T]
+    \begin{column}{8.5cm}
+      \vspace{.5cm}
+  \centering
+  \includegraphics[width=8cm]{lcoe_cf.pdf}
+\end{column}
+\begin{column}{6.5cm}
+  \begin{itemize}
+  \item LCOE $>$ marginal cost
+  \item LCOE starts high then reduces as fixed costs are spread over more hours
+  \item There are \alert{crossing points} where some types of generators become cheaper for a given capacity factor
+  \item NB: All generators need downtime for regular maintenance, so cf $< 0.9$
+  \item NB: Carbon pricing would alter this graphic by adding to the marginal cost
+  \end{itemize}
+\end{column}
+  \end{columns}
+
+\end{frame}
+
+
+\begin{frame}{LCOE for wind and solar depends on location: worldwide auction results 2017}
+
+  \centering
+  \includegraphics[width=11.5cm]{baringa-auctions.png}
+
+  \source{\href{https://www.baringa.com/getmedia/99d7aa0f-5333-47ef-b7a8-1ca3b3c10644/Baringa_Scottish-Renewables_UK-Pot-1-CfD-scenario_April-2017_Report_FINA/}{Baringa Partners LLP 2017}}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Levelised Cost of Electricity Since 2009 in US}
+
+  NB: Treat with care since LCOE doesn't take account of time or place of generation!
+
+  \centering
+  \includegraphics[width=14cm]{lazard-cropped.jpg}
+
+  \source{\href{https://www.lazard.com/perspective/levelized-cost-of-energy-2017/}{Lazard's LCOE Analysis V11}}
+
+\end{frame}
+
+
+
+\section{Duration Curves and Capacity Factors: Examples from Germany in 2015}
+
+\begin{frame}{Load curve}
+
+  Here's the electrical demand (load) in Germany in 2015:
+
+  \centering
+  \includegraphics[width=11cm]{load-2015}
+
+  \raggedright
+
+  To understand this curve better and its implications for the market,
+  it's useful to stack the hours of the year from left to right in
+  order of the amount of load.
+
+\end{frame}
+
+
+\begin{frame}{Load duration curve}
+
+  This re-ordering is called a \alert{duration curve}.\\
+  For the load it's the \alert{load duration curve}.
+
+  \centering
+  \includegraphics[width=13cm]{load-duration-2015}
+
+\end{frame}
+
+\begin{frame}{Nuclear curve}
+
+  Can do the same for nuclear output:
+
+  \centering
+  \includegraphics[width=10.5cm]{Nuclear-2015}
+
+\end{frame}
+
+\begin{frame}{Nuclear duration curve}
+
+  Duration curve is pretty flat, because it is economic to run nuclear almost all the time as  \alert{baseload plant}:
+
+  \centering
+  \includegraphics[width=13cm]{Nuclear-duration-2015}
+
+  \raggedright
+  The equivalent fraction of time that the plants run at full capacity over the year is the \alert{capacity factor} - nuclear has a high capacity factor, usually around 70-90\%.
+\end{frame}
+
+
+\begin{frame}{Gas curve}
+
+  Can do the same for gas output:
+
+  \centering
+  \includegraphics[width=13cm]{Gas-2015}
+
+\end{frame}
+
+\begin{frame}{Gas duration curve}
+
+  Duration curve is partially flat (for heat-driven CHP) and partially peaked (for \alert{peaking plant}):
+
+  \centering
+  \includegraphics[width=12cm]{Gas-duration-2015}
+
+  \raggedright
+  The capacity factor for gas is much lower - more like 20\%.
+\end{frame}
+
+\begin{frame}{Price curve}
+
+  Can do the same for price during the year:
+
+  \centering
+  \includegraphics[width=13cm]{price-2015}
+
+\end{frame}
+
+\begin{frame}{Price duration curve}
+
+  By ordering we get the \alert{price duration curve}:
+
+  \centering
+  \includegraphics[width=13cm]{price-duration-2015}
+
+\end{frame}
+
+
+
+\begin{frame}{Question}
+
+
+
+  Now we are in a position to consider the questions:
+
+  \begin{itemize}
+    \item What determines the distribution of investment in different generation technologies?
+    \item How is it connected to variable costs, capital costs and capacity factors?
+  \end{itemize}
+
+  We will find the price and load duration curves very useful.
+\end{frame}
+
+
+\section{Investment Optimisation: Generation}
+
+\begin{frame}[fragile]
+  \frametitle{Investment optimisation}
+
+ Now we also optimise \alert{investment} in the \alert{capacities} of generators,
+  storage and network lines for the \alert{whole system} not just a single plant operator, to maximise \alert{long-run efficiency}.
+
+  We will promote the capacities $G_{i,s}$, $G_{i,r,*}$, $E_{i,r}$ and
+  $F_{\ell}$ to optimisation variables.
+
+  For generation investment, we want to answer the following questions:
+  \begin{itemize}
+    \item What determines the distribution of investment in different generation technologies?
+    \item How is it connected to variable costs, capital costs and capacity factors?
+  \end{itemize}
+
+  We will find price and load duration curves very useful.
+\end{frame}
+
+
+\begin{frame}{Definition of long-run efficiency}
+
+  Up until now we have considered \alert{short-run} equilibria that
+  ensure \alert{short-run} efficiency (static), i.e. they make the best use of
+  presently available productive resources.
+
+  \alert{Long-run} efficiency (dynamic) requires in addition the optimal
+  investment in productive capacity.
+
+  Concretely: given a set of options, costs and constraints for different
+  generators (nuclear/gas/wind/solar) what is the optimal generation
+  portfolio for maximising long-run welfare?
+
+  From an indivdual generators' perspective: how best should I invest in extra capacity?
+
+  We will show again that with perfect competition and no barriers to
+  entry, the system-optimal situation can be reached by individuals
+  following their own profit.
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Baseload versus Peaking Plant}
+
+  \alert{Load} (= Electrical Demand) is low during night; in Northern Europe in the winter, the peak is in the evening.
+
+  To meet this load profile, cheap \alert{baseload} generation runs the whole time; more expensive \alert{peaking plant} covers the difference.
+
+  \centering
+  \includegraphics[width=9cm]{baseload-peaking}
+
+  \source{Tom Brown}
+
+\end{frame}
+
+
+
+
+\begin{frame}{Different types of generators}
+
+\ra{1.1}
+\begin{table}[!t]
+	\centering
+	\begin{tabular}{@{}llllll@{}}
+\toprule
+Fuel/Prime  & Marginal & Capital & Controllable & Predictable & CO2 \\
+mover & cost & cost & & days ahead & \\
+\midrule
+Oil & V. High & Low & Yes & Yes & Medium \\
+Gas OCGT & High & Low & Yes & Yes & Medium \\
+Gas CCGT & Medium & Medium & Yes & Yes & Medium \\
+Hard Coal & Medium & Lowish & Yes & Yes & High \\
+Brown Coal & Low & Medium & Yes & Yes & High \\
+Nuclear & V. Low & High & Partly & Yes & Zero \\
+Hydro dam & Zero & High & Yes & Yes & Zero \\
+Wind/Solar & Zero & High & Down & No & Zero \\
+\bottomrule
+	\end{tabular}
+\end{table}
+
+\end{frame}
+
+
+\begin{frame}{System-optimal generator capacities and dispatch}
+
+  Suppose we have generators labelled by $s$ at a single node with \alert{marginal costs} $o_s$ from each unit of
+  production $g_{s,t}$ and \alert{specific capital costs} $c_s$ from fixed costs
+  regardless of the rate of production (e.g. investment in building
+  capacity $G_s$).   For a variety of demand values $d_t$ that occur with probability $p_t$ ($\sum_t p_t = 1$)   we optimise the total \alert{average hourly system costs}
+  \begin{equation*}
+    \min_{\{g_{s,t}\},\{G_s\}}  \left[\sum_{s}c_s G_s +  \sum_{s,t} p_t o_{s} g_{s,t} \right]
+  \end{equation*}
+  such that (rescaling the KKT multipliers by $p_t$ to simplify later formulae)
+  \begin{align*}
+    \sum_s g_{s,t} & = d_t  \hspace{1cm}\leftrightarrow\hspace{1cm} p_t \l_t \\
+    - g_{s,t}  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} p_t \ubar{\m}_{s,t} \\
+    g_{s,t} - G_s  & \leq 0  \hspace{1cm}\leftrightarrow\hspace{1cm} p_t \bar{\m}_{s,t}
+  \end{align*}
+
+  We will also allow load-shedding with a `dummy' generator $s=S$,
+  $o_S = V$ (Value of Lost Load), $c_S=0$ (the capacity to shed load
+  is assumed not to cost anything).
+
+\end{frame}
+
+
+
+\begin{frame}{Beware units and scaling}
+
+  We've chosen the units here so that the total objective function has units \euro{}h$^{-1}$, the \alert{average hourly system costs}.
+
+  $\sum_{s,t} p_t o_{s} g_{s,t}$ is the expectation value of the hourly production costs. $g_{s,t}$ has units MW, $o_{s}$ has units \euro{}(MWh)$^{-1}$.
+
+  $c_sG_s$ is the investment cost averaged over each hour, i.e. the annuity divided by 8760, $\frac{a(r,T)I_0}{8760}$ (we can also add the fixed O\&{}M costs $B$ to it). $G_s$ has units MW, $c_s$ has units
+  \euro{}MW$^{-1}$h$^{-1}$.
+
+  We could have instead optimised \alert{average yearly system costs}, then $c_s G_s$ would simply be the annuity, and instead of weighting with $p_t$ such that $\sum_t p_t = 1$, we replace it with a weighting $w_t$ such that $\sum_t w_t = 8760$. In this case, the total objective would have units \euro{}a$^{-1}$.
+
+\end{frame}
+
+\begin{frame}{System-optimal generator capacities and dispatch}
+
+  Stationarity gives us for each $s$ and $t$:
+  \begin{align*}
+        0 = \frac{\d \cL}{\d g_{s,t}}  = p_t \left(o_s - \l_t^* - \bar{\m}^*_{s,t} + \ubar{\m}^*_{s,t} \right)
+  \end{align*}
+  and for each $s$:
+  \begin{align*}
+        0 = \frac{\d \cL}{\d G_{s}}  = c_s + \sum_t p_t \bar{\m}^*_{s,t}
+  \end{align*}
+  and from complementarity we get
+  \begin{align*}
+    \bar{\m}^*_{s,t}(g_{s,t}^* - G_s^*) & = 0 \\
+    \ubar{\m}^*_{s,t}g_{s,t}^* & = 0
+  \end{align*}
+  and dual feasibility (for minimisation) $ \bar{\m}^*_{s,t},  \ubar{\m}^*_{s,t} \leq 0$.
+\end{frame}
+
+
+
+\begin{frame}{System-optimal generator capacities and dispatch}
+
+  The solution for the dispatch $g_{s,t}^*$ is exactly the same as
+  without capacity optimisation. For each $t$, find the generator $m$
+  where the supply curve intersects with the demand $d_t$, i.e. the $m$
+  where   $\sum_{s=1}^{m-1} G_s < d_t < \sum_{s=1}^{m} G_s$.
+
+  For $s < m$ we have $g_{s,t}^* = G_s^*$, $\ubar{\m}^*_{s,t} = 0$,
+  $\bar{\m}^*_{s,t} = o_s - \l_t^* \leq 0$.
+
+  For $s = m$ we have $g_{m,t}^* = d_t - \sum_{s=1}^{m-1} G_s^*$ to cover
+  what's left of the demand. Since $0 < g_{m,t}^* < G_m$ we have
+  $\ubar{\m}^*_{m,t} = \bar{\m}^*_{m,t} = 0$ and therefore $\l_t^* = o_m$.
+
+  For $s > m$ we have $g_{s,t}^* = 0$,
+  $\ubar{\m}^*_{s,t} = \l_t^*-o_s \leq 0 $, $\bar{\m}^*_{s,t} = 0$.
+
+  What about the $G_s^*$?
+
+
+\end{frame}
+
+
+
+\begin{frame}{System-optimal generator capacities and dispatch}
+
+  The $G_s^*$ are determined implicitly based on the interactions between costs and prices.
+
+  From stationarity we had the relation
+    \begin{align*}
+      c_s  = - \sum_t p_t \bar{\m}^*_{s,t}
+    \end{align*}
+    The $\bar{\m}^*_{s,t}$ were only non-zero with $\l^*_{t} > o_s$ so we can re-write this as
+    \begin{align*}
+      c_s  = \sum_{t| \l^*_{t} > o_s} p_t (\l^*_{t} - o_s)
+    \end{align*}
+
+  `Increase capacity until marginal increase in profit equals the cost of extra capacity.'
+
+\end{frame}
+
+
+\begin{frame}{Multiple price duration}
+
+  The optimal mix of generation is where, for each generation type,
+  the area under the price–duration curve and above the variable cost
+  of that generation type is equal to the fixed cost of adding
+  capacity of that generation type.
+
+  \centering
+    \begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=8.5cm]{multiple-price-duration-clean}};
+\draw (0.6,1.8) node{$o_1$};
+\draw (0.6,2.6) node{$o_2$};
+\draw (0.6,3.4) node{$o_3$};
+  \end{tikzpicture}
+
+  \source{Biggar and Hesamzadeh, 2014}
+\end{frame}
+
+
+
+
+\begin{frame}{Multiple generators with inelastic demand}
+
+  Assume again we have $o_1 \leq o_2 \leq \cdots \leq o_S = V$ and $K_p = \sum_{s=1}^p G_s$
+  then:
+  \begin{equation*}
+    \l_t = \left\{ \begin{array}{ll}
+      V& \textrm{ for } d_t > K_{S-1} \\
+      o_s & \textrm{ if } K_{s-1} < d_t \leq K_s, \hspace{1cm} \textrm{ for } s = 1, \dots S-1
+    \end{array}\right.
+  \end{equation*}
+
+  Looking at the area under the price duration curve but above the
+  variable cost, we then find:
+  \begin{equation*}
+    c_s = (V-o_s)P(d>K_{S-1}) + \sum_{j=s+1}^{S-1} (o_j-o_s) P(K_{j-1} < d \leq K_j)
+  \end{equation*}
+
+
+\end{frame}
+
+
+\begin{frame}{Screening curve}
+
+  These equations can be rewritten recursively using the substitution
+  $\theta_s = P(d > K_s)$:
+  \begin{align*}
+    c_{S-1} + \theta_{S-1} o_{S-1} &= V\theta_{S-1} \\
+    c_s + \theta_s o_s &= c_{s+1} + \theta_s o_{s+1} \hspace{1cm} \forall s = 1, \dots S-2
+  \end{align*}
+  The first equation can be solved to find $\theta_{S-1}$, then the other equations can be solved recursively to find the remaining $\theta_s$. The $\theta_s$ correspond to the optimal \alert{capacity factors} of each type of generator, which correspond to the fraction  of time the generator runs at full power.
+
+
+\end{frame}
+
+
+\begin{frame}{Screening curve}
+
+  The costs as a function of the capacity factors can be drawn
+  together as a \alert{screening curve} (more expensive options are
+  \emph{screened} from the optimal inner polygon).
+
+  The intersection points determine the optimal capacity factors and hence, using the load duration curve, the optimal capacities of each generator type.
+
+  \centering
+  \begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=10.5cm]{screening-curve-clean}};
+\draw (0.2,1) node{$c_2$};
+\draw (0.2,3) node{$c_1$};
+  \end{tikzpicture}
+
+  \source{Biggar and Hesamzadeh, 2014}
+\end{frame}
+
+
+
+\begin{frame}{Screening curve versus Load duration}
+
+
+  \centering
+  \begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=6.5cm]{screening-load-duration-clean}};
+\draw (1.9,4.2) node{$c_2$};
+\draw (1.9,5.6) node{$c_1$};
+  \end{tikzpicture}
+
+  \source{Biggar and Hesamzadeh, 2014}
+\end{frame}
+
+
+\begin{frame}{Example: 2 generation technologies and load shedding}
+
+
+Suppose that electrical demand is inelastic with a demand-duration curve given by $d(x)=1000-1000x$ for $0\leq x \leq 1$. Suppose that there are two different types of generation with variable costs of 2 and 12~\euro/MWh respectively, together with load-shedding at a cost of 1012~\euro/MWh. The fixed costs of the two generation types are 15 and 10~\euro/MWh respectively. See the below table for a summary of the costs.
+
+
+
+  \ra{1.1}
+  \begin{table}[!h]
+    \begin{tabular}{lrr}
+      \toprule
+      Generator & $o_s$ [\euro/MWh] &  $c_s$ [\euro/MW/h] \\
+      \midrule
+      A & 2 & 15 \\
+      B & 12 & 10 \\
+      LS & 1012 & 0 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+
+\end{frame}
+
+\begin{frame}{Example: 2 generation technologies and load shedding}
+\begin{enumerate}
+  \item What is the interpretation of the demand-duration curve?
+  \item Below which capacity factor $x_1$ is it cheaper to run Generator B rather than to run Generator A?
+  \item Below which capacity factor $x_0$ is it cheaper to shed load than to run Generator B?
+  \item Plot the costs as a function of
+    $x$ and mark these intersection points on a screening curve.
+  \item Find the optimal capacities of Generators A and B in this market.
+\end{enumerate}
+\end{frame}
+
+
+
+\begin{frame}{Example: 2 generation technologies and load shedding}
+
+  For the solution see the flipchart photos at \url{https://nworbmot.org/courses/esm-2018/board/}.
+
+  To find $x_1$, solve for the intersection of Generator A's cost curve with Generator B's cost curve as a function of capacity factor:
+  \begin{equation*}
+    c_A + x_1 o_A = c_B + x_1 o_B
+  \end{equation*}
+  This gives $x_1 = 0.5$. At this point the demand is $d(0.5) = 500$~MW therefore
+  \begin{equation*}
+    G_A = 500\textrm{ MW}
+  \end{equation*}
+
+  To find $x_0$, solver for where Generator B crosses the load-shedding line:
+  \begin{equation*}
+    c_B + x_0 o_B = c_{LS} + x_0 o_{LS}
+  \end{equation*}
+  This gives $x_0 = 0.01$. At this point the demand is $d(0.5) = 990$~MW so:
+  \begin{equation*}
+    G_A + G_B = 990\textrm{ MW}
+  \end{equation*}
+  i.e. $G_B = 490$ MW and $G_{LS} = 10$ MW.
+
+\end{frame}
+
+\section{Investment Optimisation: Transmission}
+
+
+\begin{frame}[fragile]
+  \frametitle{Investment optimisation: transmission}
+
+  As before, our approach to the question of \alert{``What is the
+    optimal amount of transmission''} is determined by the most
+  efficient long-term solution, i.e. the infrastructure investement
+  that maximising social welfare over the long-run.
+
+
+   Promote $F_\ell$ to an optimisation variable with capital cost
+   $c_\ell$.
+
+
+  In brief: Exactly as with generation dispatch and investment, we
+  continue to invest in transmission until the marginal benefit of
+  extra transmission (i.e. extra congestion rent for extra capacity)
+  is equal to the marginal cost of extra transmission. This determines
+  the optimal investment level.
+
+  For the generator case we had $c_s = - \sum_t p_t \bar{\mu}_{s,t}^*$ where $\bar{\mu}_{s,t}^*$ were the shadow prices of the constraints  $g_{s,t} \leq G_s$.
+
+  For the transmission line we have $f_{\ell} \leq F_{\ell}$ ($\bar{\mu}_{\ell,t}^*$) and $-f_{\ell} \leq F_{\ell}$ ($\ubar{\mu}_{\ell,t}^*$) so we get
+  \begin{equation*}
+    c_\ell = - \sum_t p_t \left(\bar{\mu}_{\ell,t}^* + \ubar{\mu}_{\ell,t}^* \right)
+  \end{equation*}
+
+\end{frame}
+
+\end{document}

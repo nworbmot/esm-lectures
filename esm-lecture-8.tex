@@ -1,0 +1,1181 @@
+% NB: use pdflatex to compile NOT pdftex.  Also make sure youngtab is
+% there...
+
+% converting eps graphics to pdf with ps2pdf generates way too much
+% whitespace in the resulting pdf, so crop with pdfcrop
+% cf. http://www.cora.nwra.com/~stockwel/rgspages/pdftips/pdftips.shtml
+
+
+
+
+\documentclass[10pt,dvipsnames]{beamer}
+
+\usetheme[color/block=transparent]{metropolis}
+
+\usepackage[absolute,overlay]{textpos}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+
+\usepackage{tikz}
+
+
+\usepackage[scale=2]{ccicons}
+
+\usepackage[official]{eurosym}
+
+
+%use this to add space between rows
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+
+
+\newcommand{\R}{\mathbb{R}}
+
+
+
+\setbeamerfont{alerted text}{series=\bfseries}
+\setbeamercolor{alerted text}{fg=Mahogany}
+\setbeamercolor{background canvas}{bg=white}
+
+
+
+\def\l{\lambda}
+\def\m{\mu}
+\def\d{\partial}
+\def\cL{\mathcal{L}}
+\def\co2{CO${}_2$}
+\def\bra#1{\left\langle #1\right|}
+\def\ket#1{\left| #1\right\rangle}
+\newcommand{\braket}[2]{\langle #1 | #2 \rangle}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\def\corr#1{\Big\langle #1 \Big\rangle}
+\def\corrs#1{\langle #1 \rangle}
+
+
+\def\mw{\text{ MW}}
+\def\mwh{\text{ MWh}}
+\def\emwh{\text{ \euro/MWh}}
+
+\newcommand{\ubar}[1]{\text{\b{$#1$}}}
+
+
+% for sources http://tex.stackexchange.com/questions/48473/best-way-to-give-sources-of-images-used-in-a-beamer-presentation
+
+\setbeamercolor{framesource}{fg=gray}
+\setbeamerfont{framesource}{size=\tiny}
+
+
+\newcommand{\source}[1]{\begin{textblock*}{4cm}(8.0cm,8.0cm)
+    \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
+        \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
+    \end{beamercolorbox}
+\end{textblock*}}
+
+\usepackage{hyperref}
+
+\usepackage{tikz}
+
+
+\usepackage[europeanresistors,americaninductors]{circuitikz}
+
+
+%\usepackage[pdftex]{graphicx}
+
+
+\graphicspath{{graphics/}}
+
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png,.jpg,.gif}
+
+
+
+\def\goat#1{{\scriptsize\color{green}{[#1]}}}
+
+
+
+\let\olditem\item
+\renewcommand{\item}{%
+\olditem\vspace{5pt}}
+
+
+\title{Energy System Modelling\\ Summer Semester 2019, Lecture 7}
+%\subtitle{---}
+\author{
+  {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
+  \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
+}
+
+\date{\vspace{.3cm}13th June 2019}
+
+
+\titlegraphic{%
+  \vspace{6cm}
+  \hspace{6.7cm}
+    \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{frame}
+
+  \frametitle{Table of Contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+
+\section{Optimisation Revision}
+
+\begin{frame}
+  \frametitle{Optimisation problem}
+
+
+We have an \alert{objective function} $f: \R^k \to \R$
+\begin{equation*}
+  \max_{x} f(x)
+\end{equation*}
+[$x = (x_1, \dots x_k)$] subject to some \alert{constraints} within $\R^k$:
+\begin{align*}
+  g_i(x) & = c_i \hspace{1cm}\leftrightarrow\hspace{1cm} \l_i \hspace{1cm} i = 1,\dots n \\
+  h_j(x) & \leq d_j \hspace{1cm}\leftrightarrow\hspace{1cm} \m_j \hspace{1cm} j = 1,\dots m
+\end{align*}
+
+$\l_i$ and $\m_j$ are the \alert{KKT multipliers} (basically Lagrange multipliers) we introduce for
+each constraint equation; it measures the change in the objective value of the optimal solution obtained by relaxing the constraint (shadow price).
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{KKT conditions}
+
+The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an optimal solution $x^*,\m^*,\l^*$ always satisfies (up to some regularity conditions):
+\begin{enumerate}
+\item \alert{Stationarity}: For $l = 1,\dots k$
+  \begin{equation*}
+  \frac{\d \cL}{\d x_l} =   \frac{\d f}{\d x_l} - \sum_i \l_i^* \frac{\d g_i}{\d x_l}  - \sum_j \m_j^* \frac{\d h_j}{\d x_l} = 0
+  \end{equation*}
+    \item \alert{Primal feasibility}:
+      \begin{align*}
+        g_i(x^*) & = c_i \\
+        h_j(x^*) &\leq d_j
+      \end{align*}
+    \item \alert{Dual feasibility}: $\m_j^* \geq 0$
+    \item \alert{Complementary slackness}: $\m_j^* (h_j(x^*) - d_j) = 0$
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{min/max and signs}
+
+  If the problem is a \alert{maximisation} problem (like above), then
+  \alert{$\m_j^* \geq 0$} since $\m_j = \frac{\d \cL}{\d d_j}$ and if we
+  increase $d_j$ in the constraint $h_j(x) \leq d_j$, then the
+  feasible space can only get bigger. Since if $X \subseteq X'$
+  \begin{equation*}
+ \max_{x\in X} f(x ) \leq     \max_{x\in X'} f(x)
+  \end{equation*}
+  then the objective value at the optimum point can only get bigger, and thus $\m_j^* \geq 0$. (If $d_j \to \infty$
+  then the constraint is no longer binding, if $d_j \to -\infty$ then
+  the feasible space vanishes.)
+
+  If however the problem is a \alert{minimisation} problem (e.g. cost minimisation) then we can use
+  \begin{equation*}
+      \min_{x\in X} f(x) = - \max_{x\in X} \left[ -f(x)\right]
+  \end{equation*}
+  We can keep our definition of the Lagrangian and almost all the KKT
+  conditions, but we have a change of sign \alert{$\m_j^* \leq 0$}, since
+  \begin{equation*}
+   \min_{x\in X} f(x ) \geq     \min_{x\in X'} f(x)
+  \end{equation*}
+  The $\l_i^*$ also change sign.
+
+\end{frame}
+
+
+
+
+\section{Welfare maximisation revision}
+
+
+\begin{frame}{KKT and Welfare Maximisation 1/2}
+
+  Apply KKT now to maximisation of total economic welfare:
+  \begin{align*}
+    \max_{\{d_b\}, \{g_s\}} f(\{d_b\}, \{g_s\}) = \left[ \sum_b U_b (d_b)  -  \sum_s C_s (g_s) \right]
+  \end{align*}
+  subject to the balance constraint:
+  \begin{align*}
+    g(\{d_b\}, \{g_s\}) = \sum_b d_b -  \sum_s g_s  = 0 \hspace{1cm} \leftrightarrow \hspace{1cm} \l
+  \end{align*}
+  and any other constraints (e.g. limits on generator capacity, etc.).
+
+  Our optimisation variables are $\{x\} = \{d_b\} \cup \{g_s\}$.
+
+  We get from stationarity:
+  \begin{align*}
+    0 & =   \frac{\d f}{\d d_b} - \sum_b \l^* \frac{\d g}{\d d_b} = U_b'(d_b) - \l^* = 0 \\
+    0 & =   \frac{\d f}{\d g_s} - \sum_s \l^* \frac{\d g}{\d g_s} = -C_s'(g_s) + \l^* = 0
+  \end{align*}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{KKT and Welfare Maximisation 2/2}
+
+  So at the optimal point of maximal total economic welfare we get the
+  same result as if everyone maximises their own welfare separately:
+  \begin{align*}
+ U_b'(d_b) =  \l^*  \\
+ C_s'(g_s) = \l^*
+  \end{align*}
+
+  This is the CENTRAL result of microeconomics.
+
+  If we have further inequality constraints that are binding, then
+  these equations will receive additions with $\m_i^* > 0$.
+
+
+\end{frame}
+
+
+
+\section{Optimise Single Node with Inelastic Demand, Linear Generation Costs}
+
+
+
+
+\begin{frame}{Supply-demand linear example: generator bids}
+
+  Example from Kirschen and Strbac pages 56-58.
+
+  The following generators bid into the market for the hour between 0900 and 1000 on 20th April 2016:
+  \ra{1.1}
+  \begin{table}[!t]
+    \begin{tabular}{lrr}
+      \toprule
+      Company & Quantity [MW] &  Price [\$/MWh]\\
+      \midrule
+      Red & 200 & 12 \\
+      Red & 50 & 15 \\
+      Red & 150 & 20 \\
+      Green & 150 & 16 \\
+      Green & 50 & 17 \\
+      Blue & 100 & 13 \\
+      Blue & 50 & 18 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+
+\end{frame}
+
+
+
+\begin{frame}{Supply-demand linear example: Consumer offers}
+
+  The following consumers make offers for the same period:
+  \ra{1.1}
+  \begin{table}[!t]
+    \begin{tabular}{lrr}
+      \toprule
+      Company & Quantity [MW] &  Price [\$/MWh]\\
+      \midrule
+      Yellow & 50 & 13 \\
+      Yellow & 100 & 23 \\
+      Purple & 50 & 11 \\
+      Purple & 150 & 22 \\
+      Orange & 50 & 10 \\
+      Orange & 200 & 25 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}{Supply-demand example: Curve}
+
+  If the bids and offers are stacked up in order, the supply and
+  demand curves meet with a demand of 450~MW at a system marginal
+  price of $\l = 16$~\$/MWh.
+
+  \centering
+
+
+  \includegraphics[width=10cm]{supply-bid-example}
+
+
+  \source{Kirschen \& Strbac}
+
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{Supply-demand example: Revenue and Expenses}
+
+  Dispatch and revenue/expense of each company:
+  \ra{1.1}
+  \begin{table}[!t]
+    \begin{tabular}{l|rr|rr}
+      \toprule
+      Company & Production& Consumption & Revenue& Expense\\
+       & [MWh] & [MWh] & [\$] & [\$] \\
+      \midrule
+      Red & 250 &  & 4000 & \\
+      Blue & 100 & & 1600 & \\
+      Green & 100 & & 1600 & \\
+      Orange && 200 && 3200 \\
+      Yellow && 100 && 1600 \\
+      Purple && 150 && 2400 \\
+      \midrule
+      Total & 450 & 450 & 7200 & 7200 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Simplified world: linear generation costs, inelastic demand}
+
+  We will now turn to an even simpler world: all the generator cost
+  functions are linear
+  \begin{align*}
+    C_s(g_s) = o_s g_s
+  \end{align*}
+  and each generator has limited output $0 \leq g_s \leq G_s$.
+
+
+  We also fix the demand to a value $D$ so that it does not respond to price changes (i.e. the demand is \alert{inelastic}) up to a very high marginal utility $V >> o_s\,\, \forall s$, i.e.
+  \begin{align*}
+    U(d) = Vd
+  \end{align*}
+  for $d\leq D$.
+
+  $V$ is sometimes called the \alert{Value Of Lost Load (VOLL)}.
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Simplify representation of consumers and generators}
+
+  In this case we get for our welfare maximisation:
+  \begin{align*}
+    \max_{d, \{g_s\} }\left[ Vd  -  \sum_s o_s g_s \right]
+  \end{align*}
+  subject to:
+  \begin{align*}
+    d -  \sum_s g_s  & = 0 \hspace{1cm} \leftrightarrow \hspace{1cm} \l \\
+    d & \leq D  \hspace{1cm} \leftrightarrow \hspace{1cm} \m \\
+        g_s  & \leq  G_s  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_s \\
+    - g_s  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_s
+  \end{align*}
+
+\end{frame}
+
+
+
+\begin{frame}{Simplest example: one generator type, inelastic demand}
+
+  Suppose all generators have the same marginal cost $o$ and we
+  represent their total dispatch by $g$ and total capacity by $G$
+  \begin{align*}
+    \max_{d, g }\left[ Vd  -  og\right]
+  \end{align*}
+  such that:
+  \begin{align*}
+    d - g & = 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \l \\
+    d & \leq D  \hspace{1cm} \leftrightarrow \hspace{1cm} \m \\
+    g  & \leq  G  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m} \\
+    - g  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}
+  \end{align*}
+
+\end{frame}
+
+
+\begin{frame}{Simplest example: one generator type, inelastic demand}
+
+  If $D < G$ then since $V >> o$, it will be always profitable for the
+  generators to dispatch to satisfy the load, i.e.
+  \begin{equation*}
+    g^* = d^* = D
+  \end{equation*}
+  If the demand is non-zero then since $g^* > 0$ by complementarity we
+  have $\ubar{\m}^* = 0$. Since $D < G$ then $g^* < G$ and
+  by complementarity we have $\bar{\m}^* = 0$. To compute $\l^*$ we use stationarity:
+  \begin{align*}
+    0 & = \frac{\d \cL}{\d g } =   \frac{\d f}{\d g} - \sum_i \l_i^* \frac{\d g_i}{\d g}  - \sum_j \m_j^* \frac{\d h_j}{\d g} = - o + \l^* - \bar{\m}^* + \ubar{\m}^*
+  \end{align*}
+  Thus $\l^* = o$, which is the cost per unit of supplying extra demand. The \alert{generator sets the price}.
+
+  For the load $\m^*$ can be non-zero because $d^*=D$:
+    \begin{align*}
+      0 & = \frac{\d \cL}{\d d} =   \frac{\d f}{\d d} - \sum_i \l_i^* \frac{\d g_i}{\d d}  - \sum_j \m_j^* \frac{\d h_j}{\d d} = V - \l^* - \m^*
+    \end{align*}
+    $\m^* = V - \l^*$ is the marginal benefit of each increase in demand.
+\end{frame}
+
+
+\begin{frame}{Simplest example: one generator type, inelastic demand}
+
+  If $D > G$ then the generator will dispatch up to its maximum capacity
+  \begin{equation*}
+    g^* = d^* = G
+  \end{equation*}
+  For its lower limit we have $\ubar{\m}^* = 0$. From stationarity:
+  \begin{align*}
+    0 & = \frac{\d \cL}{\d g } =   \frac{\d f}{\d g} - \sum_i \l_i^* \frac{\d g_i}{\d g}  - \sum_j \m_j^* \frac{\d h_j}{\d g} = - o + \l^* - \bar{\m}^* + \ubar{\m}^*
+  \end{align*}
+  Thus $\l^* = o + \bar{\m}^*$. To find $\l^*$ we have to look at the demand:
+    \begin{align*}
+      0 & = \frac{\d \cL}{\d d} =   \frac{\d f}{\d d} - \sum_i \l_i^* \frac{\d g_i}{\d d}  - \sum_j \m_j^* \frac{\d h_j}{\d d} = V - \l^* - \m^*
+    \end{align*}
+  Since $d^* < D$, $\m^* = 0$, $\l^* = V$ and thus $\bar{\m}^* = V-o$, the marginal benefit of extending the generator The \alert{demand sets the price}.
+
+\end{frame}
+
+
+
+\begin{frame}{Next simplest example: several generators, fixed demand}
+
+  Suppose we have several generators with dispatch $g_s$ and strictly ordered
+  operating costs $o_s$ such that $o_s < o_{s+1}$. We now maximise
+  \begin{align*}
+    \max_{\{d, g_s\}}  \left[ Vd  -  \sum_s o_s g_s \right]
+  \end{align*}
+  such that
+  \begin{align*}
+    d -  \sum_s g_s  & = 0 \hspace{1cm} \leftrightarrow \hspace{1cm} \l \\
+    d & \leq D  \hspace{1cm} \leftrightarrow \hspace{1cm} \m \\
+        g_s  & \leq  G_s  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_s \\
+    - g_s  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_s
+  \end{align*}
+
+
+\end{frame}
+
+\begin{frame}{Next simplest example: several generators, fixed demand}
+
+  Stationarity gives us for each $s$:
+  \begin{align*}
+    0 = -o_s + \l^* - \bar{\m}^*_s + \ubar{\m}^*_s
+  \end{align*}
+  and from complementarity we get
+  \begin{align*}
+    \bar{\m}_s(g_s^* - G_s) & = 0 \\
+    \ubar{\m}_sg_s^* & = 0
+  \end{align*}
+
+  We can see by inspection that we will dispatch the cheapest
+  generation first. Suppose that we have enough generation for the
+  demand, i.e. $D < \sum_s G_s$. [If $D > \sum_s G_s$ we have the same
+    situation as for a single generator, i.e. $\l^* = V$, so that the demand sets the price.]
+
+  Find the generator $m$ where the supply curve intersects with the demand $D$, i.e. the $m$ where $\sum_{s=1}^{m-1} G_s < D < \sum_{s=1}^{m}
+  G_s$.
+
+  For $s \leq m-1$ we have $g_s^* = G_s$, $\ubar{\m}^*_s = 0$,
+  $\bar{\m}^*_s =  \l^* - o_s$.
+
+  For $s = m$ we have $g_m^* = D - \sum_{s=1}^{m-1} G_s$ to cover
+  what's left of the demand. Since $0 < g_m^* < G_m$ we have
+  $\ubar{\m}^*_m = \bar{\m}^*_m = 0$ and thus $\l^* = o_m$.
+
+
+\end{frame}
+
+
+
+\begin{frame}{Next simplest example: several generators, fixed demand}
+
+  Specific example of two generators with $G_1 = 300$~MW, $G_2 =
+  400$~MW, $o_1 = 10$~\euro/MWh, $o_2 = 30$~\euro/MWh and $D = 500$~MW.
+
+  In this case $m=2$, $g_1^* = G_1 = 300$~MW, $g_2^* = d - G_1 = 200$~MW,
+  $\l^* = o_2$, $\ubar{\m}_i = 0$, $\bar{\m}_2 = 0$ and $\bar{\m}_1 =
+  o_2 - o_1$.
+
+  \centering
+  \includegraphics[width=8cm]{supply-demand-high.pdf}
+
+
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{From welfare maximisation to cost minimisation}
+
+  For the case $D > \sum_s G_s$ we can instead imagine that the demand
+  is rigidly fixed to $D$ and that instead we have a dummy generator
+  with dispatch $g_d = D-\sum_s G_s$ that represents \alert{load shedding}.
+
+  In this case we can substitute $d = D - g_d$ to get
+  \begin{align*}
+    \max_{\{g_d, g_s\}}  \left[ VD - Vg_d  -  \sum_s o_s g_s \right]
+  \end{align*}
+  such that
+  \begin{align*}
+    D - g_d -  \sum_s g_s  & = 0 \hspace{1cm} \leftrightarrow \hspace{1cm} \l \\
+        g_s  & \leq  G_s  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_s \\
+    - g_s  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_s
+  \end{align*}
+
+  Since $VD$ is a constant, we can use
+      $\max_{x\in X} \left[ -f(x)\right] = - \min_{x\in X} f(x)$
+  to recast this as a minimisation of the total generator costs,
+  absorbing $g_d$ into the set $\{g_s\}$. The constant $VD$ is dropped.
+
+\end{frame}
+
+
+\begin{frame}{From welfare maximisation to cost minimisation}
+
+ We have  turned the maximisation of total welfare into \alert{cost minimisation}:
+  \begin{align*}
+    \min_{\{g_s\}}  \sum_s o_s g_s
+  \end{align*}
+  such that:
+  \begin{align*}
+    \sum_s g_s - d & = 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \l \\
+        g_s  & \leq  G_s  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_s \\
+    - g_s  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_s
+  \end{align*}
+
+  The most expensive generator has $o_s = V$ and $G_s = \infty$ and
+  represents \alert{load shedding}.
+
+  We've replaced the symbol $D$  with $d$ for simplicity going forward.
+
+
+
+  NB: Because the signs of the KKT multipliers change when we go from
+  maximisation to minimisation, we've also changed the sign of the
+  balance constraint to keep the marginal price $\l$ positive.
+\end{frame}
+
+
+\section{Optimise nodes in a network}
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Welfare optimisation for several nodes in a network}
+
+  Now let's suppose we have several nodes $i$ with different loads and
+  different generators, with flows $f_\ell$ in the network lines.
+
+  Now we have additional optimisation variables $f_\ell$ AND
+  additional constraints for welfare maximisation:
+  \begin{align*}
+    \max_{\{d_{i,b}\},\{g_{i,s}\},\{f_\ell\}}\left[\sum_{i,b} U_{i,b}(d_{i,b}) - \sum_{i,s} C_{i,s} (g_{i,s}) \right]
+  \end{align*}
+  such that demand is met either by generation or by the network at each node $i$
+  \begin{align*}
+    \sum_{b} d_{i,b} - \sum_{s} g_{i,s} +  \sum_\ell K_{i\ell}f_\ell  = 0 \hspace{1cm}\leftrightarrow\hspace{1cm} \l_i
+  \end{align*}
+  and generator constraints are satisified
+    \begin{align*}
+        g_{i,s}  & \leq  G_{i,s}  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_{i,s} \\
+    - g_{i,s}  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_{i,s}
+  \end{align*}
+
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Cost minimisation at several nodes in a network}
+
+  For cost minimisation we have a fixed load $d_i$ at each node, and
+  absorb load-shedding above a value $V$ into a dummy generator.
+
+  Now we minimise over $g_{i,s}$ and $f_\ell$:
+  \begin{align*}
+    \min_{\{g_{i,s}\},\{f_\ell\}}  \sum_{i,s} o_{i,s} g_{i,s}
+  \end{align*}
+  such that demand is met either by generation or by the network at each node $i$
+  \begin{align*}
+    \sum_{s} g_{i,s} - d_i = \sum_\ell K_{i\ell}f_\ell  \hspace{1cm}\leftrightarrow\hspace{1cm} \l_i
+  \end{align*}
+  and generator constraints are satisified
+    \begin{align*}
+        g_{i,s}  & \leq  G_{i,s}  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_{i,s} \\
+    - g_{i,s}  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_{i,s}
+  \end{align*}
+
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Several generators at different nodes in a network}
+
+  In addition we have constraints on the line flows.
+
+  First, they have to satisfy Kirchoff's Voltage Law around each closed cycle $c$:
+  \begin{align*}
+    \sum_{c} C_{\ell c} x_\ell f_\ell = 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \l_c
+  \end{align*}
+  and in addition the flows cannot overload the thermal limits, $|f_\ell| \leq F_\ell$
+  \begin{align*}
+    f_\ell \leq F_\ell  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_\ell \\
+        - f_\ell \leq F_\ell  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_\ell
+  \end{align*}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Simplest example: two nodes connected by a single line}
+
+  At node 1 we have demand of $d_1 = 100$~MW and a generator with
+  costs $o_1 = 10$~\euro/MWh and a capacity of $G_1 = 300$~MW.
+
+  At node 2 we have demand of $d_2 = 100$~MW and a generator with
+  costs $o_1 = 20$~\euro/MWh and a capacity of $G_2 = 300$~MW.
+
+  What happens if the capacity of the line connecting them is $F = 0$?
+
+  What about $F = 50$~MW?
+
+  What about $F = \infty$?
+
+  See example on board.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Simplest example: two nodes connected by a single line}
+
+\centering
+\begin{circuitikz}
+  \draw [ultra thick] (1,13) node[anchor=south]{1} -- (4,13);
+  \draw(2.5,13) |- +(0,0.5) to [short,i^=$f$] +(5,0.5) |- +(0,-0.5);
+  \draw [ultra thick] (6,13) node[anchor=south]{2} -- (9,13);
+  \draw (1.5,13) -- +(0,-0.5) node[sground]{};
+  \draw (3,12) node[vsourcesinshape, rotate=270](V2){}
+  (V2.left) -- +(0,0.6);
+  \draw (1.5,11) node{$d_1$};
+  \draw (3,11) node{$g_{1}$};
+  \draw (2,10.3) node{$g_1 - d_1 = f \quad \leftrightarrow \quad \l_1$};
+  \draw (6.5,13) -- +(0,-0.5) node[sground]{};
+  \draw (8,12) node[vsourcesinshape, rotate=270](V2){}
+  (V2.left) -- +(0,0.6);
+  \draw (6.5,11) node{$d_2$};
+  \draw (8,11) node{$g_{2}$};
+  \draw (8,10.3) node{$g_2 - d_1 =  -f   \quad \leftrightarrow \quad \l_2$};
+
+\end{circuitikz}
+Objective function is   $\min_{g_1,g_2,f}  \left[o_1 g_1 + o_2 g_2 \right]$ subject to:
+\begin{align*}
+  g_1 \leq G_1  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_1 \\
+    - g_1 \leq 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_1  \\
+  g_2 \leq G_2  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_2  \\
+  - g_2 \leq 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_2  \\
+    f \leq F  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}  \\
+    - f \leq F  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}
+\end{align*}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Two nodes: Case $F = 0$ }
+
+  For the case $F = 0$ the nodes are like two separated islands, $f^* = 0$.
+
+  The generator on each island provides the demand separately, so:
+  \begin{equation*}
+    g_1^* = d_1  \hspace{2cm} \textrm{and} \hspace{2cm} g_2^* = d_2
+  \end{equation*}
+
+  Neither generator has any binding constraints, since in each case the demand (100~MW) is less than the generator capacity (300~MW), so
+  \begin{equation*}
+    \bar{\m}_1^* = \ubar{\m}_1^* =     \bar{\m}_2^* = \ubar{\m}_2^* = 0
+  \end{equation*}
+
+  From stationarity for each site we get
+  \begin{equation*}
+    0 = \frac{\d \cL}{\d g_{i}} = o_i - \l_i^*  -  \bar{\m}_i^* + \ubar{\m}_i^*
+  \end{equation*}
+
+  Thus we have at each site $\l_i^* = o_i$.
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Two nodes: Case $F =$ 50~MW }
+
+  For the case $F = $50~MW the cheaper node 1 will export to the more
+  expensive node 2 as much as the restricted capacity $F$ allows:
+  \begin{equation*}
+    f^* = F = 50\textrm{ MW}
+  \end{equation*}
+  Generator 1 covers 50~MW of the demand from node 2:
+  \begin{equation*}
+    g_1^* = d_1+f^*  \hspace{2cm} \textrm{and} \hspace{2cm} g_2^* = d_2 - f^*
+  \end{equation*}
+  Neither generator has any binding constraints, so
+  \begin{equation*}
+    \bar{\m}_1^* = \ubar{\m}_1^* =     \bar{\m}_2^* = \ubar{\m}_2^* = 0
+  \end{equation*}
+  and thus we have again different prices at each $\l_i = o_i$. For the flow:
+  \begin{equation*}
+    0 = \frac{\d \cL}{\d f} = 0 +  \l_1^* - \l_2^*  -  \bar{\m}^* + \ubar{\m}^*
+  \end{equation*}
+  Only the upper limit is binding, so we get $\ubar{\m}^* = 0$ and
+  \begin{equation*}
+    \bar{\m}^* = \l_1^* - \l_2^* = -10 \textrm{EUR/MWh}
+  \end{equation*}
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Two nodes: Case $F = \infty$ }
+
+  For the case $F = \infty$ we have unrestricted capacity, so it is
+  like merging the two nodes to one node. Now all the demand is
+  covered by the cheapest node:
+  \begin{equation*}
+    f^* = d_2 = 100\textrm{ MW}
+  \end{equation*}
+  Generator 1 covers all the demand:
+  \begin{equation*}
+    g_1^* = d_1+d_2  \hspace{2cm} \textrm{and} \hspace{2cm} g_2^* = 0
+  \end{equation*}
+  Only generator 2 has a non-zero KKT multiplier, so at node 1 we have
+  $\l_1^* =o_1$ and at node 2 we have:
+  \begin{equation*}
+   \ubar{\m}_2^* = \l_2^* - o_2
+  \end{equation*}
+  From KKT for the flow $f$ we have no constraints so
+  \begin{equation*}
+    0 = \frac{\d \cL}{\d f} = 0 +  \l_1^* - \l_2^*  -  \bar{\m}^* + \ubar{\m}^*
+  \end{equation*}
+  i.e. $\l_1^* = \l_2^*$. We have price equalisation, as if it were a single node.
+
+\end{frame}
+
+
+\begin{frame}{Congestion rent}
+
+Due to the congestion of the transmission line, the marginal cost of producing electricity can be different at node 1 and node 2. The competitive price at node 2 is higher than at node 1 -- this corresponds to \alert{locational marginal pricing}, or \alert{nodal pricing}.
+
+Since consumers pay and generators get paid the price in their local market, in case of congestion there is a difference between the total payment of consumers and the total revenue of producers -- this is the \alert{merchandising surplus} or \alert{congestion rent}, collected by the market operator. For each line it is given by the price difference in both regions times the amount of power flow between them:
+\begin{align*}
+\text{Congestion rent =}\:\Delta \lambda\times f
+\end{align*}
+
+
+\end{frame}
+
+
+\begin{frame}{Congestion rent: Two node example}
+
+  Returning to our two node example:
+  \ra{1.1}
+  \begin{table}[!t]
+    \begin{tabular}{rrrrrr}
+      \toprule
+      Case & Demand pays & Generator gets & $\l_2^* - \l_1^*$ & flow $f$ & Cong. rent \\
+       & [\euro/h] & [\euro/h] & [\euro/MWh] & [MW] & [\euro/h] \\
+      \midrule
+      $F = 0$ & 3000 & 3000 & 0 & 0 & 0 \\
+      $F = 50$ & 3000 & 2500 & 10 & 50 & 500 \\
+      $F = \infty$ & 2000 & 2000 & 0 & 100 & 0 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+To get a congestion rent, we need congestion to cause a price
+difference between the nodes, as well as a non-zero flow between the
+nodes.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Congestion rent}
+
+  In this example we saw that the sum of what consumers pay does not always equal the sum of generator revenue.
+
+  In fact if we take the balance constraint and sum it weighted by the market price at each node we find
+  \begin{align*}
+    \sum_i \l_i^* d_i -   \sum_i \l_i^* \sum_{s} g^*_{i,s} = -\sum_i \l_i^* \sum_\ell K_{i\ell}f^*_\ell
+  \end{align*}
+
+  The quantity for each $\ell$
+  \begin{equation*}
+    -f_\ell^*\sum_i K_{i\ell} \l_i^* = f_\ell (\l_{\textrm{end}}^* - \l_{\textrm{start}}^*)
+  \end{equation*}
+  is called the \alert{congestion rent} and is the money the network
+  operator receives for transferring power from a low price node (start)
+  to a high price node (end), `buy it low, sell it high'.
+
+  It is zero if: a) the flow is zero or b) the price difference is zero.
+
+\end{frame}
+
+
+
+
+
+\section{The European Market}
+
+
+\begin{frame}
+  \frametitle{Existing bidding zones}
+
+
+
+\begin{columns}[T]
+  \begin{column}{5cm}
+
+    \vspace{.5cm}
+    \includegraphics[width=5cm]{european_bidding_zones.png}
+  \end{column}
+
+  \begin{column}{6cm}
+
+    \begin{itemize}
+    \item Bids for German electricity take place in a \alert{giant bidding zone} encompassing both Austria and Germany (Austria will be separated from October 2018)
+    \item This means that transmission constraints are only visible to the market at the \alert{borders} to the other national zones
+    \item Internal transmission constraints are \alert{ignored} - market bids are handled as if they do not exist
+    \item Only KCL enforced - KVL impossible
+    \end{itemize}
+
+\end{column}
+\end{columns}
+
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{The Problem}
+
+  Renewables are not always located near demand centres, as in this example from Germany.
+
+
+
+\begin{columns}[T]
+  \begin{column}{6cm}
+\includegraphics[width=6cm]{scigrid-load}
+  \end{column}
+
+  \begin{column}{6cm}
+      % left bottom right top
+  \includegraphics[trim=0 0cm 0 1cm,width=6.3cm,clip=true]{scigrid-wind}
+
+
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{The Problem}
+
+
+
+\begin{columns}[T]
+  \begin{column}{5.5cm}
+        \vspace{.5cm}
+\includegraphics[width=6cm]{scigrid-loading}
+  \end{column}
+
+  \begin{column}{6cm}
+    \begin{itemize}
+      \item This leads to \alert{overloaded lines} in the middle of Germany, which
+   cannot transport all the wind energy from North Germany to the load
+   in South Germany
+
+   \item It also overloads lines in neighbouring countries due to
+     \alert{loop flows} (unplanned physical flows `according to least
+     resistance' which do not correspond to traded flows)
+
+     \item It also \alert{blocks imports and exports} with
+       neighbouring countries, e.g. Denmark
+
+    \end{itemize}
+
+\end{column}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Solution 1: Redispatch after energy market clearing}
+
+  These problems are \alert{not visible} in the day-ahead electricity
+  market, which treats the whole of Germany and Austria as a single
+  bidding zone. It dispatches wind in North Germany as if there was no
+  internal congestion...
+
+  To ensure that the physical limits of transmission are not exceeded,
+  the network operator must \alert{`re-dispatch'} power stations and
+  \alert{curtail} (Einspeisemanagement) renewables to restore order.
+  This is \alert{costly} (0.8 redispatch + 0.6 RE-compensation = 1.4 billion
+  EUR in 2017 - although exceptional circumstances in 1st quarter) and
+  results in \alert{lost CO$_2$-free generation} (5.5 TWh curtailment of RE
+  and CHP in 2017).
+
+  \alert{International redispatch} is sometimes also required
+  (Multilateral Remedial Actions = MRA).
+
+  Furthermore, there are \alert{no market incentives} to reinforce the North-South
+  grid, to locate more power stations in South Germany or to
+  build storage / P2X in North Germany.
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Solution 2: Smaller bidding zones to ``see'' congested boundaries}
+
+
+\begin{columns}[T]
+  \begin{column}{5cm}
+\includegraphics[width=6cm]{nordel.png}
+  \end{column}
+  \begin{column}{5cm}
+    \begin{itemize}
+      \item In Scandinavia they have solved this by introducing \alert{smaller bidding zones}
+      \item Now congestion at the boundaries between zones is taken
+        into account in the \alert{implicit auctions} of the market
+      \item This is also done in Italy (again, a long country),
+          where prices for small consumers are \alert{uniformised} for fairness
+    \end{itemize}
+
+\end{column}
+\end{columns}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Solution 3: Nodal pricing}
+
+
+\begin{columns}[T]
+  \begin{column}{6cm}
+
+    \vspace{.5cm}
+\includegraphics[width=7cm]{lmp.png}
+  \end{column}
+  \begin{column}{5cm}
+    \begin{itemize}
+    \item The ultimate solution, as used in the US and other markets,
+      is \alert{nodal pricing}, which exposes all transmission congestion
+    \item Considered too complex and subject to market power to be
+      used in Europe, but this is questionable...
+      \item Here we see clearly why many argue for a North-South
+        German split
+    \end{itemize}
+
+\end{column}
+\end{columns}
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{First step: Split Germany North-South}
+
+
+\begin{columns}[T]
+  \begin{column}{5cm}
+    \vspace{.5cm}
+\includegraphics[width=5.2cm]{DE_split.png}
+  \end{column}
+  \begin{column}{6cm}
+
+    \vspace{.7cm}
+    \begin{itemize}
+
+    \item Initial price difference could average up to 12 EUR/MWh
+    \item Prices would converge with more network expansion
+    \item Redispatch costs reduced by 39\% in 2025, 58\% in 2035 (assuming NEP 2030 transmission projects get built)
+    \item Politically difficult, may require, like Italy, uniformised
+      price on consumer side
+    \end{itemize}
+  \end{column}
+\end{columns}
+
+\source{\href{https://www.strommarkttreffen.org/2018-02_Fraunholz&Hladik_Zwei_Preiszonen_in_D.pdf}{Fraunholz \& Hladik, 2018}}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Solution 1.5: Flow-based market coupling}
+
+  Flow-based market coupling can be used in zonal markets to see
+  precise individual line constraints, instead of ``boxing'' the feasible space
+  like ATC/NTC schemes do.
+
+  \centering \includegraphics[width=12cm]{fbmc}
+  \source{Van den Bergh, Boury, Delarue}
+\end{frame}
+
+
+
+
+
+
+
+\section{Storage Optimisation}
+
+
+\begin{frame}[fragile]
+  \frametitle{Storage equations}
+
+  Now, like the network case where we add different nodes $i$
+  with different loads, for storage we have to
+  consider different time periods $t$.
+
+  Label conventional generators by $s$, storage by $r$ and now minimise
+  \begin{align*}
+    &    \min_{\{g_{i,s,t}\},\{g_{i,r,t,\textrm{store}}\},\{g_{i,r,t,\textrm{dispatch}}\},\{f_{\ell,t}\}}\\
+    &\left[  \sum_{i,s,t} o_{i,s} g_{i,s,t} +   \sum_{i,r,t} o_{i,r,\textrm{store} }\, g_{i,r,t,\textrm{store}} +   \sum_{i,r,t} o_{i,r,\textrm{dispatch}}\, g_{i,r,t,\textrm{dispatch}} \right]
+  \end{align*}
+  The power balance constraints are now (cf. Lecture 4) for each node $i$ and time $t$ that the demand is met either by generation, storage or network flows:
+  \begin{align*}
+    \sum_{s} g_{i,s,t} + \sum_{r}(g_{i,r,t,\textrm{dispatch}} - g_{i,r,t,\textrm{store}}) - d_{i,t} = \sum_\ell K_{i\ell}f_{\ell,t}  \hspace{0.5cm}\leftrightarrow\hspace{0.5cm} \l_{i,t}
+  \end{align*}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Storage equations}
+
+  We have constraints on normal generators
+    \begin{align*}
+        0 \leq g_{i,s,t}  \leq  G_{i,s}
+  \end{align*}
+    and on the storage
+    \begin{align*}
+    0 & \leq g_{i,r,t,\textrm{dispatch}} \leq G_{i,r,\textrm{dispatch}} \\
+    0 & \leq g_{i,r,t,\textrm{store}} \leq G_{i,r,\textrm{store}}
+    \end{align*}
+
+    The energy level of the storage is given by
+  \begin{align*}
+    e_{i,r,t} = \eta_0e_{i,r,t-1} + \eta_1g_{i,r,t,\textrm{store}} -  \eta_2^{-1} g_{i,r,t,\textrm{dispatch}}
+  \end{align*}
+  and limited by
+  \begin{align*}
+    0 \leq e_{i,r,t} \leq E_{i,r}
+  \end{align*}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Idea of storage}
+
+
+  Storage does `buy it low, sell it high' arbitrage, like network, but
+  in time rather than space, i.e. between cheap times (e.g. with lots
+  of zero-marginal-cost renewables) and expensive times (e.g. with
+  high demand, low renewables and expensive conventional generators).
+
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Storage charges at low prices, discharges at high prices}
+
+  Simplified example from \url{https://model.energy} For Germany with only wind and hydrogen storage to meet a flat 100~MW demand.
+
+  Average charging price (with electrolyser): 43 \euro/MWh
+
+  Average discharging price (with turbine): 144\euro/MWh
+
+  %single_node_storage_bids.ipynb
+    \centering \includegraphics[width=9cm]{storage_bids.pdf}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Storage plus network equations}
+
+
+
+  Finally for the flows we repeat the constraints for each time $t$.
+
+  We have KVL for each cycle $c$ and time $t$
+  \begin{align*}
+    \sum_{c} C_{\ell c} x_\ell f_{\ell,t} = 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \l_{c,t}
+  \end{align*}
+  and in addition the flows cannot overload the thermal limits, $|f_{\ell,t}| \leq F_\ell$
+  \begin{align*}
+    f_{\ell,t} \leq F_\ell  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_{\ell,t} \\
+        - f_{\ell,t} \leq - F_\ell  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_{\ell,t}
+  \end{align*}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Preview: Investment optimisation}
+
+  Preview for next time:
+
+  Next time we will also optimise \alert{investment} in the \alert{capacities} of generators,
+  storage and network lines, to maximise \alert{long-run efficiency}.
+
+  We will promote the capacities $G_{i,s}$, $G_{i,r,*}$, $E_{i,r}$ and
+  $F_{\ell}$ to optimisation variables.
+
+\end{frame}
+
+
+\end{document}
