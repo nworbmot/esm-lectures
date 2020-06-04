@@ -189,7 +189,7 @@
   14:00-15:00, or quarter-hourly, 14:00-14:15, well in advance of the
   time when it is actually consumed (based on forecasts).
 
-  Further markets trade in backup balancing power, which step in if the
+  Additional markets trade in backup balancing power, which step in if the
   forecasts are wrong.
 
 
@@ -201,8 +201,7 @@
   \frametitle{Baseload versus Peaking Plant}
 
   \alert{Load} (= Electrical Demand) is low during night; in Northern Europe in the winter, the peak is in the evening.
-
-  To meet this load profile, cheap \alert{baseload} generation runs the whole time; more expensive \alert{peaking plant} covers the difference.
+  To meet this load profile, \alert{baseload} generation with low fuel and running costs runs the whole time; more expensive \alert{peaking plant} covers the difference.
 
   \centering
   \includegraphics[width=9cm]{baseload-peaking}
@@ -216,7 +215,7 @@
   \frametitle{Effect of varying demand for fixed generation}
 
   \centering
-  \includegraphics[width=9cm]{demand-supply}
+  \includegraphics[width=10cm]{demand-supply}
 
   \source{Tom Brown}
 
@@ -230,7 +229,7 @@
 
   \centering
 
-  \includegraphics[width=9cm]{germany_generation-price-2015-01-06-2015-01-12}
+  \includegraphics[width=11cm]{germany_generation-price-2015-01-06-2015-01-12}
 
 \end{frame}
 
@@ -238,7 +237,7 @@
   \frametitle{Example market 2/3}
 
   \centering
-  \includegraphics[width=9cm]{germany_generation-price-2015-03-15-2015-03-31}
+  \includegraphics[width=11cm]{germany_generation-price-2015-03-15-2015-03-31}
 
 \end{frame}
 
@@ -246,7 +245,7 @@
   \frametitle{Example market 3/3}
 
   \centering
-  \includegraphics[width=9cm]{germany_generation-price-2015-04-07-2015-04-14}
+  \includegraphics[width=11cm]{germany_generation-price-2015-04-07-2015-04-14}
 
 \end{frame}
 
@@ -255,7 +254,7 @@
   \frametitle{Effect of varying renewables: fixed demand, no wind}
 
   \centering
-  \includegraphics[width=9cm]{demand-supply-no_wind}
+  \includegraphics[width=10cm]{demand-supply-no_wind}
 
 \end{frame}
 
@@ -264,7 +263,8 @@
 \begin{frame}
   \frametitle{Effect of varying renewables: fixed demand, 35~GW wind}
 
-  \includegraphics[width=9cm]{demand-supply-with_wind}
+  \centering
+  \includegraphics[width=10cm]{demand-supply-with_wind}
 
 \end{frame}
 
@@ -273,14 +273,38 @@
   \frametitle{Spot market price development}
 
   As a result of so much zero-marginal-cost renewable feed-in, spot
-  market prices steadily decreased until 2016. Since then prices have
-  been rising due to rising gas and CO$_2$ prices.
+  market prices steadily decreased until 2016. This is called the
+  \alert{Merit Order Effect}.  Since then prices have been rising due
+  to rising gas and CO$_2$ prices.
 
-  \includegraphics[width=11cm]{price_development-2018.png}
 
-  \source{\href{https://www.agora-energiewende.de/fileadmin2/Projekte/2018/Jahresauswertung_2018/Agora-Annual-Review-2018_Energy-Transition-EN.pdf}{Agora Energiewende}}
+  \centering
+  \includegraphics[width=10cm]{strompreis-2019.png}
+
+  \source{\href{https://www.agora-energiewende.de/fileadmin2/Projekte/2019/Jahresauswertung_2019/171_A-EW_Jahresauswertung_2019_WEB.pdf}{Agora Energiewende Jahresauswertung 2019}}
 \end{frame}
 
+
+
+
+\begin{frame}
+  \frametitle{Merit Order Effect}
+
+  To summarise:
+  \begin{itemize}
+  \item Renewables have zero marginal cost
+  \item As a result they enter at the bottom of the merit order, reducing the price at which the market clears
+  \item This pushes non-CHP gas and hard coal out of the market
+  \item This is unfortunate, because among the fossil fuels, gas and
+    hard coal are the most flexible and produce the \emph{lowest} \co2
+    per MWh
+  \item It also reduces the profits that nuclear and brown coal make
+  \item Will there be enough backup power plants for times with no wind/solar?
+  \end{itemize}
+
+  This has led to lots of political tension, but has been counteracted in recent years by the rising CO$_2$ price.
+
+\end{frame}
 
 
 \section{Optimisation Revision}
@@ -299,8 +323,8 @@ We have an \alert{objective function} $f: \R^k \to \R$
   h_j(x) & \leq d_j \hspace{1cm}\leftrightarrow\hspace{1cm} \m_j \hspace{1cm} j = 1,\dots m
 \end{align*}
 
-$\l_i$ and $\m_j$ are the \alert{KKT multipliers} (basically Lagrange multipliers) we introduce for
-each constraint equation; it measures the change in the objective value of the optimal solution obtained by relaxing the constraint (shadow price).
+$\l_i$ and $\m_j$ are the \alert{KKT multipliers} we introduce for
+each constraint equation; they measure the change in the objective value of the optimal solution obtained by relaxing the constraints (for this reason they are also called \alert{shadow prices}).
 
 \end{frame}
 
@@ -323,6 +347,51 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
     \item \alert{Dual feasibility}: $\m_j^* \geq 0$
     \item \alert{Complementary slackness}: $\m_j^* (h_j(x^*) - d_j) = 0$
 \end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Interpretation of the KKT multipliers}
+
+  If say $d_j \to d_j + \varepsilon$ then
+  \begin{equation*}
+     f(x^*) \to f(x^*) + \mu^*_j \varepsilon
+  \end{equation*}
+  and similarly for $c_i \to c_i + \varepsilon$ and $\l^*_i$.
+
+  We will now sketch a proof of this (not in exam). The Lagrangian from last time was defined:
+\begin{equation*}
+   \cL(x,\l,\m) = f(x) - \sum_i \l_i \left[g_i(x) - c_i\right]  - \sum_j \m_j \left[h_j(x) - d_j\right]
+\end{equation*}
+Note that by primal feasibility and complementary slackness at the optimum point $x^*,\m^*,\l^*$:
+\begin{equation*}
+   \cL(x^*,\l^*,\m^*) = f(x^*)
+\end{equation*}
+Now consider the Lagrangian $\cL^\varepsilon$ for the perturbed problem $d_j \to d_j + \varepsilon$:
+\begin{equation*}
+  \cL^\varepsilon(x,\l,\m) = \cL(x,\l,\m) + \m_j\varepsilon
+\end{equation*}
+
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Interpretation of the KKT multipliers}
+
+  At the optimum point of the perturbed problem $x^+,\m^+,\l^+$ we have:
+  \begin{equation*}
+    f(x^+)  =   \cL^\varepsilon(x^+,\l^+,\m^+) = \cL(x^+,\l^+,\m^+) + \m_j^+\varepsilon
+  \end{equation*}
+  Because everything is differentiable and we only have a small perturbation, we expect that $y^+ = (x^+,\m^+,\l^+)$ is close to $y^* = (x^*,\m^*,\l^*)$ and Taylor expand about this point:
+  \begin{equation*}
+    \cL(x^+,\l^+,\m^+)  \approx \cL(x^*,\l^*,\m^*) +  \sum_l (x^+_l - x^*_l) \frac{\d \cL }{\d x_l} \Big|_{y = y^*}+ \sum_i (\l^+_i - \l^*_i) \frac{\d \cL }{\d \l_i} \Big|_{y = y^*}+ \sum_j (\m^+_j - \m^*_j) \frac{\d \cL }{\d \m_j} \Big|_{y = y^*}
+  \end{equation*}
+  From stationarity for the original problem we know that $\frac{\d L }{\d x_l} \Big|_{y = y^*} = \frac{\d L }{\d \l_i} \Big|_{y = y^*} = 0$. $\frac{\d L }{\d \m_j} \Big|_{y = y^*} = 0$ for binding inequalities, and for non-binding inequalities $\m^*_j = \m^+_j = 0$. Thus
+  \begin{equation*}
+    f(x^+)  =   \cL(x^+,\l^+,\m^+) + \m_j^+\varepsilon \approx L(x^*,\l^*,\m^*) + \m_j^*\varepsilon = f(x^*) + \m_j^*\varepsilon
+\end{equation*}
 
 \end{frame}
 
@@ -355,7 +424,7 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
   Consider now the market from the point of view of a single generator.
 
   A generator has a \alert{cost or supply function} $C(g)$ in \euro/h,
-  which gives the total operating costs (of fuel, etc.) for a given
+  which gives the total costs (fuel, operation and maintenance costs) for a given
   rate of electricity generation $g$~MW.
 
   Typically the generator has a higher cost for a higher rate of generation $g$,
@@ -388,28 +457,24 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
 
   We assume that the generator is a \alert{price-taker},
   i.e. they cannot influence the price by changing the amount they
-  generate.
-
-  Suppose the market price is $\lambda$ \euro/MWh. For a generation
-  rate $g$, the revenue is $\l g$ and the generator should adjust their
-generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their profit:
+  generate.  Suppose the market price is $\lambda$ \euro/MWh. For a generation
+  rate $g$, the \alert{revenue} from the market is $\l g$ and the generator should adjust their
+generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their \alert{profit}:
   \begin{equation*}
     \max_g \left[ \l g - C(g) \right]
   \end{equation*}
 
-  This optimisation problem is optimised for $g=g^*$ where
+  This optimisation problem is optimised for $g=g^*$ where by KKT stationarity we have
+  \begin{equation*}
+    0 = \frac{\d \cL}{\d g} = \frac{\d f}{\d g} = \l  -  \frac{dC}{dg} (g^*)
+  \end{equation*}
+  We'll write the derivative with a prime to get:
   \begin{equation*}
     C'(g^*) \equiv \frac{dC}{dg} (g^*) =  \l
   \end{equation*}
 
-  [Check units: $\frac{dC}{dg}$ has units $\frac{\textrm{\euro/h}}{\textrm{MW}} = $ \euro/MWh.]
-
   I.e. the generator increases their output until they make a net loss for any increase of generation.
-
-  $C'(g)$ is known as the \alert{marginal cost curve}, which shows,
-  for each rate of generation $g$ what price $\l$ the generator should be
-  willing to supply at.
-
+  [Check units: $\frac{dC}{dg}$ has units $\frac{\textrm{\euro/h}}{\textrm{MW}} = $ \euro/MWh.]
 
 \end{frame}
 
@@ -417,7 +482,11 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
 
 \begin{frame}{Marginal cost function: Example}
 
-  For our example the marginal function is given by
+  $C'(g)$ is known as the \alert{marginal cost function}, which shows,
+  for each rate of generation $g$ what price $\l$ the generator should be
+  willing to supply at.
+
+  For our example the marginal cost function is given by
   \begin{equation*}
     C'(g) = 0.01~g + 9.3
   \end{equation*}
@@ -431,14 +500,14 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
 
 
 
-\begin{frame}{Generator surplus}
+\begin{frame}{Net generator surplus}
 
   The area under the curve is generator costs, which as the integral
   of a derivative, just gives the cost function $C(g)$ again, up to a
   constant.
 
 
-  The \alert{generator surplus} is the profit the generator makes by
+  The \alert{net generator surplus} is the profit the generator makes by
   having costs below the electricity price.
 
   \centering
@@ -452,16 +521,45 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
 
 
   Note that it is quite common for generators to be limited by
-  e.g. their capacity $G$, which may become a \alert{binding}, i.e. limiting factor before the price plays a role, e.g.
+  e.g. their capacity $G$, which may become a \alert{binding constraint}, i.e. limiting factor before the price plays a role, e.g.
+  \begin{equation*}
+    h(g) = g \leq G  \leftrightarrow \m
+  \end{equation*}
+
+  This constraint alters our KKT stationarity constraint for $g$ to
+    \begin{equation*}
+    0 = \frac{\d \cL}{\d g} =  \frac{\d f}{\d g} - \m^* \frac{\d h}{\d g} =  \l  -  C'(g^*) - \m^*
+  \end{equation*}
+
+    Now the \alert{shadow price} of the constraint is given by
+    \begin{equation*}
+      \m^* = \l - C'(g^*)
+    \end{equation*}
+
+    If it is binding, it tells us the benefit to our objective function of an incremental increase in capacity $G$.
+
+\end{frame}
+
+
+
+\begin{frame}{Limits to generation: Example}
+
+  Consider the constraint
   \begin{equation*}
     g \leq G  \leftrightarrow \m
   \end{equation*}
-  In the following case the optimal generation is at
-  $g^* = G = $ 250~MW.   We have a \alert{binding} constraint and can define a \alert{shadow price} $\m$, which indicates the benefit of relaxing the constraint $\m^* = \l - C'(g^*)$.
-
+  with capacity $G = $ 250~MW so that for our example it is binding
+  $g^* = G = $ 250~MW. $\m^* = \l - C'(g^*)$ can be marked on the
+  graph:
 
   \centering
-  \includegraphics[width=6.5cm]{generator_surplus-limited}
+    \begin{tikzpicture}
+      \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=6.5cm]{generator_surplus-limited}};
+      \node[] at (2.45,3.55) {$\l$};
+      \node[] at (4.9,3.2) {$\}\m^* = \l - C'(g^*)$};
+  \end{tikzpicture}
+
+
 
 \end{frame}
 
@@ -522,7 +620,7 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
     \max_d \left[U(d) - \l d \right]
   \end{equation*}
 
-  This optimisation problem is optimised for $d=d^*$ where
+  This optimisation problem is optimised for $d=d^*$ where from KKT stationarity we now get
   \begin{equation*}
     U'(d^*) \equiv \frac{dU}{dd} (d^*) =  \l
   \end{equation*}
@@ -575,7 +673,7 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
 
   The area under the inverse demand curve is the \alert{gross consumer surplus},
   which as the integral of a derivative, just gives the utility
-  function $U(d)$ again, up to a constant.
+  function $U(d^*)$ again, up to a constant.
 
   \centering
   \includegraphics[width=6cm]{gross_consumer_surplus}
@@ -588,7 +686,7 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
 
   The more relevant \alert{net consumer surplus}, or just
   \alert{consumer surplus} is the net gain the consumer makes by
-  having utility above the electricity price.
+  having utility above the electricity price, i.e. $U(d^*) - \l d^*$.
 
   \centering
   \includegraphics[width=6cm]{net_consumer_surplus}
@@ -605,11 +703,17 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
   \begin{equation*}
     d \leq D  \leftrightarrow \m
   \end{equation*}
+  The \alert{shadow price} $\m$ indicates the benefit of relaxing the constraint. From KKT $\m^* = U'(d^*) - \l$.
   In the following case the optimal consumption is at
-  $d^* = D =$  10~MW. We have a \alert{binding} constraint and can define a \alert{shadow price} $\m$, which indicates the benefit of relaxing the constraint $\m^* = U'(d^*) - \l$.
+  $d^* = D =$  10~MW.
 
-  \centering
-  \includegraphics[width=6cm]{net_consumer_surplus-limited}
+    \centering
+    \begin{tikzpicture}
+      \node[anchor=south west,inner sep=0] (image) at (0,0) {  \includegraphics[width=6cm]{net_consumer_surplus-limited}};
+      \node[] at (2.6,1.82) {$\l$};
+      \node[] at (4.45,2) {$\Big\}\m^* = U'(d^*) - \l$};
+  \end{tikzpicture}
+
 
 \end{frame}
 
@@ -632,7 +736,7 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
 
 
   \centering
-  \includegraphics[width=6cm]{csm_1998_LHCUeberblick_CERN_02_ed178e98ea}
+  \includegraphics[width=5cm]{csm_1998_LHCUeberblick_CERN_02_ed178e98ea}
 
 
   \source{CERN}
@@ -651,11 +755,11 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
   power.  For example, 73\% of Iceland's total power consumption in
   2010 came from aluminium smelting.
 
-  Aluminium costs around US\$ 1500/ tonne to produce. %http://www.lme.com/metals/non-ferrous/aluminium/
+  Aluminium sells on world markets for around US\$ 1500/ tonne. %http://www.lme.com/metals/non-ferrous/aluminium/
 
   Electricity consumption: 15 MWh/tonne.
 
-  At Germany consumer price of \euro 300 / MWh, this is \euro 4500 / tonne. Uh-oh!!!
+  At Germany consumer price of electricity of \euro 300 / MWh, this is \euro 4500 / tonne. Industrial consumers pay less.
 
   If electricity is 50\% of cost, then need \$750/tonne to go on electricity $\Rightarrow$ 750/15 \$/MWh = 50 \$/MWh.
 
@@ -722,16 +826,17 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
 
 \begin{frame}{Setting the quantity and price}
 
-  \alert{Total welfare} (consumer and generator surplus) is maximised
-  if the total quantity of electricity is set where the aggregated marginal cost and
-  marginal utility curves of all generators and consumers meet.
+  Now let's consider the case with \alert{many} consumers and generators.  We build \alert{aggregated} marginal cost and marginal utility
+  curves from the individual curves.
+
+  Then we maximise \alert{total welfare}, the sum of net consumer and generator surplus of all actors.
 
   If the price is also set from this point, then the individual
   optimal actions of each actor will achieve this result in a perfect
   decentralised market.
 
   \centering
-  \includegraphics[width=8cm]{consumer_producer_surplus.pdf}
+  \includegraphics[width=7.5cm]{consumer_producer_surplus.pdf}
 
 
 
@@ -762,13 +867,13 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
 
   We will now show our main result:
 
-      \begin{alertblock}{Welfare-maximisation through decentralised markets}
+  \alert{Welfare-maximisation through decentralised markets}
+
         The welfare-maximising combination of production and consumption can be achieved by the decentralised profit-maximising decisions of producers and the utility-maximising decisions of consumers, provided that:
         \begin{itemize}
-        \item The market price is equal to the constraint marginal value of the overall supply-balance constraint in the welfare maximisation problem
+        \item The market price is equal to the shadow price of the overall supply-balance constraint in the welfare maximisation problem
           \item All producers and consumers are price-takers
         \end{itemize}
-      \end{alertblock}
 
 \end{frame}
 
@@ -813,7 +918,7 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
 
   This is the CENTRAL result of microeconomics.
 
-  If we have further inequality constraints that are binding, then
+  If we have further inequality constraints that are binding (e.g. capacity constraints), then
   these equations will receive additions with $\m_i^* > 0$.
 
 
@@ -824,7 +929,7 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
 \begin{frame}[fragile]
   \frametitle{Power Production Real Example}
 
-  At this website you can see the forecast of load, wind, solar and conventional generation right now in Germany (\href{https://energy-charts.de/power_de.htm}{link}):
+  At \href{https://energy-charts.de/power_de.htm}{\bf\color{blue}\underline{energy-charts.de}}  you can see the forecast of load, wind, solar and conventional generation right now in Germany, here's an old version:
 
 
   \centering
@@ -836,103 +941,12 @@ generation rate $g$ to maximise their \alert{net generation surplus}, i.e. their
 \begin{frame}[fragile]
   \frametitle{Supply-Demand Curve Real Example}
 
-  A real supply-demand curve for Germany-Austria from 2017 (\href{https://www.epexspot.com/en/market-data/dayaheadauction/curve/auction-aggregated-curve/2017-05-31/DE/14/3}{link})
+  At \href{https://www.epexspot.com/en/market-data?market_area=AT&trading_date=2020-06-04&delivery_date=2020-06-05&underlying_year=&modality=Auction&sub_modality=DayAhead&product=60&data_mode=aggregated&period=}{\bf\color{blue}\underline{epexspot.com}} you can find the real supply-demand curves for every hour, here's an old example for Germany-Austria from 2017:
 
   \centering
-    \includegraphics[width=11cm]{DEAT-170531-14}
-\end{frame}
-
-
-
-
-\begin{frame}
-  \frametitle{Effect of varying demand for fixed generation}
-
-  \centering
-  \includegraphics[width=9cm]{demand-supply}
-
-  \source{Tom Brown}
+    \includegraphics[width=9cm]{DEAT-170531-14}
 
 \end{frame}
 
-
-
-
-\begin{frame}
-  \frametitle{Example market 1/3}
-
-  \centering
-
-  \includegraphics[width=9cm]{germany_generation-price-2015-01-06-2015-01-12}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Example market 2/3}
-
-  \centering
-  \includegraphics[width=9cm]{germany_generation-price-2015-03-15-2015-03-31}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Example market 3/3}
-
-  \centering
-  \includegraphics[width=9cm]{germany_generation-price-2015-04-07-2015-04-14}
-
-\end{frame}
-
-
-\begin{frame}
-  \frametitle{Effect of varying renewables: fixed demand, no wind}
-
-  \centering
-  \includegraphics[width=9cm]{demand-supply-no_wind}
-
-\end{frame}
-
-
-
-\begin{frame}
-  \frametitle{Effect of varying renewables: fixed demand, 35~GW wind}
-
-  \includegraphics[width=9cm]{demand-supply-with_wind}
-
-\end{frame}
-
-
-
-\begin{frame}
-  \frametitle{Spot market price development}
-
-  As a result of so much zero-marginal-cost renewable feed-in, spot
-  market prices steadily decreased until 2016. Since then prices have
-  been rising due to rising gas and CO$_2$ prices.
-
-  \includegraphics[width=11cm]{price_development-2018.png}
-
-  \source{\href{https://www.agora-energiewende.de/fileadmin2/Projekte/2018/Jahresauswertung_2018/Agora-Annual-Review-2018_Energy-Transition-EN.pdf}{Agora Energiewende}}
-\end{frame}
-
-
-\begin{frame}
-  \frametitle{Merit Order Effect}
-
-  To summarise:
-  \begin{itemize}
-  \item Renewables have zero marginal cost
-  \item As a result they enter at the bottom of the merit order, reducing the price at which the market clears
-  \item This pushes non-CHP gas and hard coal out of the market
-  \item This is unfortunate, because among the fossil fuels, gas and
-    hard coal are the most flexible and produce the \emph{lowest} \co2
-    per MWh
-  \item It also massively reduces the profits that nuclear and brown coal make
-  \item Will there be enough backup power plants for times with no wind/solar?
-  \end{itemize}
-
-  This has led to lots of political tension...
-
-\end{frame}
 
 \end{document}
