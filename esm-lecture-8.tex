@@ -832,14 +832,14 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
   \begin{equation*}
     \bar{\m}_1^* = \ubar{\m}_1^* =     \bar{\m}_2^* = \ubar{\m}_2^* = 0
   \end{equation*}
-  and thus we have again different prices at each $\l_i = o_i$. For the flow:
+  and thus we have again different prices at each $\l_i^* = o_i$. For the flow:
   \begin{equation*}
     0 = \frac{\d \cL}{\d f} = 0 +  \l_1^* - \l_2^*  -  \bar{\m}^* + \ubar{\m}^*
   \end{equation*}
   Only the upper limit is binding, so we get $\ubar{\m}^* = 0$ and
-  \begin{equation*}
-    \bar{\m}^* = \l_1^* - \l_2^* = -10 \textrm{ EUR/MWh}
-  \end{equation*}
+    $\bar{\m}^* = \l_1^* - \l_2^* = o_1 - o_2 = -10 $ \euro/MWh.
+
+$\bar{\m}^*$ is the cost reduction if we expand the transmission capacity $F$ by $\varepsilon$, allowing us to substitute some of the expensive generation at node 2 with cheap generation from node 1.
 
 
 \end{frame}
@@ -872,11 +872,42 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
 \end{frame}
 
 
+
+\begin{frame}{Two node: demand pagements versus generation revenue}
+
+  Now let's compare for our examples what each demand pays $\l_i^*d_i$ and what each generator receives as revenue $\l_i^*g_i^*$ from each market.
+  \ra{1.1}
+  \begin{table}[!t]
+    \begin{tabular}{rrrrrrrrr}
+      \toprule
+      Case & $\l_1^*$  & $\l_2^*$ & $\l_1^*d_1$ & $\l_2^*d_2$ & $\sum_i \l_i^*d_i$ & $\l_1^*g_1^*$  & $\l_2^*g_2^*$ & $\sum_i \l_i^*g_i^*$ \\
+       & [\euro/MWh] &  [\euro/MWh] & [\euro/h] & [\euro/h] & [\euro/h] & [\euro/h] & [\euro/h] & [\euro/h] \\
+      \midrule
+      $F = 0$ & 10 & 20 & 1000 & 2000 & 3000 & 1000 & 2000 & 3000 \\
+      $F = 50$ & 10 & 20 & 1000 & 2000 & 3000 & 1500 & 1000 & 2500 \\
+      $F = \infty$ & 10 & 10 & 1000 & 1000 & 2000 & 2000 & 0 & 2000 \\
+%      $F = 50$ & 3000 & 2500 & 10 & 50 & 500
+%      $F = \infty$ & 2000 & 2000 & 0 & 100 & 0  \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  NB: In the case with $F=50$, total demand payments are 3000~\euro/h, whereas the generators are only receiving 2500~\euro/h.
+
+  Where is the missing money (500~\euro/h) going?
+
+  Answer: to the network operator for service of doing arbitrage, buying low and selling high.
+
+\end{frame}
+
+
+
+
 \begin{frame}{Congestion rent}
 
 Due to the congestion of the transmission line, the marginal cost of producing electricity can be different at node 1 and node 2. The competitive price at node 2 is higher than at node 1 -- this corresponds to \alert{locational marginal pricing}, or \alert{nodal pricing}.
 
-Since consumers pay and generators get paid the price in their local market, in case of congestion there is a difference between the total payment of consumers and the total revenue of producers -- this is the \alert{merchandising surplus} or \alert{congestion rent}, collected by the market operator. For each line it is given by the price difference in both regions times the amount of power flow between them:
+Since consumers pay and generators get paid the price in their local market, in case of congestion there is a difference between the total payment of consumers and the total revenue of producers -- this is the \alert{merchandising surplus} or \alert{congestion rent}, collected by the network operator. For each line it is given by the price difference in both regions times the amount of power flow between them:
 \begin{align*}
 \text{Congestion rent =}\:\Delta \lambda\times f
 \end{align*}
@@ -895,7 +926,7 @@ Since consumers pay and generators get paid the price in their local market, in 
       Case & Demand pays & Generator gets & $\l_2^* - \l_1^*$ & flow $f$ & Cong. rent \\
        & [\euro/h] & [\euro/h] & [\euro/MWh] & [MW] & [\euro/h] \\
       \midrule
-      $F = 0$ & 3000 & 3000 & 0 & 0 & 0 \\
+      $F = 0$ & 3000 & 3000 & 10 & 0 & 0 \\
       $F = 50$ & 3000 & 2500 & 10 & 50 & 500 \\
       $F = \infty$ & 2000 & 2000 & 0 & 100 & 0 \\
       \bottomrule
@@ -1168,6 +1199,7 @@ nodes.
   \begin{align*}
     \sum_{s} g_{i,s,t} + \sum_{r}(g_{i,r,t,\textrm{discharge}} - g_{i,r,t,\textrm{charge}}) - d_{i,t} = \sum_\ell K_{i\ell}f_{\ell,t}  \hspace{0.5cm}\leftrightarrow\hspace{0.5cm} \l_{i,t}
   \end{align*}
+  Now we have a market price $\l_{i,t}$ for each node $i$ and time $t$.
 \end{frame}
 
 \begin{frame}[fragile]
