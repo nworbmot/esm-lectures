@@ -151,8 +151,8 @@ We have an \alert{objective function} $f: \R^k \to \R$
   h_j(x) & \leq d_j \hspace{1cm}\leftrightarrow\hspace{1cm} \m_j \hspace{1cm} j = 1,\dots m
 \end{align*}
 
-$\l_i$ and $\m_j$ are the \alert{KKT multipliers} (basically Lagrange multipliers) we introduce for
-each constraint equation; it measures the change in the objective value of the optimal solution obtained by relaxing the constraint (shadow price).
+$\l_i$ and $\m_j$ are the \alert{KKT multipliers} we introduce for
+each constraint equation; they measure the change in the objective value of the optimal solution obtained by relaxing the constraints (for this reason they are also called \alert{shadow prices}).
 
 \end{frame}
 
@@ -181,7 +181,7 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
 \begin{frame}
   \frametitle{min/max and signs}
 
-  If the problem is a \alert{maximisation} problem (like above), then
+  If the problem is a \alert{maximisation} problem (e.g. welfare maximisation), then
   \alert{$\m_j^* \geq 0$} since $\m_j = \frac{\d \cL}{\d d_j}$ and if we
   increase $d_j$ in the constraint $h_j(x) \leq d_j$, then the
   feasible space can only get bigger. Since if $X \subseteq X'$
@@ -211,6 +211,7 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
 \section{Welfare maximisation revision}
 
 
+
 \begin{frame}{KKT and Welfare Maximisation 1/2}
 
   Apply KKT now to maximisation of total economic welfare:
@@ -225,10 +226,10 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
 
   Our optimisation variables are $\{x\} = \{d_b\} \cup \{g_s\}$.
 
-  We get from stationarity:
+  We get from KKT stationarity at the optimal point:
   \begin{align*}
-    0 & =   \frac{\d f}{\d d_b} - \sum_b \l^* \frac{\d g}{\d d_b} = U_b'(d_b) - \l^* = 0 \\
-    0 & =   \frac{\d f}{\d g_s} - \sum_s \l^* \frac{\d g}{\d g_s} = -C_s'(g_s) + \l^* = 0
+    0 & =   \frac{\d f}{\d d_b} - \sum_b \l^* \frac{\d g}{\d d_b} = U_b'(d_b^*) - \l^* = 0 \\
+    0 & =   \frac{\d f}{\d g_s} - \sum_s \l^* \frac{\d g}{\d g_s} = -C_s'(g_s^*) + \l^* = 0
   \end{align*}
 
 
@@ -241,15 +242,15 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
 \begin{frame}{KKT and Welfare Maximisation 2/2}
 
   So at the optimal point of maximal total economic welfare we get the
-  same result as if everyone maximises their own welfare separately:
+  same result as if everyone maximises their own welfare separately based on the price $\l^*$:
   \begin{align*}
- U_b'(d_b) =  \l^*  \\
- C_s'(g_s) = \l^*
+ U_b'(d_b^*) =  \l^*  \\
+ C_s'(g_s^*) = \l^*
   \end{align*}
 
   This is the CENTRAL result of microeconomics.
 
-  If we have further inequality constraints that are binding, then
+  If we have further inequality constraints that are binding (e.g. capacity constraints), then
   these equations will receive additions with $\m_i^* > 0$.
 
 
@@ -257,21 +258,48 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
 
 
 
-\section{Optimise Single Node with Inelastic Demand, Linear Generation Costs}
+
+\section{Optimise Single Node with Linear Generation Costs and Demand Utility}
+
+
+\begin{frame}[fragile]
+  \frametitle{Simplified world: linear generation costs, linear demand utility}
+
+  We will now turn to a simpler world: all the generator cost
+  functions are linear
+  \begin{align*}
+    C_s(g_s) = o_s g_s
+  \end{align*}
+  and each generator has limited output $0 \leq g_s \leq G_s$. The marginal cost function is a constant $C_s'(g_s) = o_s$.
+
+
+  The quantity $G_s$ and marginal cost $o_s$ define a \alert{supply offer}.
+
+
+  All the consumer utility functions are also linear
+  \begin{align*}
+    U_b(d_b)  = v_b d_b
+  \end{align*}
+  and each consumer has limited consumption $0 \leq d_b \leq D_b$. The marginal utility function is a constant $U_b'(d_b)  = v_b$.
+
+
+  The quantity $D_b$ and marginal utility $v_b$ define a \alert{demand bid}.
+
+
+\end{frame}
 
 
 
-
-\begin{frame}{Supply-demand linear example: generator bids}
+\begin{frame}{Supply-demand linear example: generator offers}
 
   Example from Kirschen and Strbac pages 56-58.
 
-  The following generators bid into the market for the hour between 0900 and 1000 on 20th April 2016:
+  The following generators offer into the market for the hour between 0900 and 1000 on 20th April 2016:
   \ra{1.1}
   \begin{table}[!t]
     \begin{tabular}{lrr}
       \toprule
-      Company & Quantity [MW] &  Price [\$/MWh]\\
+      Company & Quantity [MW] &  Marginal cost [\$/MWh]\\
       \midrule
       Red & 200 & 12 \\
       Red & 50 & 15 \\
@@ -289,14 +317,14 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
 
 
 
-\begin{frame}{Supply-demand linear example: Consumer offers}
+\begin{frame}{Supply-demand linear example: consumer bids}
 
-  The following consumers make offers for the same period:
+  The following consumers make bids for the same period:
   \ra{1.1}
   \begin{table}[!t]
     \begin{tabular}{lrr}
       \toprule
-      Company & Quantity [MW] &  Price [\$/MWh]\\
+      Company & Quantity [MW] &  Marginal utility [\$/MWh]\\
       \midrule
       Yellow & 50 & 13 \\
       Yellow & 100 & 23 \\
@@ -318,7 +346,7 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
 
   If the bids and offers are stacked up in order, the supply and
   demand curves meet with a demand of 450~MW at a system marginal
-  price of $\l = 16$~\$/MWh.
+  price of $\l^* = 16$~\$/MWh.
 
   \centering
 
@@ -366,23 +394,17 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
 
 
 \begin{frame}[fragile]
-  \frametitle{Simplified world: linear generation costs, inelastic demand}
+  \frametitle{Simplified world: linear generation costs, single inelastic demand}
 
-  We will now turn to an even simpler world: all the generator cost
-  functions are linear
+  For the analysis of the KKT equations, we will simplify even further.
+
+  We consider a single demand bid of volume $D$ so that the demand does not respond to price changes (i.e. the demand is \alert{inelastic}) up to a very high marginal utility $v >> o_s\,\, \forall s$, i.e.
   \begin{align*}
-    C_s(g_s) = o_s g_s
-  \end{align*}
-  and each generator has limited output $0 \leq g_s \leq G_s$.
-
-
-  We also fix the demand to a value $D$ so that it does not respond to price changes (i.e. the demand is \alert{inelastic}) up to a very high marginal utility $V >> o_s\,\, \forall s$, i.e.
-  \begin{align*}
-    U(d) = Vd
+    U(d) = vd
   \end{align*}
   for $d\leq D$.
 
-  $V$ is sometimes called the \alert{Value Of Lost Load (VOLL)}.
+  $v$ is sometimes called the \alert{Value Of Lost Load (VOLL)}.
 \end{frame}
 
 
@@ -391,14 +413,14 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
 
   In this case we get for our welfare maximisation:
   \begin{align*}
-    \max_{d, \{g_s\} }\left[ Vd  -  \sum_s o_s g_s \right]
+    \max_{d, \{g_s\} }\left[ vd  -  \sum_s o_s g_s \right]
   \end{align*}
   subject to:
   \begin{align*}
-    d -  \sum_s g_s  & = 0 \hspace{1cm} \leftrightarrow \hspace{1cm} \l \\
-    d & \leq D  \hspace{1cm} \leftrightarrow \hspace{1cm} \m \\
-        g_s  & \leq  G_s  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_s \\
-    - g_s  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_s
+    d -  \sum_s g_s   = 0 \hspace{1cm} & \leftrightarrow \hspace{1cm} \l \\
+    d  \leq D  \hspace{1cm}  & \leftrightarrow \hspace{1cm} \m \\
+        g_s   \leq  G_s  \hspace{1cm}& \leftrightarrow\hspace{1cm} \bar{\m}_s \\
+    - g_s   \leq  0   \hspace{1cm}& \leftrightarrow\hspace{1cm} \ubar{\m}_s
   \end{align*}
 
 \end{frame}
@@ -410,7 +432,7 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
   Suppose all generators have the same marginal cost $o$ and we
   represent their total dispatch by $g$ and total capacity by $G$
   \begin{align*}
-    \max_{d, g }\left[ Vd  -  og\right]
+    \max_{d, g }\left[ vd  -  og\right]
   \end{align*}
   such that:
   \begin{align*}
@@ -425,8 +447,7 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
 
 \begin{frame}{Simplest example: one generator type, inelastic demand}
 
-  If $D < G$ then since $V >> o$, it will be always profitable for the
-  generators to dispatch to satisfy the load, i.e.
+  If $D < G$ then since $v >> o$, it will be always be welfare-maximising to dispatch to satisfy the load, i.e.
   \begin{equation*}
     g^* = d^* = D
   \end{equation*}
@@ -436,15 +457,24 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
   \begin{align*}
     0 & = \frac{\d \cL}{\d g } =   \frac{\d f}{\d g} - \sum_i \l_i^* \frac{\d g_i}{\d g}  - \sum_j \m_j^* \frac{\d h_j}{\d g} = - o + \l^* - \bar{\m}^* + \ubar{\m}^*
   \end{align*}
-  Thus $\l^* = o$, which is the cost per unit of supplying extra demand. The \alert{generator sets the price}.
+  Thus $\l^* = o$, which is the cost per unit of supplying extra demand. The \alert{generator sets the price}. There is no generator profit and a large consumer surplus.
 
   For the load $\m^*$ can be non-zero because $d^*=D$:
     \begin{align*}
-      0 & = \frac{\d \cL}{\d d} =   \frac{\d f}{\d d} - \sum_i \l_i^* \frac{\d g_i}{\d d}  - \sum_j \m_j^* \frac{\d h_j}{\d d} = V - \l^* - \m^*
+      0 & = \frac{\d \cL}{\d d} =   \frac{\d f}{\d d} - \sum_i \l_i^* \frac{\d g_i}{\d d}  - \sum_j \m_j^* \frac{\d h_j}{\d d} = v - \l^* - \m^*
     \end{align*}
-    $\m^* = V - \l^*$ is the marginal benefit of each increase in demand.
+    $\m^* = v - \l^*$ is the marginal benefit of each increase in demand.
 \end{frame}
 
+
+
+\begin{frame}{Simplest example: one generator type, inelastic demand}
+
+  For the case $D < G$:
+
+  \includegraphics[width=12cm]{supply-bigger-demand-single.pdf}
+
+\end{frame}
 
 \begin{frame}{Simplest example: one generator type, inelastic demand}
 
@@ -458,12 +488,20 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
   \end{align*}
   Thus $\l^* = o + \bar{\m}^*$. To find $\l^*$ we have to look at the demand:
     \begin{align*}
-      0 & = \frac{\d \cL}{\d d} =   \frac{\d f}{\d d} - \sum_i \l_i^* \frac{\d g_i}{\d d}  - \sum_j \m_j^* \frac{\d h_j}{\d d} = V - \l^* - \m^*
+      0 & = \frac{\d \cL}{\d d} =   \frac{\d f}{\d d} - \sum_i \l_i^* \frac{\d g_i}{\d d}  - \sum_j \m_j^* \frac{\d h_j}{\d d} = v - \l^* - \m^*
     \end{align*}
-  Since $d^* < D$, $\m^* = 0$, $\l^* = V$ and thus $\bar{\m}^* = V-o$, the marginal benefit of extending the generator The \alert{demand sets the price}.
+  Since $d^* < D$, $\m^* = 0$, $\l^* = v$ and thus $\bar{\m}^* = v-o$, which is the marginal benefit of increasing the generator capacity $G$. The \alert{demand sets the price}. There is no consumer surplus and the generator makes a large profit.
 
 \end{frame}
 
+
+\begin{frame}{Simplest example: one generator type, inelastic demand}
+
+  For the case $D > G$:
+
+  \includegraphics[width=12cm]{demand-bigger-supply.pdf}
+
+\end{frame}
 
 
 \begin{frame}{Next simplest example: several generators, fixed demand}
@@ -471,7 +509,7 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
   Suppose we have several generators with dispatch $g_s$ and strictly ordered
   operating costs $o_s$ such that $o_s < o_{s+1}$. We now maximise
   \begin{align*}
-    \max_{\{d, g_s\}}  \left[ Vd  -  \sum_s o_s g_s \right]
+    \max_{\{d, g_s\}}  \left[ vd  -  \sum_s o_s g_s \right]
   \end{align*}
   such that
   \begin{align*}
@@ -486,23 +524,22 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
 
 \begin{frame}{Next simplest example: several generators, fixed demand}
 
-  Stationarity gives us for each $s$:
+  Stationarity gives us for each generator $g_s$:
   \begin{align*}
-    0 = -o_s + \l^* - \bar{\m}^*_s + \ubar{\m}^*_s
+    0  = \frac{\d \cL}{\d g_s} = -o_s + \l^* - \bar{\m}^*_s + \ubar{\m}^*_s
   \end{align*}
   and from complementarity we get
   \begin{align*}
-    \bar{\m}_s(g_s^* - G_s) & = 0 \\
-    \ubar{\m}_sg_s^* & = 0
+    \bar{\m}_s(g_s^* - G_s)  = 0 \hspace{2cm}    \ubar{\m}_sg_s^*  = 0
   \end{align*}
-
   We can see by inspection that we will dispatch the cheapest
   generation first. Suppose that we have enough generation for the
   demand, i.e. $D < \sum_s G_s$. [If $D > \sum_s G_s$ we have the same
-    situation as for a single generator, i.e. $\l^* = V$, so that the demand sets the price.]
+    situation as for a single generator, i.e. $\l^* = v$, so that the demand sets the price.]
 
-  Find the generator $m$ where the supply curve intersects with the demand $D$, i.e. the $m$ where $\sum_{s=1}^{m-1} G_s < D < \sum_{s=1}^{m}
-  G_s$.
+  Find the generator $m$ on the margin where the supply curve
+  intersects with the demand $D$, i.e. the $m$ where $\sum_{s=1}^{m-1}
+  G_s < D < \sum_{s=1}^{m} G_s$.
 
   For $s \leq m-1$ we have $g_s^* = G_s$, $\ubar{\m}^*_s = 0$,
   $\bar{\m}^*_s =  \l^* - o_s$.
@@ -526,7 +563,7 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
   o_2 - o_1$.
 
   \centering
-  \includegraphics[width=8cm]{supply-demand-high.pdf}
+  \includegraphics[width=8cm]{supply-demand-two.pdf}
 
 
 
@@ -542,10 +579,9 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
   For the case $D > \sum_s G_s$ we can instead imagine that the demand
   is rigidly fixed to $D$ and that instead we have a dummy generator
   with dispatch $g_d = D-\sum_s G_s$ that represents \alert{load shedding}.
-
   In this case we can substitute $d = D - g_d$ to get
   \begin{align*}
-    \max_{\{g_d, g_s\}}  \left[ VD - Vg_d  -  \sum_s o_s g_s \right]
+    \max_{\{g_d, g_s\}}  \left[ vD - vg_d  -  \sum_s o_s g_s \right]
   \end{align*}
   such that
   \begin{align*}
@@ -554,10 +590,10 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
     - g_s  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_s
   \end{align*}
 
-  Since $VD$ is a constant, we can use
+  Since $vD$ is a constant, we can use
       $\max_{x\in X} \left[ -f(x)\right] = - \min_{x\in X} f(x)$
   to recast this as a minimisation of the total generator costs,
-  absorbing $g_d$ into the set $\{g_s\}$. The constant $VD$ is dropped.
+  absorbing $g_d$ into the set $\{g_s\}$. The constant $vD$ is dropped.
 
 \end{frame}
 
@@ -575,10 +611,10 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
     - g_s  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_s
   \end{align*}
 
-  The most expensive generator has $o_s = V$ and $G_s = \infty$ and
+  The most expensive generator has $o_s = v$ and $G_s = \infty$ and
   represents \alert{load shedding}.
 
-  We've replaced the symbol $D$  with $d$ for simplicity going forward.
+  We've replaced the symbol $D$  with $d$ for simplicity going forward ($d$ is now a constant).
 
 
 
@@ -596,7 +632,7 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
   \frametitle{Welfare optimisation for several nodes in a network}
 
   Now let's suppose we have several nodes $i$ with different loads and
-  different generators, with flows $f_\ell$ in the network lines.
+  different generators, with flows $f_\ell$ in the network lines $\ell$.
 
   Now we have additional optimisation variables $f_\ell$ AND
   additional constraints for welfare maximisation:
@@ -607,7 +643,7 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
   \begin{align*}
     \sum_{b} d_{i,b} - \sum_{s} g_{i,s} +  \sum_\ell K_{i\ell}f_\ell  = 0 \hspace{1cm}\leftrightarrow\hspace{1cm} \l_i
   \end{align*}
-  and generator constraints are satisified
+  Note there is now a \alert{market price for each node}. As before, generator constraints are satisified
     \begin{align*}
         g_{i,s}  & \leq  G_{i,s}  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_{i,s} \\
     - g_{i,s}  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_{i,s}
@@ -619,12 +655,12 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
 
 
 \begin{frame}[fragile]
-  \frametitle{Cost minimisation at several nodes in a network}
+  \frametitle{Linear cost minimisation at several nodes in a network}
 
   For cost minimisation we have a fixed load $d_i$ at each node, and
-  absorb load-shedding above a value $V$ into a dummy generator.
+  absorb load-shedding above a value $v$ into a dummy generator.
 
-  Now we minimise over $g_{i,s}$ and $f_\ell$:
+  Now we minimise over $f_\ell$ and $g_{i,s}$ for the case of linear cost functions:
   \begin{align*}
     \min_{\{g_{i,s}\},\{f_\ell\}}  \sum_{i,s} o_{i,s} g_{i,s}
   \end{align*}
@@ -667,15 +703,13 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
   costs $o_1 = 10$~\euro/MWh and a capacity of $G_1 = 300$~MW.
 
   At node 2 we have demand of $d_2 = 100$~MW and a generator with
-  costs $o_1 = 20$~\euro/MWh and a capacity of $G_2 = 300$~MW.
+  costs $o_2 = 20$~\euro/MWh and a capacity of $G_2 = 300$~MW.
 
   What happens if the capacity of the line connecting them is $F = 0$?
 
   What about $F = 50$~MW?
 
   What about $F = \infty$?
-
-  See example on board.
 
 \end{frame}
 
@@ -693,17 +727,60 @@ The \alert{Karush-Kuhn-Tucker (KKT) conditions} are necessary conditions that an
   (V2.left) -- +(0,0.6);
   \draw (1.5,11) node{$d_1$};
   \draw (3,11) node{$g_{1}$};
-  \draw (2,10.3) node{$g_1 - d_1 = f \quad \leftrightarrow \quad \l_1$};
   \draw (6.5,13) -- +(0,-0.5) node[sground]{};
   \draw (8,12) node[vsourcesinshape, rotate=270](V2){}
   (V2.left) -- +(0,0.6);
   \draw (6.5,11) node{$d_2$};
   \draw (8,11) node{$g_{2}$};
-  \draw (8,10.3) node{$g_2 - d_1 =  -f   \quad \leftrightarrow \quad \l_2$};
 
 \end{circuitikz}
-Objective function is   $\min_{g_1,g_2,f}  \left[o_1 g_1 + o_2 g_2 \right]$ subject to:
-\begin{align*}
+
+
+\centering
+\begin{columns}[T]
+  \begin{column}{5cm}
+
+    \centering
+
+ $g_1 - d_1 = f \quad \leftrightarrow \quad \l_1$
+
+    \hspace{1cm}
+
+    $d_1 =$ 100~MW
+
+    $G_1 =$ 300~MW
+
+    $o_1 = 10$~\euro/MWh
+
+  \end{column}
+  \begin{column}{5cm}
+
+    \centering
+    $g_2 - d_2 =  -f   \quad \leftrightarrow \quad \l_2$
+
+    \hspace{1cm}
+
+    $d_2 =$ 100~MW
+
+    $G_2 =$ 300~MW
+
+    $o_2 = 20$~\euro/MWh
+
+  \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Simplest example: two nodes connected by a single line}
+
+  Out optimisation problem has objective function:
+  \begin{equation*}
+    \min_{g_1,g_2,f}  \left[o_1 g_1 + o_2 g_2 \right]
+  \end{equation*}
+  subject to the following constraints:
+  \begin{align*}
+    g_1 - d_1  = f \hspace{1cm}\leftrightarrow\hspace{1cm} \l_1 \\
+    g_2 - d_2  = -f \hspace{1cm}\leftrightarrow\hspace{1cm} \l_2 \\
   g_1 \leq G_1  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_1 \\
     - g_1 \leq 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_1  \\
   g_2 \leq G_2  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_2  \\
@@ -733,7 +810,7 @@ Objective function is   $\min_{g_1,g_2,f}  \left[o_1 g_1 + o_2 g_2 \right]$ subj
     0 = \frac{\d \cL}{\d g_{i}} = o_i - \l_i^*  -  \bar{\m}_i^* + \ubar{\m}_i^*
   \end{equation*}
 
-  Thus we have at each site $\l_i^* = o_i$.
+  Thus we have at each site $\l_i^* = o_i$, as if we had optimised the nodes separately.
 
 
 \end{frame}
@@ -749,7 +826,7 @@ Objective function is   $\min_{g_1,g_2,f}  \left[o_1 g_1 + o_2 g_2 \right]$ subj
   \end{equation*}
   Generator 1 covers 50~MW of the demand from node 2:
   \begin{equation*}
-    g_1^* = d_1+f^*  \hspace{2cm} \textrm{and} \hspace{2cm} g_2^* = d_2 - f^*
+    g_1^* = d_1+f^* = 150\textrm{ MW}  \hspace{2cm} \textrm{and} \hspace{2cm} g_2^* = d_2 - f^* = 50\textrm{ MW}
   \end{equation*}
   Neither generator has any binding constraints, so
   \begin{equation*}
@@ -761,7 +838,7 @@ Objective function is   $\min_{g_1,g_2,f}  \left[o_1 g_1 + o_2 g_2 \right]$ subj
   \end{equation*}
   Only the upper limit is binding, so we get $\ubar{\m}^* = 0$ and
   \begin{equation*}
-    \bar{\m}^* = \l_1^* - \l_2^* = -10 \textrm{EUR/MWh}
+    \bar{\m}^* = \l_1^* - \l_2^* = -10 \textrm{ EUR/MWh}
   \end{equation*}
 
 
@@ -779,14 +856,14 @@ Objective function is   $\min_{g_1,g_2,f}  \left[o_1 g_1 + o_2 g_2 \right]$ subj
   \end{equation*}
   Generator 1 covers all the demand:
   \begin{equation*}
-    g_1^* = d_1+d_2  \hspace{2cm} \textrm{and} \hspace{2cm} g_2^* = 0
+    g_1^* = d_1+d_2  = 200\textrm{ MW} \hspace{2cm} \textrm{and} \hspace{2cm} g_2^* = 0
   \end{equation*}
   Only generator 2 has a non-zero KKT multiplier, so at node 1 we have
   $\l_1^* =o_1$ and at node 2 we have:
   \begin{equation*}
    \ubar{\m}_2^* = \l_2^* - o_2
   \end{equation*}
-  From KKT for the flow $f$ we have no constraints so
+  From KKT for the flow $f$ we have no constraints so $\bar{\m}^* = \ubar{\m}^* = 0$ and from stationarity
   \begin{equation*}
     0 = \frac{\d \cL}{\d f} = 0 +  \l_1^* - \l_2^*  -  \bar{\m}^* + \ubar{\m}^*
   \end{equation*}
@@ -870,17 +947,16 @@ nodes.
 \begin{columns}[T]
   \begin{column}{5cm}
 
-    \vspace{.5cm}
-    \includegraphics[width=5cm]{european_bidding_zones.png}
+    \includegraphics[width=5.8cm]{european_bidding_zones.png}
   \end{column}
 
-  \begin{column}{6cm}
+  \begin{column}{8cm}
 
     \begin{itemize}
-    \item Bids for German electricity take place in a \alert{giant bidding zone} encompassing both Austria and Germany (Austria will be separated from October 2018)
+    \item Bids for German electricity take place in a \alert{giant bidding zone} encompassing both Germany and Luxembourg (Austria was separated from the German bidding zone in October 2018)
     \item This means that transmission constraints are only visible to the market at the \alert{borders} to the other national zones
     \item Internal transmission constraints are \alert{ignored} - market bids are handled as if they do not exist
-    \item Only KCL enforced - KVL impossible
+    \item Only KCL enforced on most borders - KVL much harder
     \end{itemize}
 
 \end{column}
@@ -1062,7 +1138,8 @@ nodes.
   precise individual line constraints, instead of ``boxing'' the feasible space
   like ATC/NTC schemes do.
 
-  \centering \includegraphics[width=12cm]{fbmc}
+  \centering \includegraphics[width=13cm]{fbmc}
+
   \source{Van den Bergh, Boury, Delarue}
 \end{frame}
 
@@ -1084,12 +1161,12 @@ nodes.
 
   Label conventional generators by $s$, storage by $r$ and now minimise
   \begin{align*}
-    &    \min_{\{g_{i,s,t}\},\{g_{i,r,t,\textrm{store}}\},\{g_{i,r,t,\textrm{dispatch}}\},\{f_{\ell,t}\}}\\
-    &\left[  \sum_{i,s,t} o_{i,s} g_{i,s,t} +   \sum_{i,r,t} o_{i,r,\textrm{store} }\, g_{i,r,t,\textrm{store}} +   \sum_{i,r,t} o_{i,r,\textrm{dispatch}}\, g_{i,r,t,\textrm{dispatch}} \right]
+    &    \min_{\{g_{i,s,t}\},\{g_{i,r,t,\textrm{charge}}\},\{g_{i,r,t,\textrm{discharge}}\},\{f_{\ell,t}\}}\\
+    &\left[  \sum_{i,s,t} o_{i,s} g_{i,s,t} +   \sum_{i,r,t} o_{i,r,\textrm{charge} }\, g_{i,r,t,\textrm{charge}} +   \sum_{i,r,t} o_{i,r,\textrm{discharge}}\, g_{i,r,t,\textrm{discharge}} \right]
   \end{align*}
-  The power balance constraints are now (cf. Lecture 4) for each node $i$ and time $t$ that the demand is met either by generation, storage or network flows:
+  The power balance constraints are now (cf. Lecture 5) for each node $i$ and time $t$ that the demand is met either by generation, storage or network flows:
   \begin{align*}
-    \sum_{s} g_{i,s,t} + \sum_{r}(g_{i,r,t,\textrm{dispatch}} - g_{i,r,t,\textrm{store}}) - d_{i,t} = \sum_\ell K_{i\ell}f_{\ell,t}  \hspace{0.5cm}\leftrightarrow\hspace{0.5cm} \l_{i,t}
+    \sum_{s} g_{i,s,t} + \sum_{r}(g_{i,r,t,\textrm{discharge}} - g_{i,r,t,\textrm{charge}}) - d_{i,t} = \sum_\ell K_{i\ell}f_{\ell,t}  \hspace{0.5cm}\leftrightarrow\hspace{0.5cm} \l_{i,t}
   \end{align*}
 \end{frame}
 
@@ -1102,13 +1179,13 @@ nodes.
   \end{align*}
     and on the storage
     \begin{align*}
-    0 & \leq g_{i,r,t,\textrm{dispatch}} \leq G_{i,r,\textrm{dispatch}} \\
-    0 & \leq g_{i,r,t,\textrm{store}} \leq G_{i,r,\textrm{store}}
+    0 & \leq g_{i,r,t,\textrm{discharge}} \leq G_{i,r,\textrm{discharge}} \\
+    0 & \leq g_{i,r,t,\textrm{charge}} \leq G_{i,r,\textrm{charge}}
     \end{align*}
 
     The energy level of the storage is given by
   \begin{align*}
-    e_{i,r,t} = \eta_0e_{i,r,t-1} + \eta_1g_{i,r,t,\textrm{store}} -  \eta_2^{-1} g_{i,r,t,\textrm{dispatch}}
+    e_{i,r,t} = \eta_0e_{i,r,t-1} + \eta_1g_{i,r,t,\textrm{charge}} -  \eta_2^{-1} g_{i,r,t,\textrm{discharge}}
   \end{align*}
   and limited by
   \begin{align*}
@@ -1125,7 +1202,7 @@ nodes.
   \frametitle{Idea of storage}
 
 
-  Storage does `buy it low, sell it high' arbitrage, like network, but
+  Storage does `buy it low, sell it high' \alert{arbitrage}, like network, but
   in time rather than space, i.e. between cheap times (e.g. with lots
   of zero-marginal-cost renewables) and expensive times (e.g. with
   high demand, low renewables and expensive conventional generators).
@@ -1143,10 +1220,10 @@ nodes.
 
   Average charging price (with electrolyser): 43 \euro/MWh
 
-  Average discharging price (with turbine): 144\euro/MWh
+  Average discharging price (with turbine): 144 \euro/MWh
 
   %single_node_storage_bids.ipynb
-    \centering \includegraphics[width=9cm]{storage_bids.pdf}
+    \centering \includegraphics[width=8cm]{storage_bids.pdf}
 
 
 
