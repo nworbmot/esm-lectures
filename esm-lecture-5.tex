@@ -380,11 +380,11 @@
 
   Second, the iterative integration equation for the storage energy
   \begin{align*}
-    e_{i,r,t} = e_{i,r,t-1} + g_{i,r,t,\textrm{store}} -  g_{i,r,t,\textrm{dispatch}}
+    e_{i,r,t} = e_{i,r,t-1} + g_{i,r,t,\textrm{charge}} -  g_{i,r,t,\textrm{discharge}}
   \end{align*}
   needs to be amended for \alert{efficiencies} $\eta\in [0,1]$ (corresponding to \alert{losses} $1-\eta$)
   \begin{align*}
-    e_{i,r,t} = \eta_0e_{i,r,t-1} + \eta_1g_{i,r,t,\textrm{store}} -  \eta_2^{-1} g_{i,r,t,\textrm{dispatch}}
+    e_{i,r,t} = \eta_0e_{i,r,t-1} + \eta_1g_{i,r,t,\textrm{charge}} -  \eta_2^{-1} g_{i,r,t,\textrm{discharge}}
   \end{align*}
   $1-\eta_0$ corresponds to \alert{standing losses} or \alert{self-discharge}, $\eta_1$ to the \alert{charging efficiency} and $\eta_2$ to the \alert{discharging efficiency}.
 
