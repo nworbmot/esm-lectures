@@ -270,7 +270,7 @@
   generators (nuclear/gas/wind/solar) what is the optimal generation
   portfolio for maximising long-run welfare?
 
-  From an indivdual generators' perspective: how best should I invest in extra capacity?
+  From an individual generators' perspective: how best should I invest in extra capacity?
 
   We will show again that with perfect competition and no barriers to
   entry, the system-optimal situation can be reached by individuals
@@ -288,7 +288,7 @@
   To meet this load profile, cheap \alert{baseload} generation runs the whole time; more expensive \alert{peaking plant} covers the difference.
 
   \centering
-  \includegraphics[width=9cm]{baseload-peaking}
+  \includegraphics[width=8.5cm]{baseload-peaking}
 
   \source{Tom Brown}
 
@@ -311,10 +311,10 @@ Oil & V. High & Low & Yes & Yes & Medium \\
 Gas OCGT & High & Low & Yes & Yes & Medium \\
 Gas CCGT & Medium & Medium & Yes & Yes & Medium \\
 Hard Coal & Medium & Lowish & Yes & Yes & High \\
-Brown Coal & Low & Medium & Yes & Yes & High \\
+Brown Coal & Low & Medium & Partly & Yes & High \\
 Nuclear & V. Low & High & Partly & Yes & Zero \\
 Hydro dam & Zero & High & Yes & Yes & Zero \\
-Wind/Solar & Zero & High & Down & No & Zero \\
+Wind/Solar & Zero & High & Down & Partly & Zero \\
 \bottomrule
 	\end{tabular}
 \end{table}
@@ -423,6 +423,7 @@ Wind/Solar & Zero & High & Down & No & Zero \\
 
   `Increase capacity until marginal increase in profit equals the cost of extra capacity.'
 
+    Above this capacity  the generator makes less money from the market than its cost $\Rightarrow$ bad investment.
 \end{frame}
 
 
@@ -449,7 +450,7 @@ Wind/Solar & Zero & High & Down & No & Zero \\
 
 \begin{frame}{Multiple generators with linear costs and inelastic demand}
 
-  Assume again we have $o_1 \leq o_2 \leq \cdots \leq o_S = v$ and $K_s = \sum_{p=1}^s G_p$
+  Assume again we have $o_1 \leq o_2 \leq \cdots \leq o_S = v$ and $K_s = \sum_{p=1}^s G_p^*$
   then:
   \begin{equation*}
     \l_t = \left\{ \begin{array}{ll}
@@ -482,7 +483,7 @@ Wind/Solar & Zero & High & Down & No & Zero \\
 
     The upper graph is the load duration curve.
 
-    The y-axis is marked with the summed capacities of the generators $K_s = \sum_{p=1}^s G_p$.
+    The y-axis is marked with the summed capacities of the generators $K_s = \sum_{p=1}^s G_p^*$.
     These meet the curve at $\theta_s = P(d_t > K_s)$ (the definition of load duration curve).
 
     \vspace{1cm}
@@ -491,7 +492,7 @@ Wind/Solar & Zero & High & Down & No & Zero \\
 
     During the time when generator $s$ is price-setting, the price is $o_s$.
 
-    When $d_t > G_1 + G_2 + G_3$ then we have load-shedding and the price is $v$.
+    When $d_t > G_1^* + G_2^* + G_3^*$ then we have load-shedding and the price is $v$.
   \end{column}
 
 \end{columns}
@@ -515,7 +516,7 @@ Wind/Solar & Zero & High & Down & No & Zero \\
 
     For generator 3, the capital cost $c_3$ is the area above the price duration curve when $\l_t^* > o_3$.
 
-    This only happens when there is load-shedding and $\l_t^* = v$ when $d_t > K_3 = G_1 + G_2 + G_3$.
+    This only happens when there is load-shedding and $\l_t^* = v$ when $d_t > K_3 = G_1^* + G_2^* + G_3^*$.
 
     The area is given by
     \begin{align*}
@@ -681,13 +682,13 @@ Wind/Solar & Zero & High & Down & No & Zero \\
   \end{column}
   \begin{column}{6cm}
 
-      The screening curve allows us to read of the optimal generator capacities $G_p$ from the load duration curve.
+      The screening curve allows us to read of the optimal generator capacities $G_p^*$ from the load duration curve.
 
     \begin{itemize}
 
     \item We match the intersection points $\theta_s$ to the load duration curve.
-    \item The values of the load duration curve at $\theta_s$ tell us what the cumulative sums $K_s = \sum_{p=1}^s G_p$  of the generator capacities are.
-      \item This allows us to deduce the generator capacities $G_p$.
+    \item The values of the load duration curve at $\theta_s$ tell us what the cumulative sums $K_s = \sum_{p=1}^s G_p^*$  of the generator capacities are.
+      \item This allows us to deduce the generator capacities $G_p^*$.
     \end{itemize}
 
   \end{column}
@@ -744,8 +745,8 @@ Suppose that electrical demand is inelastic with a  load duration curve given by
     \begin{itemize}
     \item Draw the screening curve and load duration curve $d(\theta)$.
     \item Determine the intersection points $\theta_s$ from the screening curve.
-    \item Compute the cumulative generator capacity sums from the load duration curve $d(\theta_s) = K_s = \sum_{p=1}^s G_p$.
-      \item Find the capacities $G_s$ from the cumulative sums $K_s$.
+    \item Compute the cumulative generator capacity sums from the load duration curve $d(\theta_s) = K_s = \sum_{p=1}^s G_p^*$.
+      \item Find the capacities $G_s^*$ from the cumulative sums $K_s$.
     \end{itemize}
   \end{column}
   \end{columns}
@@ -761,7 +762,7 @@ Suppose that electrical demand is inelastic with a  load duration curve given by
   \end{equation*}
   This gives $\theta_1 = 0.5$. At this point the demand is $d(0.5) = 500$~MW therefore
   \begin{equation*}
-    K_1 = G_1 = 500\textrm{ MW}
+    K_1 = G_1^* = 500\textrm{ MW}
   \end{equation*}
 
   To find $\theta_2$, solver for where Generator 2 crosses the load-shedding line:
@@ -770,9 +771,9 @@ Suppose that electrical demand is inelastic with a  load duration curve given by
   \end{equation*}
   This gives $\theta_2 = 0.01$. At this point the demand is $d(0.01) = 990$~MW so:
   \begin{equation*}
-    K_2 =     G_1 + G_2 = 990\textrm{ MW}
+    K_2 =     G_1^* + G_2^* = 990\textrm{ MW}
   \end{equation*}
-  i.e. $G_2 = 490$ MW. The remaining load is shed, $G_{LS} = 10$ MW.
+  i.e. $G_2^* = 490$ MW. The remaining load is shed, $G_{LS}^* = 10$ MW.
 
 \end{frame}
 
