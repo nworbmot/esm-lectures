@@ -8,7 +8,7 @@
 
 
 
-\documentclass[10pt,dvipsnames]{beamer}
+\documentclass[10pt,aspectratio=169,dvipsnames]{beamer}
 
 
 \usetheme[color/block=transparent]{metropolis}
@@ -64,7 +64,7 @@
 \setbeamerfont{framesource}{size=\tiny}
 
 
-\newcommand{\source}[1]{\begin{textblock*}{4cm}(8.0cm,8.0cm)
+\newcommand{\source}[1]{\begin{textblock*}{5cm}(10.5cm,8.35cm)
     \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
         \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
     \end{beamercolorbox}
@@ -95,20 +95,29 @@
 \renewcommand{\item}{%
 \olditem\vspace{5pt}}
 
-\title{Energy System Modelling\\ Summer Semester 2019, Lecture 10}
+\title{Energy System Modelling\\ Summer Semester 2020, Lecture 10}
 %\subtitle{---}
 \author{
   {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
   \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
 }
 
-\date{\vspace{.3cm}14th June 2019}
+\date{}
 
 
-\titlegraphic{%
-  \vspace{6cm}
-  \hspace{6.7cm}
+\titlegraphic{
+  \vspace{0cm}
+  \hspace{10cm}
     \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+
+\vspace{5.1cm}
+
+  {\footnotesize
+
+  Unless otherwise stated, graphics and text are Copyright \copyright Tom Brown, 2020.
+  Graphics and text for which no other attribution are given are licensed under a
+  \href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons
+  Attribution 4.0 International Licence}. \ccby}
 }
 
 \begin{document}
@@ -125,16 +134,23 @@
 
 
 
-\section{Cost recovery in optimised system}
+\section{Cost Recovery in Long-Term Equilibrium}
 
 
-\begin{frame}{Cost recovery in an optimised system}
+\begin{frame}{Cost recovery in the long-term equilibrium}
 
-  In this part of the lecture we will demonstrate that all players in
-  the power network (generators and network operators) recover their
-  costs, at least in theory with perfect markets in equilibrium.
+  We will demonstrate that all players in the power network
+  (generators, storage and network operators) \alert{recover their
+    costs} in theory with perfect markets in long-term equilibrium and
+  linear (actually convex) costs.
 
-  We will discuss at the end why this does not work in practice.
+  If they didn't cover their costs, they would leave the market.
+
+  If they made a profit, others would join the market and competition would reduce the profit.
+
+  This is a direct consequence of the investment equations we considered in Lecture 9.
+
+  We will discuss at the end why this \alert{does not work in real life}, i.e. the consequences of imperfect markets, frictions  and non-convexities.
 \end{frame}
 
 
@@ -143,7 +159,7 @@
   Suppose we have generators labelled by $s$ at a single node with \alert{marginal costs} $o_s$ arising from each unit of
   production $g_{s,t}$ and \alert{capital costs} $c_s$ that arise from fixed costs
   regardless of the rate of production (such as the investment in building
-  capacity $G_s$).   For a variety of demand values $d_t$ in representative situation $t$ we optimise the total system costs
+  capacity $G_s$).   For a variety of demand values $d_t$ in representative situation $t$ we optimise the total annual system costs
   \begin{equation*}
     \min_{\{g_{s,t}\},\{G_s\}}  \left[\sum_{s}c_s G_s +  \sum_{s,t} o_{s} g_{s,t} \right]
   \end{equation*}
@@ -154,7 +170,7 @@
     g_{s,t} - G_s  & \leq 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_{s,t}
   \end{align*}
 
-  We will now show using KKT that every generator exactly recovers their costs if the market price is set by $\l_t^*$ (`no profit rule').
+  We will now show using KKT that every generator exactly recovers their costs if the market price is set by $\l_t^*$, the \alert{no/zero profit rule}.
 \end{frame}
 
 
@@ -189,12 +205,11 @@
     c_s G_s^* +  o_{s} \sum_{t}  g_{s,t}^* & =  c_s G_s^* + \sum_{t}( \l_t^* + \bar{\m}^*_{s,t} - \ubar{\m}^*_{s,t}) g_{s,t}^* \\
     & = c_s G_s^* +  \sum_{t} \l_t^* g_{s,t}^* + \sum_t  \bar{\m}^*_{s,t} G_s^*
   \end{align*}
-
   Finally use stationarity for the capacity $G_s^*$
     \begin{align*}
         0 = \frac{\d \cL}{\d G_{s}}  = c_s + \sum_t \bar{\m}^*_{s,t}
   \end{align*}
-  to get full cost recovery from the market price:
+  to get \alert{full cost recovery} from the market price:
   \begin{align*}
     c_s G_s^* +  o_{s} \sum_{t}  g_{s,t}^* =  \sum_{t} \l_t^* g_{s,t}^*
   \end{align*}
@@ -263,8 +278,27 @@
     $ \sum_i \l_{i,t}^*K_{i\ell} f_{\ell,t}^*$ is nothing other than
     the \alert{congestion rent} on line $\ell$ at time $t$, i.e. the flow $f_{\ell,t}^*$ multiplied by the price difference across the line $\sum_i \l_{i,t}^*K_{i\ell}$.
 
+    At the long-term equilibrium, the network operator covers the costs of the line exactly with the congestion rent. The optimum requires congestion at least some of the time!
 \end{frame}
 
+\begin{frame}{Storage cost recovery}
+
+  The proof for storage is a bit grizzly, but you can find it in \href{https://arxiv.org/abs/2002.05209}{\bf\color{blue}\underline{this paper}}.
+
+  The result is for storage unit $r$ at node $i$:
+    \begin{align*}
+      & c_{r,\textrm{discharge}} G_{i,r,\textrm{discharge}}^* +        c_{r,\textrm{charge}} G_{i,r,\textrm{charge}}^* +  c_{r,\textrm{energy}}  E^*_{i,r} \\
+      & = \sum_t \lambda_t^* g_{i,r,t,\textrm{discharge}}^* - \sum_t \lambda_t^* g_{i,r,t,\textrm{charge}}^*
+    \end{align*}
+
+    All the costs, including the costs of the electricity to charge the storage, are recovered when the storage discharges, thereby selling its electricity to the market.
+
+    At the equilibrium, the profits from arbitrage in the market (`buy low, sell high') exactly cover the investment costs.
+
+    From KKT we can deduce the optimal levels at which storage should bid into the market as demand or offer as supply (more later maybe).
+
+
+\end{frame}
 
 
 \begin{frame}{Adding a CO2 constraint for a single node}
@@ -294,15 +328,84 @@ This shows nicely the duality for exchanging the CO2 constraint for a CO2 price 
 
 
 
+\begin{frame}{Introduction to Lagrangian Relaxation}
 
-\begin{frame}{Grit in the machine 1/2}
+  This switching between costs and constraints is a special case of \alert{Lagrangian relaxation}.
+
+  Consider the optimisation problem:
+  \begin{equation*}
+  \max_{x} f(x)
+\end{equation*}
+[$x = (x_1, \dots x_k)$] subject to some \alert{constraints} within $\R^k$:
+\begin{align*}
+  g_i(x) & = c_i \hspace{1cm}\leftrightarrow\hspace{1cm} \l_i \hspace{1cm} i = 1,\dots n \\
+  h_0(x) & = d_0  \hspace{1cm}\leftrightarrow\hspace{1cm} \m_0 \\
+  h_j(x) & \leq d_j \hspace{1cm}\leftrightarrow\hspace{1cm} \m_j \hspace{1cm} j = 1,\dots m
+\end{align*}
+
+\end{frame}
+
+
+
+\begin{frame}{Introduction to Lagrangian Relaxation}
+
+  Now consider the related problem where $\tilde\mu_0$ is fixed to a constant:
+  \begin{equation*}
+  \max_{x} f(x) - \tilde\mu_0 (h_0(x) - d_0)
+\end{equation*}
+[$x = (x_1, \dots x_k)$] subject to some \alert{constraints} within $\R^k$:
+\begin{align*}
+  g_i(x) & = c_i \hspace{1cm}\leftrightarrow\hspace{1cm} \l_i \hspace{1cm} i = 1,\dots n \\
+  h_j(x) & \leq d_j \hspace{1cm}\leftrightarrow\hspace{1cm} \m_j \hspace{1cm} j = 1,\dots m
+\end{align*}
+
+We have \alert{relaxed} the problem by removing one of the constraints.
+
+You can show that the new problem has the same solution as the old $(x^*,\l^*,\m^*)$ if we fix the constant $\tilde\mu_0 = \mu_0^*$ by comparing the KKT stationarity constraints of the two problems.
+
+We have lifted the constraint into the objective function, where it penalises solutions with $h_0(x) > d_0$.
+
+In general, if we don't know $\mu_0^*$ beforehand, we can iteratively solve to find it.
+
+Often it can be easier to solve the relaxed problem.
+
+
+\end{frame}
+
+
+\begin{frame}{Fundamental Welfare Theorem is Lagrangian Relaxation}
+
+  Consider the maximisation of total welfare:
+  \begin{align*}
+    \max_{\{d_b\}, \{g_s\}} f(\{d_b\}, \{g_s\}) = \left[ \sum_b U_b (d_b)  -  \sum_s C_s (g_s) \right]
+  \end{align*}
+  subject to the balance constraint:
+  \begin{align*}
+    g(\{d_b\}, \{g_s\}) = \sum_b d_b -  \sum_s g_s  = 0 \hspace{1cm} \leftrightarrow \hspace{1cm} \l
+  \end{align*}
+  Now let's relax the constraint:
+  \begin{align*}
+    \max_{\{d_b\}, \{g_s\}} f(\{d_b\}, \{g_s\}) = \left[ \sum_b U_b (d_b)  -  \sum_s C_s (g_s) - \tilde\lambda ( \sum_b d_b -  \sum_s g_s) \right]
+  \end{align*}
+  This problem is \alert{separable} and \alert{decomposes} into separate problems for each $d_b$:
+  \begin{equation*}
+    \max_{d_b} \left[ U_b(d_b) - \tilde\lambda d_b\right]
+  \end{equation*}
+  and for each $g_s$:
+  \begin{equation*}
+    \max_{g_s} \left[ \tilde\lambda g_s  -  C_s(g_s)\right]
+  \end{equation*}
+
+\end{frame}
+
+\begin{frame}{Grit in the machine for generation 1/2}
 
   Several factors make this theoretical picture quite different in reality:
   \begin{itemize}
   \item Generation investment is \alert{lumpy} i.e. you can often only
-    build power stations in e.g. 500~MW blocks, not in continuous chunks.
-  \item Some older generators have \alert{sunk costs}, i.e. costs which have been incurred once and cannot be recovered, which alters their behaviour (i.e. the $f$ term is not evenly distributed across all hours)
-  \item Returns on scale in building plant are not taken into account (we did everything linear)
+    build power stations in e.g. 500~MW blocks, not at any size.
+  \item Some older generators have \alert{sunk costs}, i.e. costs which have been incurred once and cannot be recovered, which alters their behaviour (i.e. the capital cost term $c_s$ is not evenly distributed across all hours)
+  \item Returns on scale in building plant are not taken into account (this would be a non-convexity; we did everything linear)
   \item Site-specific concerns ignored (e.g. lignite might need to be near a mine and have limited capacity)
   \item Variability of production for wind/solar ignored
     \item There is considerable  uncertainty given load/weather conditions during a year, which makes investment risky; economic downturns reduce electricity demand
@@ -311,7 +414,8 @@ This shows nicely the duality for exchanging the CO2 constraint for a CO2 price 
 \end{frame}
 
 
-\begin{frame}{Grit in the machine 2/2}
+
+\begin{frame}{Grit in the machine for generation 2/2}
 
   Several factors make this theoretical picture quite different in reality:
   \begin{itemize}
@@ -351,7 +455,7 @@ This shows nicely the duality for exchanging the CO2 constraint for a CO2 price 
   costs. Day ahead spot market prices in 2016 in Germany-Austria bidding zone:
 
   \centering
-  \includegraphics[width=8.5cm]{germany-2016-price-duration}
+  \includegraphics[width=8cm]{germany-2016-price-duration}
 
   \raggedright
   Gas generators can bid into other markets, such as the intra-day or
@@ -362,13 +466,15 @@ This shows nicely the duality for exchanging the CO2 constraint for a CO2 price 
 \end{frame}
 
 
-\begin{frame}{Market prices from FIAS highly renewable simulations}
+\begin{frame}{Market prices from highly renewable simulations}
 
   In our simulations for high renewable penetrations, the theory does
   however work:
 
+  \centering
   \includegraphics[width=8.5cm]{europe-future-price-duration}
 
+  \raggedright
   Prices are zero around a quarter of the time, but spike above 10,000 \euro/MWh in some hours.
 
 \end{frame}
@@ -498,7 +604,7 @@ This shows nicely the duality for exchanging the CO2 constraint for a CO2 price 
   solar) production can be forecast in advance.   (Shaded area is the uncertainty.)
 
   \centering
-  \includegraphics[width=10cm]{wind_farm_forecast_2}
+  \includegraphics[width=9.5cm]{wind_farm_forecast_2}
 \end{frame}
 
 
@@ -525,7 +631,7 @@ This shows nicely the duality for exchanging the CO2 constraint for a CO2 price 
   Since RE often have priority feed-in (i.e. network operators are obliged to take their power), we often subtract the RE production from the load to get the \alert{residual load}, plotted here as a demand-duration-curve.
 
   \centering
-  \includegraphics[width=10.5cm]{residual-load}
+  \includegraphics[width=10cm]{residual-load}
 
   \source{Biggar and Hesamzadeh, 2014}
 \end{frame}
@@ -542,13 +648,13 @@ This shows nicely the duality for exchanging the CO2 constraint for a CO2 price 
 
   \centering
     \begin{tikzpicture}
-\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=5.5cm]{residual-screening_curve-clean}};
+\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=5.4cm]{residual-screening_curve-clean}};
 \draw (0.3,4.9) node{$c_2$};
 \draw (0.3,6.5) node{$c_1$};
   \end{tikzpicture}
 
 \end{column}
-\begin{column}{4cm}
+\begin{column}{6cm}
 
   The residual load must be met by conventional generators.
 
@@ -594,6 +700,7 @@ This shows nicely the duality for exchanging the CO2 constraint for a CO2 price 
   As a result of so much zero-marginal-cost renewable feed-in, spot
   market prices steadily decreased until 2016 (but since went up again):
 
+  \centering
   \includegraphics[width=11cm]{price_development}
 
   \source{Agora Energiewende}
