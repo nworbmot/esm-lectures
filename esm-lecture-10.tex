@@ -1,0 +1,768 @@
+% NB: use pdflatex to compile NOT pdftex.  Also make sure youngtab is
+% there...
+
+% converting eps graphics to pdf with ps2pdf generates way too much
+% whitespace in the resulting pdf, so crop with pdfcrop
+% cf. http://www.cora.nwra.com/~stockwel/rgspages/pdftips/pdftips.shtml
+
+
+
+
+\documentclass[10pt,dvipsnames]{beamer}
+
+
+\usetheme[color/block=transparent]{metropolis}
+
+\usepackage[absolute,overlay]{textpos}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+
+\usepackage{tikz}
+
+
+\usepackage[scale=2]{ccicons}
+
+\usepackage[official]{eurosym}
+
+
+%use this to add space between rows
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+
+
+\newcommand{\R}{\mathbb{R}}
+
+
+\setbeamerfont{alerted text}{series=\bfseries}
+\setbeamercolor{alerted text}{fg=Mahogany}
+\setbeamercolor{background canvas}{bg=white}
+
+
+
+\def\l{\lambda}
+\def\m{\mu}
+\def\d{\partial}
+\def\cL{\mathcal{L}}
+\def\co2{CO${}_2$}
+\def\bra#1{\left\langle #1\right|}
+\def\ket#1{\left| #1\right\rangle}
+\newcommand{\braket}[2]{\langle #1 | #2 \rangle}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\def\corr#1{\Big\langle #1 \Big\rangle}
+\def\corrs#1{\langle #1 \rangle}
+
+
+\def\mw{\text{ MW}}
+\def\mwh{\text{ MWh}}
+\def\emwh{\text{ \euro/MWh}}
+
+\newcommand{\ubar}[1]{\text{\b{$#1$}}}
+
+
+% for sources http://tex.stackexchange.com/questions/48473/best-way-to-give-sources-of-images-used-in-a-beamer-presentation
+
+\setbeamercolor{framesource}{fg=gray}
+\setbeamerfont{framesource}{size=\tiny}
+
+
+\newcommand{\source}[1]{\begin{textblock*}{4cm}(8.0cm,8.0cm)
+    \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
+        \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
+    \end{beamercolorbox}
+\end{textblock*}}
+
+\usepackage{hyperref}
+
+\usepackage{tikz}
+
+
+\usepackage[europeanresistors,americaninductors]{circuitikz}
+
+
+%\usepackage[pdftex]{graphicx}
+
+
+\graphicspath{{graphics/}}
+
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png,.jpg,.gif}
+
+
+
+\def\goat#1{{\scriptsize\color{green}{[#1]}}}
+
+
+
+\let\olditem\item
+\renewcommand{\item}{%
+\olditem\vspace{5pt}}
+
+\title{Energy System Modelling\\ Summer Semester 2019, Lecture 10}
+%\subtitle{---}
+\author{
+  {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
+  \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
+}
+
+\date{\vspace{.3cm}14th June 2019}
+
+
+\titlegraphic{%
+  \vspace{6cm}
+  \hspace{6.7cm}
+    \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{frame}
+
+  \frametitle{Table of Contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+
+
+\section{Cost recovery in optimised system}
+
+
+\begin{frame}{Cost recovery in an optimised system}
+
+  In this part of the lecture we will demonstrate that all players in
+  the power network (generators and network operators) recover their
+  costs, at least in theory with perfect markets in equilibrium.
+
+  We will discuss at the end why this does not work in practice.
+\end{frame}
+
+
+\begin{frame}{Single node with optimised capacities and dispatch}
+
+  Suppose we have generators labelled by $s$ at a single node with \alert{marginal costs} $o_s$ arising from each unit of
+  production $g_{s,t}$ and \alert{capital costs} $c_s$ that arise from fixed costs
+  regardless of the rate of production (such as the investment in building
+  capacity $G_s$).   For a variety of demand values $d_t$ in representative situation $t$ we optimise the total system costs
+  \begin{equation*}
+    \min_{\{g_{s,t}\},\{G_s\}}  \left[\sum_{s}c_s G_s +  \sum_{s,t} o_{s} g_{s,t} \right]
+  \end{equation*}
+  such that
+  \begin{align*}
+    \sum_s g_{s,t} & = d_t  \hspace{1cm}\leftrightarrow\hspace{1cm} \l_t \\
+    - g_{s,t}  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_{s,t} \\
+    g_{s,t} - G_s  & \leq 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_{s,t}
+  \end{align*}
+
+  We will now show using KKT that every generator exactly recovers their costs if the market price is set by $\l_t^*$ (`no profit rule').
+\end{frame}
+
+
+\begin{frame}{Single node with optimised capacities and dispatch}
+
+  Take the costs of generator $s$ at the optimal point:
+  \begin{align*}
+    c_s G_s^* +  \sum_{t}  o_{s} g_{s,t}^*
+  \end{align*}
+
+  Use stationarity for $g_{s,t}^*$
+  \begin{align*}
+        0 = \frac{\d \cL}{\d g_{s,t}}  = o_s - \l_t^* - \bar{\m}^*_{s,t} + \ubar{\m}^*_{s,t}
+  \end{align*}
+  to substitute for $o_s$ in the costs:
+  \begin{align*}
+    c_s G_s^* +  o_{s} \sum_{t}  g_{s,t}^* & =  c_s G_s^* + \sum_{t}( \l_t^* + \bar{\m}^*_{s,t} - \ubar{\m}^*_{s,t}) g_{s,t}^*
+  \end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Single node with optimised capacities and dispatch}
+
+  Next use complementarity
+  \begin{align*}
+    \bar{\m}^*_{s,t}(g_{s,t}^* - G_s^*) & = 0 \\
+    \ubar{\m}^*_{s,t}g_{s,t}^* & = 0
+  \end{align*}
+  to substitute for the terms $\m^*g_{s,t}^*$
+  \begin{align*}
+    c_s G_s^* +  o_{s} \sum_{t}  g_{s,t}^* & =  c_s G_s^* + \sum_{t}( \l_t^* + \bar{\m}^*_{s,t} - \ubar{\m}^*_{s,t}) g_{s,t}^* \\
+    & = c_s G_s^* +  \sum_{t} \l_t^* g_{s,t}^* + \sum_t  \bar{\m}^*_{s,t} G_s^*
+  \end{align*}
+
+  Finally use stationarity for the capacity $G_s^*$
+    \begin{align*}
+        0 = \frac{\d \cL}{\d G_{s}}  = c_s + \sum_t \bar{\m}^*_{s,t}
+  \end{align*}
+  to get full cost recovery from the market price:
+  \begin{align*}
+    c_s G_s^* +  o_{s} \sum_{t}  g_{s,t}^* =  \sum_{t} \l_t^* g_{s,t}^*
+  \end{align*}
+
+\end{frame}
+
+
+\begin{frame}{Network of nodes with optimised capacities and dispatch}
+
+  Suppose now we have a network of nodes $i$ connected by lines $\ell$.
+
+  Our investment problem is now:
+    \begin{equation*}
+    \min_{\{g_{i,s,t}\},\{G_{i,s}\}, f_{\ell,t}, F_\ell}  \left[\sum_{i,s}c_s G_{i,s} +  \sum_{i,s,t} o_{s} g_{i,s,t}  + \sum_\ell c_\ell F_\ell \right]
+  \end{equation*}
+  such that
+  \begin{align*}
+    \sum_s g_{i,s,t} - \sum_\ell K_{i\ell}f_{\ell,t} & = d_{i,t}  \hspace{1cm}\leftrightarrow\hspace{1cm} \l_{i,t} \\
+    - g_{i,s,t}  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_{i,s,t} \\
+    g_{i,s,t} - G_{i,s}  & \leq 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_{i,s,t} \\
+    f_{\ell,t} - F_\ell & \leq 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_{\ell,t} \\
+        - f_{\ell,t} - F_\ell & \leq 0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_{\ell,t}
+  \end{align*}
+
+
+\end{frame}
+
+\begin{frame}{Network of nodes with optimised capacities and dispatch}
+
+  The cost recovery of the generators follows through exactly as before.
+
+  What about the costs $c_\ell F_\ell^*$ of each transmission line?
+
+
+  Use stationarity for the capacity $F_{\ell}^*$:
+    \begin{align*}
+        0 = \frac{\d \cL}{\d F_{\ell}}  = c_\ell   +\sum_t \bar{\m}^*_{\ell,t}  + \sum_t \ubar{\m}^*_{\ell,t}
+    \end{align*}
+    to get
+    \begin{align*}
+      c_\ell F_\ell^* = F_\ell^* \sum_t \left[ \ubar{\m}^*_{\ell,t} +  \bar{\m}^*_{\ell,t} \right]
+    \end{align*}
+   `At the optimal point, fixed costs equal the sum of marginal
+    benefits of expanding the line at each time.'
+
+
+  Next use complementarity for the flows $\bar{\m}_{\ell,t}^* ( f_{\ell,t}^* - F_\ell^*) = 0$ and $\ubar{\m}_{\ell,t}^* ( - f_{\ell,t}^* - F_\ell^*) = 0$ to get
+    \begin{align*}
+      c_\ell F_\ell^* =  \sum_t \left[ \bar{\m}^*_{\ell,t} -  \ubar{\m}^*_{\ell,t} \right] f_{\ell,t}^*
+    \end{align*}
+
+\end{frame}
+
+
+\begin{frame}{Network of nodes with optimised capacities and dispatch}
+
+  Finally use stationarity for each $f_{\ell,t}^*$:
+    \begin{align*}
+        0 = \frac{\d \cL}{\d f_{\ell,t}}  = \sum_i \l_{i,t}^*K_{i\ell}  - \bar{\m}^*_{\ell,t} + \ubar{\m}^*_{\ell,t}
+  \end{align*}
+    to substitute for the $\m^*$:
+    \begin{align*}
+      c_\ell F_\ell^*  &=  \sum_t \left[ \bar{\m}^*_{\ell,t} -  \ubar{\m}^*_{\ell,t}   \right] f_{\ell,t}^* \\
+      & =\sum_t \sum_i \l_{i,t}^*K_{i\ell} f_{\ell,t}^*
+    \end{align*}
+    $ \sum_i \l_{i,t}^*K_{i\ell} f_{\ell,t}^*$ is nothing other than
+    the \alert{congestion rent} on line $\ell$ at time $t$, i.e. the flow $f_{\ell,t}^*$ multiplied by the price difference across the line $\sum_i \l_{i,t}^*K_{i\ell}$.
+
+\end{frame}
+
+
+
+\begin{frame}{Adding a CO2 constraint for a single node}
+
+If we add a constraint on the total \co2 emissions
+\begin{equation*}
+  \sum_{s,t} \frac{\varepsilon_s}{\eta_{s}} g_{s,t} \leq \textrm{CAP}  \leftrightarrow \m_{CO2}
+\end{equation*}
+where $\varepsilon_s$ are the specific \co2 emissions of technology $s$ per fuel
+thermal energy and $\eta_s$ is the efficiency of the generator
+(i.e. the ratio between thermal energy and electrical energy). CAP
+could correspond to e.g. political targets for \co2 reduction.
+
+All that changes is stationarity for the generator
+\begin{align*}
+  0 =     \frac{\d \cL}{\d g_{s,t}} =   o_{s}-\l_t^* - \ubar{\m}^*_{s,t} + \bar{\m}^*_{s,t} + \m_{CO2}^* \frac{\varepsilon_s}{\eta_{s}}
+\end{align*}
+and now for each generator cost recovery becomes
+\begin{align*}
+  c_s G_s^* +  o_{s}\sum_{t} g_{s,t}^*
+  & = \sum_{t} \l_t^* g_{s,t} -\m_{CO2}^* \sum_{t}  \frac{\varepsilon_s}{\eta_{s}} g_{s,t}^*
+\end{align*}
+
+This shows nicely the duality for exchanging the CO2 constraint for a CO2 price $o_{s} \to o_{s} + \m^*_{CO2} \frac{\varepsilon_s}{\eta_{s}} $.
+
+\end{frame}
+
+
+
+
+\begin{frame}{Grit in the machine 1/2}
+
+  Several factors make this theoretical picture quite different in reality:
+  \begin{itemize}
+  \item Generation investment is \alert{lumpy} i.e. you can often only
+    build power stations in e.g. 500~MW blocks, not in continuous chunks.
+  \item Some older generators have \alert{sunk costs}, i.e. costs which have been incurred once and cannot be recovered, which alters their behaviour (i.e. the $f$ term is not evenly distributed across all hours)
+  \item Returns on scale in building plant are not taken into account (we did everything linear)
+  \item Site-specific concerns ignored (e.g. lignite might need to be near a mine and have limited capacity)
+  \item Variability of production for wind/solar ignored
+    \item There is considerable  uncertainty given load/weather conditions during a year, which makes investment risky; economic downturns reduce electricity demand
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Grit in the machine 2/2}
+
+  Several factors make this theoretical picture quite different in reality:
+  \begin{itemize}
+    \item Fuel cost fluctuations, building delays which cost money
+  \item Risks from third-parties:  Changing costs of other generators, political risks (\co2 taxes,  Atomausstieg, subsidies for renewables, price caps)
+  \item Political or administrative constraints on wholesale energy
+    prices may prevent prices from rising high enough for long enough
+    to justify generation investment (``Missing Money Problem'')
+  \item  Lead-in time for planning and building, behaviour of others, boom-and-bust investment cycles resulting from periods of under- and over-investment in capacity
+    \item Exercise of \alert{market power}
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Episodes of High Prices are an Essential Part of an Energy-Only Market}
+
+  In an energy-only market (in which generators are only compensated
+  for the energy they produce), the wholesale spot price must at times
+  be higher than the variable cost of the highest-variable-cost
+  generating unit in the market. Episodes of high prices and/ or price
+  spikes are not in themselves evidence of market power or evidence of
+  market failure.
+
+  However, there may be political or administrative restrictions on
+  prices going to very high levels (i.e. consumer protection, concerns about market abuse).
+
+
+
+
+\end{frame}
+
+
+\begin{frame}{Today's market does not have episodes of very high prices}
+
+  This makes it hard for e.g. gas generators to make back their
+  costs. Day ahead spot market prices in 2016 in Germany-Austria bidding zone:
+
+  \centering
+  \includegraphics[width=8.5cm]{germany-2016-price-duration}
+
+  \raggedright
+  Gas generators can bid into other markets, such as the intra-day or
+  reserve power markets, or provide redispatch services.
+
+
+
+\end{frame}
+
+
+\begin{frame}{Market prices from FIAS highly renewable simulations}
+
+  In our simulations for high renewable penetrations, the theory does
+  however work:
+
+  \includegraphics[width=8.5cm]{europe-future-price-duration}
+
+  Prices are zero around a quarter of the time, but spike above 10,000 \euro/MWh in some hours.
+
+\end{frame}
+
+\begin{frame}{Price cap}
+
+  Some markets implement a maximum market price cap (MPC), which may be below the Value of Lost Load (VoLL)
+  ($V$ for the inelastic case).
+
+  In the Eastern Australian National Electricity Market (NEM), a MPC
+  of A\$13,800/MWh (\euro~9,300/MWh) for the 2015-2016 financial year
+  is set, corresponding to the price automatically triggered when AEMO
+  directs network service providers to interrupt customer supply in
+  order to keep supply and demand in the system in balance.
+
+  \centering
+
+\begin{columns}[T]
+\begin{column}{6.5cm}
+
+
+
+  \includegraphics[width=6.5cm]{price-cap}
+\end{column}
+\begin{column}{5cm}
+
+
+  This can introduce distortions which make it difficult for some generators to recover costs.
+
+\end{column}
+
+\end{columns}
+
+
+  \source{Biggar and Hesamzadeh, 2014}
+\end{frame}
+
+
+
+\begin{frame}{Europe: Capacity Markets in Some Countries}
+
+  CRM = Capacity Remuneration Mechanisms (CRM): status June 2014
+  \centering
+  \includegraphics[width=10.5cm]{cap_markets.png}
+
+
+  \source{\href{http://www.mdpi.com/1996-1073/8/6/5198metrics}{Ellenbeck et al, 2014}}
+
+\end{frame}
+
+\begin{frame}{Features of Transmission Investment 1/2}
+
+
+  \begin{enumerate}
+  \item \alert{Rationale for transmission}: Load and generation do not coincide in location at all times, so electricity must be transported for some of the time.
+  \item \alert{Transmission is a natural monopoly}: Like railways or water provision, it is unlikely that a parallel electricity network would be built, given cost and limits on installing infrastructure due to space and public acceptance. Natural monopolies require \alert{regulation}.
+  \item \alert{Transmission is a capital-intensive business}:
+    Transmitting electric power securely and efficiently over long
+    distances requires large amounts of equipment (lines,
+    transformers, etc.) which dominate costs compared to the operating
+    costs of the grid. Making good investment decisions is thus the
+    most important aspect of running a transmission company.
+  \end{enumerate}
+
+
+
+\end{frame}
+
+
+\begin{frame}{Features of Transmission Investment 2/2}
+
+
+  \begin{enumerate}
+  \item \alert{Transmission assets have a long life}: Most
+    transmission equipment is designed for an expected life ranging
+    from 20 to 40 years or even longer (up to 60-80 years). A lot can
+    change over this time, such as load behaviour and generation costs
+    and composition.
+  \item \alert{Transmission investments are irreversible}: Once a transmission line has been built, it
+  cannot be redeployed in another location where it could be used more profitably.
+  \item \alert{Transmission investments are lumpy}: Manufacturers sell transmission equipment in
+    only a small number of standardized voltage and MVA ratings. It is therefore often not
+    possible to build a transmission facility whose rating exactly matches the need.
+    \item \alert{Economies of scale}: Transmission investment more
+      proportional to length (costs of rights of way, terrain, towers,
+      which dominate costs) than to power rating (which depends only
+      on conductoring, which is cheap).
+
+  \end{enumerate}
+
+
+\end{frame}
+
+
+
+\section{Integrating Renewables in Power Markets}
+
+
+\begin{frame}{Characteristics of Renewables}
+
+  \begin{itemize}
+  \item \alert{Variability}: Their production depends on weather (wind speeds for wind, insolation for solar and precipitation for hydroelectricity)
+  \item \alert{No Upwards Controllability}: Variable Renewable Energy (VRE) like wind and solar can only reduce their output; raising is hard
+  \item \alert{No Long-Term Forecastability}: Although short-term forecasting is improving steadily
+  \item \alert{Low Marginal Cost} (no fuel costs)
+  \item \alert{High Capital Cost}
+  \item \alert{No Direct Carbon Dioxide Emissions} (but some indirect ones from manufacturing)
+  \item \alert{Small unit size} (wind turbine is 2-3~MW; coal/nuclear is 1000~MW)
+  \item \alert{Somewhat Decentralised Distribution} for some VRE (e.g. solar panels on household rooves); offshore is however very centralised
+    \item \alert{Provision of system services}: Increasing
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{RE Levelised Cost already approaching fossil fuels}
+
+  \centering
+  \includegraphics[width=10.5cm]{irena_costs}
+
+  \source{\href{http://www.irena.org/DocumentDownloads/Publications/IRENA_RE_Power_Costs_2014_report.pdf}{IRENA Renewable Generation Costs}}
+\end{frame}
+
+
+\begin{frame}{RE Forecasting}
+
+  Just like the weather on which it depends, Variable RE (wind and
+  solar) production can be forecast in advance.   (Shaded area is the uncertainty.)
+
+  \centering
+  \includegraphics[width=10cm]{wind_farm_forecast_2}
+\end{frame}
+
+
+
+\begin{frame}{RE Forecasting}
+
+  Like the weather, the forecast in the short-term (e.g. day ahead) is
+  fairly reliable, particularly for wind, but for several days ahead
+  it is less useful. In addition, it is subject to more uncertainty
+  than the load. For example, fog and mist is very local, hard to
+  predict, and has a big impact on solar power production.
+
+
+  This makes scheduling more challenging and has led to the introduction of
+  more regular auctions in the intraday market.
+
+  Forecasting has also become a big business.
+
+\end{frame}
+
+
+\begin{frame}{Effect on effective `residual' load curve}
+
+  Since RE often have priority feed-in (i.e. network operators are obliged to take their power), we often subtract the RE production from the load to get the \alert{residual load}, plotted here as a demand-duration-curve.
+
+  \centering
+  \includegraphics[width=10.5cm]{residual-load}
+
+  \source{Biggar and Hesamzadeh, 2014}
+\end{frame}
+
+
+\begin{frame}{Residual load curve and screening curve}
+
+
+
+\begin{columns}[T]
+\begin{column}{6.5cm}
+
+
+
+  \centering
+    \begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=5.5cm]{residual-screening_curve-clean}};
+\draw (0.3,4.9) node{$c_2$};
+\draw (0.3,6.5) node{$c_1$};
+  \end{tikzpicture}
+
+\end{column}
+\begin{column}{4cm}
+
+  The residual load must be met by conventional generators.
+
+  The changed duration curve interacts differently with the screening curve, so that we may require less baseload generation and peaking plant and more load shedding, depending on the shape of the curve.
+
+  In some markets, there is increased demand for medium-peaking plant.
+
+\end{column}
+
+
+
+\end{columns}
+
+
+  \centering
+
+  \source{Biggar and Hesamzadeh, 2014}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Effect of varying renewables: fixed demand, no wind}
+
+  \centering
+  \includegraphics[width=9cm]{demand-supply-no_wind}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Effect of varying renewables: fixed demand, 35~GW wind}
+
+  \centering
+  \includegraphics[width=9cm]{demand-supply-with_wind}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Spot market price development}
+
+  As a result of so much zero-marginal-cost renewable feed-in, spot
+  market prices steadily decreased until 2016 (but since went up again):
+
+  \includegraphics[width=11cm]{price_development}
+
+  \source{Agora Energiewende}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Merit Order Effect}
+
+  To summarise:
+  \begin{itemize}
+  \item Renewables have zero marginal cost
+  \item As a result they enter at the bottom of the merit order, reducing the price at which the market clears
+  \item This pushes non-CHP gas and hard coal out of the market
+  \item This is unfortunate, because among the fossil fuels, gas and
+    hard coal are the most flexible and produce the \emph{lowest} \co2
+    per MWh
+  \item It also massively reduces the profits that nuclear and brown coal make
+  \item Will there be enough backup power plants for times with no wind/solar?
+  \end{itemize}
+
+  This has led to lots of political tension...
+
+\end{frame}
+
+\begin{frame}{Market value}
+
+  VRE have the property that they cannibalise their own market, by
+  pushing down prices when lots of other VRE are producing.
+
+  We define the \alert{market value} of a technology by the average
+  market price it receives when it produces, i.e.
+
+  \begin{equation*}
+    MV_s = \frac{\sum_{t} \l^*_t g_{s,t}}{\sum_{t} g_{s,t}}
+  \end{equation*}
+
+  We can compare this to the average market price,
+    defined either as the simple average $\frac{1}{T} \sum_t \l^*_t$ or the demand-weighted average $ \frac{\sum_{t} \l^*_td_t}{\sum_{t}d_t}$.
+
+\end{frame}
+
+
+
+\begin{frame}{Historic market values in Germany}
+
+  \centering
+
+  \includegraphics[width=11cm]{market_value-historical}
+
+
+
+  \source{\href{https://doi.org/10.1016/j.eneco.2013.02.004}{Lion Hirth, 2013}}
+\end{frame}
+
+\begin{frame}{Market value at higher shares}
+
+
+  At low shares of VRE the market value may be higher than the average market price (because for example, PV produces a midday when prices are higher than average), but as VRE share increases the market value goes down.
+
+\begin{columns}[T]
+\begin{column}{6.5cm}
+
+
+
+  \centering
+
+  \includegraphics[width=6cm]{market_value_us}
+
+
+\end{column}
+\begin{column}{4cm}
+
+  The effect is particularly severe for PV, since the production is highly correlated; for wind smoothing prevents a steeper drop off. The bigger the catchment area, the longer wind preserves its market value.
+
+  \source{Mills \& Wiser, 2014}
+\end{column}
+
+
+
+\end{columns}
+
+
+\end{frame}
+
+
+
+\begin{frame}{Market value mitigation}
+
+To halt the drop in market value (and hence revenue for wind and
+solar) we can use networks to do price arbitrage in space, storage to
+do arbitrage in time, or introduce CO2 prices that push up the prices in times when fossil fuel
+plants are running.
+
+\begin{columns}[T]
+\begin{column}{5.5cm}
+
+
+
+  \centering
+
+  \includegraphics[width=5cm]{market_value-networks}
+
+
+\end{column}
+\begin{column}{5.5cm}
+
+
+  \centering
+
+  \includegraphics[width=5cm]{market_value-storage}
+\end{column}
+
+\end{columns}
+
+
+  \source{\href{https://doi.org/10.1016/j.eneco.2013.02.004}{Lion Hirth, 2013}}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Market value from our 95\% renewable simulations}
+  \begin{columns}[T]
+    \begin{column}{8.3cm}
+      \vspace{1cm}
+\centering
+  \includegraphics[width=8.3cm]{pre-7-market_value}
+  %\includegraphics[width=6cm]{pre-2-costs_de_storage}
+\end{column}
+\begin{column}{4cm}
+  \begin{itemize}
+%\item   %Big reduction in curtailment
+  \item Storage charges at low market prices and dispatches at high
+    prices.
+  \item Dispatchable power sources take advantage of high prices.
+  \item Variable renewables get lower prices, but saved by storage, networks and high CO2 price.
+  \end{itemize}
+\end{column}
+\end{columns}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Relation of LCOE to market value}
+
+  From the first section we had for a perfect market in long-term equilibrium that all costs are recovered from market revenue:
+  \begin{align*}
+    c_s G_s^* +  o_{s} \sum_{t}  g_{s,t}^* =  \sum_{t} \l_t^* g_{s,t}^*
+  \end{align*}
+  If we divide both sides by the total yearly generation $\sum_{t} g_{s,t}^*$ then we get:
+  \begin{align*}
+    \frac{c_s G_s^* +  o_{s} \sum_{t}  g_{s,t}^*}{\sum_{t} g_{s,t}^*} =  \frac{\sum_{t} \l_t^* g_{s,t}^*}{\sum_{t} g_{s,t}^*}
+  \end{align*}
+  This is none other than the identity between the LCOE and market value:
+  \begin{align*}
+    LCOE = MV
+  \end{align*}
+  This \emph{only} holds in a perfect equilibrium. I.e. the
+  equilibrium is found by increasing the penetration until the market
+  value equals the LCOE.
+
+  In reality the market is far from equilibrium: subsidies support
+  technologies (with a longer-term view of pushing them down the
+  learning curve), there are sunk costs for existing plants, excess
+  capacity supported outside the energy-only market, etc.
+\end{frame}
+
+
+\end{document}
