@@ -94,20 +94,29 @@
 \renewcommand{\item}{%
 \olditem\vspace{5pt}}
 
-\title{Energy System Modelling\\ Summer Semester 2019, Lecture 8}
+\title{Energy System Modelling\\ Summer Semester 2020, Lecture 11}
 %\subtitle{---}
 \author{
   {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
   \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
 }
 
-\date{\vspace{.3cm}14th June 2019}
+\date{}
 
 
-\titlegraphic{%
-  \vspace{6cm}
-  \hspace{6.7cm}
+\titlegraphic{
+  \vspace{0cm}
+  \hspace{10cm}
     \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+
+\vspace{5.1cm}
+
+  {\footnotesize
+
+  Unless otherwise stated, graphics and text are Copyright \copyright Tom Brown, 2020.
+  Graphics and text for which no other attribution are given are licensed under a
+  \href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons
+  Attribution 4.0 International Licence}. \ccby}
 }
 
 \begin{document}
@@ -296,11 +305,11 @@
       \toprule
       year $t$ &  0 & 1 & 2 & $\cdots$ & 20 \\
       \midrule
-      Capital costs $I_t$ & 80.000  & 0 & 0  & & 0\\
-      Operating costs $B_t$ & 0 & 2.000 & 2.000 & & 2.000  \\
-      Income $U_t$ & 0 & 10.000  & 10.000 & & 10.000 \\
+      Capital costs $I_t$ & 80,000  & 0 & 0  & & 0\\
+      Operating costs $B_t$ & 0 & 2,000 & 2,000 & & 2,000  \\
+      Income $U_t$ & 0 & 10,000  & 10,000 & & 10,000 \\
       \midrule
-      Net cash flow $U_t - I_t - B_t$ & -80.000 & 8.000 & 8.000 & & 8.000 \\
+      Net cash flow $U_t - I_t - B_t$ & -80,000 & 8,000 & 8,000 & & 8,000 \\
       \midrule
       Discount factor $\frac{1}{(1+r)^t}$ & 1 & $\frac{1}{(1+r)}$ & $\frac{1}{(1+r)^2}$ & &  $\frac{1}{(1+r)^{20}}$ \\
       \bottomrule
@@ -338,9 +347,9 @@
 
   For our example with $r= 0.05$
   \begin{align*}
-    NPV & = -80.000 + (10.000 - 2.000)  \cdot \frac{1}{r} \left[1  - \frac{1}{(1+r)^{T}}  \right] \\
-    & = -80.000 + 8.000*12.5 \\
-    & = 19698
+    NPV & = -80,000 + (10,000 - 2,000)  \cdot \frac{1}{r} \left[1  - \frac{1}{(1+r)^{T}}  \right] \\
+    & = -80,000 + 8,000*12.5 \\
+    & = 19,698
   \end{align*}
 
   \alert{Conclusion:} It's worthwile to invest in the photovoltaic unit!
@@ -349,8 +358,8 @@
 
   NB: The calculation is very sensitive to the interest rate, e.g. with $r = 0.08$
   \begin{align*}
-    NPV & = -80.000 + 8.000*9.8 \\
-    & = -1.454
+    NPV & = -80,000 + 8,000*9.8 \\
+    & = -1,454
   \end{align*}
 
   \alert{Conclusion:} The investment is not worthwhile.
@@ -436,7 +445,7 @@
 
   \begin{itemize}
   \item Future income or costs are worth less from today's point of view
-  \item To calculate the \alert{present value}, multiply the cash flow in year $t$ by the \alert{discount factor}  $\frac{1}{(1+r)^t}$
+  \item To calculate the \alert{present value} give the \alert{interest rate} $r$, multiply the cash flow in year $t$ by the \alert{discount factor}  $\frac{1}{(1+r)^t}$
   \item To calculate the \alert{net present value (NPV)} for an investment, sum the present values of all income and costs
   \item If  $NPV > 0$, the investment is worthwhile compared to investing with interest rate $r$
   \item For two different investments, a higher NPV should be preferred
@@ -620,7 +629,7 @@ For a plant with capacity $G_s$ in MW and yearly production $Q$ in MWh$_{\textrm
 
 
 
-\section{Review}
+\section{Multi-horizon investment: Motivation}
 
 
 \begin{frame}
@@ -675,15 +684,21 @@ For a plant with capacity $G_s$ in MW and yearly production $Q$ in MWh$_{\textrm
     \end{column}
     \begin{column}{7cm}
 
-        \includegraphics[width=6cm]{screening-load-duration.png}
+  \begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=6cm]{screening-load-duration-clean}};
+\draw (1.8,4.0) node{$c_2$};
+\draw (1.8,5.2) node{$c_1$};
+\draw (2.5,3.3) node{$\theta_2$};
+\draw (4.8,3.3) node{$\theta_1$};
+\draw (2.5,0.1) node{$\theta_2$};
+\draw (4.8,0.1) node{$\theta_1$};
+  \end{tikzpicture}
 
     \end{column}
   \end{columns}
 
 \end{frame}
 
-
-\section{Multi-horizon investment: Motivation}
 
 
 \begin{frame}
@@ -705,9 +720,9 @@ For a plant with capacity $G_s$ in MW and yearly production $Q$ in MWh$_{\textrm
   \item \alert{Energy consumption} (particularly in developing countries)
   \item \alert{Resource scarcity} (scarcity of oil, cobalt, rare earth metals, etc.)
   \item \alert{Political targets} (e.g. reduction of greenhouse gas emissions)
-  \item \alert{Maturity, costs and other parameters} (e.g.. efficiency) of technologies
+  \item \alert{Technology maturity, costs and other parameters} (e.g. efficiency)
   \item \alert{Economic growth}
-  \item \alert{Bahavioural change} (car sharing, online gaming, etc.)
+  \item \alert{Behavioural change} (car sharing, less flying, online gaming, etc.)
   \end{itemize}
 \end{frame}
 
@@ -763,7 +778,7 @@ For a plant with capacity $G_s$ in MW and yearly production $Q$ in MWh$_{\textrm
 
   The totals costs are expressed in their
   \alert{present value} using the
- \alert{discount rate} $r$ (see lecture 8), to allow comparison between different years.
+ \alert{discount rate} $r$, to allow comparison between different years.
 
  For costs (or income) in year $a$ we \alert{discount} the costs with a factor
   \begin{equation*}
@@ -911,7 +926,7 @@ We optimise the discounted total costs over 30 years from 2021 to 2050
 \begin{frame}
   \frametitle{Simplified example}
 
-  \url{https://nworbmot.org/courses/esm-2019/lectures/notebooks/dynamic_investment.ipynb}
+  \url{https://nworbmot.org/courses/esm-2020/lectures/notebooks/dynamic_investment.ipynb}
 
   Time period: 2021 until 2070. Discount rate: $r = 0.05$.
 
