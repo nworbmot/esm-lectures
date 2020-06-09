@@ -1,0 +1,1045 @@
+% NB: use pdflatex to compile NOT pdftex.  Also make sure youngtab is
+% there...
+
+% converting eps graphics to pdf with ps2pdf generates way too much
+% whitespace in the resulting pdf, so crop with pdfcrop
+% cf. http://www.cora.nwra.com/~stockwel/rgspages/pdftips/pdftips.shtml
+
+
+
+
+\documentclass[10pt,aspectratio=169,dvipsnames]{beamer}
+
+\usetheme[color/block=transparent]{metropolis}
+
+\usepackage[absolute,overlay]{textpos}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+
+\usepackage{tikz}
+
+
+\usepackage[scale=2]{ccicons}
+
+\usepackage[official]{eurosym}
+
+
+%use this to add space between rows
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+
+
+\newcommand{\R}{\mathbb{R}}
+
+
+\setbeamerfont{alerted text}{series=\bfseries}
+\setbeamercolor{alerted text}{fg=Mahogany}
+\setbeamercolor{background canvas}{bg=white}
+
+
+
+\def\l{\lambda}
+\def\m{\mu}
+\def\d{\partial}
+\def\cL{\mathcal{L}}
+\def\co2{CO${}_2$}
+\def\bra#1{\left\langle #1\right|}
+\def\ket#1{\left| #1\right\rangle}
+\newcommand{\braket}[2]{\langle #1 | #2 \rangle}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\def\corr#1{\Big\langle #1 \Big\rangle}
+\def\corrs#1{\langle #1 \rangle}
+
+
+\def\mw{\text{ MW}}
+\def\mwh{\text{ MWh}}
+\def\emwh{\text{ \euro/MWh}}
+
+\newcommand{\ubar}[1]{\text{\b{$#1$}}}
+
+
+% for sources http://tex.stackexchange.com/questions/48473/best-way-to-give-sources-of-images-used-in-a-beamer-presentation
+
+\setbeamercolor{framesource}{fg=gray}
+\setbeamerfont{framesource}{size=\tiny}
+
+
+\newcommand{\source}[1]{\begin{textblock*}{5cm}(10.5cm,8.35cm)
+    \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
+        \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
+    \end{beamercolorbox}
+\end{textblock*}}
+
+\usepackage{hyperref}
+
+\usepackage{tikz}
+
+
+\usepackage[europeanresistors,americaninductors]{circuitikz}
+
+
+%\usepackage[pdftex]{graphicx}
+
+
+\graphicspath{{graphics/}}
+
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png,.jpg,.gif}
+
+
+
+\def\goat#1{{\scriptsize\color{green}{[#1]}}}
+
+
+
+\let\olditem\item
+\renewcommand{\item}{%
+\olditem\vspace{5pt}}
+
+\title{Energy System Modelling\\ Summer Semester 2019, Lecture 8}
+%\subtitle{---}
+\author{
+  {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
+  \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
+}
+
+\date{\vspace{.3cm}14th June 2019}
+
+
+\titlegraphic{%
+  \vspace{6cm}
+  \hspace{6.7cm}
+    \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{frame}
+
+  \frametitle{Table of Contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+
+\section{Present value and discounting}
+
+
+\begin{frame}
+  \frametitle{The value of money depends on time}
+
+
+  \alert{Question 1:} What would you prefer: \euro 1000 today, or \euro 1000 in 3 years?
+
+  \pause
+
+  \euro 1000 today can be invested in the bank with an interest rate of 5\%.
+
+  After 3 years you would have
+  \begin{equation*}
+     1000 \cdot (1 + 0.05)^3 = 1158
+  \end{equation*}
+
+  \alert{Answer 1:} Best to take the money today and use the opportunity to invest!
+
+  \vspace{.5cm}
+
+ ``Money in the future is worth less than money today.''
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{The value of money depends on time}
+
+
+  \alert{Question 2:} What would you prefer: \euro 1000 today, or \euro 1300 in 5  years?
+
+  \pause
+
+  If you invested \euro 1000 today, after 5 years you would have only
+  \begin{equation*}
+     1000 \cdot (1 + 0.05)^5 = 1276
+  \end{equation*}
+
+  \alert{Answer 2:} Best to wait for the \euro 1300 in 5 years!
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Present value}
+
+  To allow comparison between income and outgoings in different years, we need to agree on a particular point in time to evaluate the cash flows.
+
+  The simplest and most frequently used time point: today's value, known as the \alert{present value}.
+
+  For an \alert{interest rate} $r$ we multiply the income or outgoings in year $t$ by the \alert{discount factor}
+  \begin{equation*}
+    \frac{1}{(1+r)^t}
+  \end{equation*}
+  to calculate the present value. We have \alert{discounted} the future cash flow.
+
+  Future income or outgoings are \alert{worth less} from today's point of view (as long as $r$ is positive).
+
+  ``Money in the future is worth less than money today.''
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example: present value}
+
+  For our example with interest rate 5\% we can now order the options:
+  \ra{1.1}
+  \begin{table}[!t]
+    \begin{tabular}{rrr}
+      \toprule
+      Income (\euro) & Year & Present value (\euro)  \\
+      \midrule
+      1000  &  3 & $\frac{1000}{(1+0.05)^3} = 863$  \\
+      1000  &  0 & $\frac{1000}{(1+0.05)^0} = 1000$ \\
+      1300  &  5 & $\frac{1300}{(1+0.05)^5} = 1019$ \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+\end{frame}
+
+
+
+\section{Investment calculations}
+
+
+\begin{frame}
+  \frametitle{Motivation: Power plant investment}
+
+  A company is considering investing in a photovoltaic plant on its roof. The key figures:
+
+
+  \begin{columns}[T]
+\begin{column}{6cm}
+
+    \begin{table}[!t]
+    \begin{tabular}{lr}
+      \toprule
+      Size &  100 kW \\
+      Investment cost & 800 \euro kW$^{-1}$ \\
+      Operating cost & 20 \euro kW$^{-1}$ a$^{-1}$\\
+      Feed-In Tariff & 0.1 \euro kWh$^{-1}$\\
+      Full load hours & 1000 \\
+      Period of subsidy & 20 years \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{column}
+\begin{column}{6cm}
+
+    \includegraphics[width=6.5cm]{PV_Anlage_auf_der_Rottweiler_Stadthalle.jpg}
+\end{column}
+  \end{columns}
+
+  \vspace{.5cm}
+
+  The company can invest its money elsewhere for a return of 5\%.
+
+  \alert{Is it worthwhile to invest in the photovoltaic plant?}
+
+  \source{\href{https://www.ise.fraunhofer.de/content/dam/ise/de/documents/publications/studies/DE2018_ISE_Studie_Stromgestehungskosten_Erneuerbare_Energien.pdf}{Fraunhofer ISE Stromgestehungskosten 2018}, \href{https://de.wikipedia.org/wiki/ENRW_Energieversorgung_Rottweil\#/media/Datei:PV_Anlage_auf_der_Rottweiler_Stadthalle.jpg}{Wikipedia}}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Investment calculations}
+
+  An \alert{investment calculation} quantifies the financial costs and benefits of an investment, assuming that future income and outgoings can be predicted.
+
+  It considers
+  \begin{itemize}
+  \item \alert{Capital costs} - Costs for investments and installation
+  \item \alert{Consumption costs} - Fuel, other materials (e.g. lubricants for wind turbine), etc.
+  \item \alert{Operating costs} - Maintenance, wages, insurance, management, etc.
+  \item \alert{Income} - depends on market price, subsidies, and production
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Dynamic investment calculation}
+
+  For a \alert{dynamic investment calculation} we sum the present values of all income and outgoings over the $T$ years of operation taking account of the interest rate $r$ to get the \alert{Net Present Value (NPV)}:
+  \begin{equation*}
+    NPV = \sum_{t=0}^T \frac{ - I_t - V_t - B_t + U_t}{(1+r)^t}
+  \end{equation*}
+  where $I_t$ is the capital expenditure in year $t$, $V_t$ the
+  consumption costs (e.g. for fuel cost $o_t$ and annual production $Q_t$, $V_t = o_t\cdot Q_t$), $B_t$ the operating costs und $U_t$ the income (e.g. average market value $\lambda_t$ times annual production
+  $Q_t$, $U_t = \lambda_t\cdot Q_t$).
+
+  \alert{Conclusion:} If $NPV > 0$, the investment is worthwhile.
+
+  If $NPV < 0$, better to invest with a rate of return of $r$ elsewhere.
+
+  For comparisons between different investments, a higher NPV should be preferred.
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Example: Rooftop photovoltaic unit}
+
+    All cash flows (costs and income) in \euro:
+    \begin{table}[!t]
+    \begin{tabular}{lrrrrr}
+      \toprule
+      year $t$ &  0 & 1 & 2 & $\cdots$ & 20 \\
+      \midrule
+      Capital costs $I_t$ & 80.000  & 0 & 0  & & 0\\
+      Operating costs $B_t$ & 0 & 2.000 & 2.000 & & 2.000  \\
+      Income $U_t$ & 0 & 10.000  & 10.000 & & 10.000 \\
+      \midrule
+      Net cash flow $U_t - I_t - B_t$ & -80.000 & 8.000 & 8.000 & & 8.000 \\
+      \midrule
+      Discount factor $\frac{1}{(1+r)^t}$ & 1 & $\frac{1}{(1+r)}$ & $\frac{1}{(1+r)^2}$ & &  $\frac{1}{(1+r)^{20}}$ \\
+      \bottomrule
+    \end{tabular}
+    \end{table}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{NPV simplification}
+
+  If investments only occur in the first year, and the costs and income for the following years are constant, we can simplify the NPV formula:
+  \begin{equation*}
+    NPV = -I_0 + (U - V - B) \sum_{t=1}^T \frac{1}{(1+r)^t}
+  \end{equation*}
+  The sum $\sum$ is called the \alert{Present Value Factor} $PVF(r,T)$.
+
+  For a geometric series with $|q| < 1$ we have $\sum_{n=0}^\infty q^n = \frac{1}{1-q}$.
+  For $q= (1+r)^{-1}$ we can simplify the formula
+  \begin{align*}
+    PVF(r,T) & =  \sum_{t=1}^T \frac{1}{(1+r)^t} \\
+             & = \left[\frac{1}{(1+r)} - \frac{1}{(1+r)^{T+1}}  \right] \sum_{t=0}^\infty \frac{1}{(1+r)^t}
+              = \left[\frac{1}{(1+r)} - \frac{1}{(1+r)^{T+1}}  \right] \frac{1}{1 - (1+r)^{-1}} \\
+             & = \left[\frac{1}{(1+r)} - \frac{1}{(1+r)^{T+1}}  \right] \frac{1+r}{1 + r  - 1}  = \frac{1}{r} \left[1  - \frac{1}{(1+r)^{T}}  \right]
+  \end{align*}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Example: Rooftop photovoltaic unit}
+
+  For our example with $r= 0.05$
+  \begin{align*}
+    NPV & = -80.000 + (10.000 - 2.000)  \cdot \frac{1}{r} \left[1  - \frac{1}{(1+r)^{T}}  \right] \\
+    & = -80.000 + 8.000*12.5 \\
+    & = 19698
+  \end{align*}
+
+  \alert{Conclusion:} It's worthwile to invest in the photovoltaic unit!
+
+  \pause
+
+  NB: The calculation is very sensitive to the interest rate, e.g. with $r = 0.08$
+  \begin{align*}
+    NPV & = -80.000 + 8.000*9.8 \\
+    & = -1.454
+  \end{align*}
+
+  \alert{Conclusion:} The investment is not worthwhile.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Return On Investment (ROI)}
+
+  The expected return or \alert{Return On Investment (ROI)} is the required interest rate to reach the point $NPV = 0$.
+
+  In our example you can either experiment or use the Newton-Raphson algorithm to determine the ROI $r$
+  \begin{equation*}
+    0 = NPV = -I_0 + (U - V - B) \sum_{t=1}^T \frac{1}{(1+r)^t}
+  \end{equation*}
+
+  In our example we find an ROI of $r=7.75$\%.
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{German example figures for electricity production technologies in 2018}
+
+  WACC is the \alert{Weighted Average Cost of Capital} over the bank interest rate for borrowed capital (Fremdkapital) and the investor's ROI on their own investment (Eigenkapital).
+
+  \centering
+  \includegraphics[width=14cm]{stromgestehungskosten.png}
+
+
+  \source{\href{https://www.ise.fraunhofer.de/content/dam/ise/de/documents/publications/studies/DE2018_ISE_Studie_Stromgestehungskosten_Erneuerbare_Energien.pdf}{Fraunhofer ISE Stromgestehungskosten 2018}}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Warning: Discounting over long time periods}
+
+  Over long time periods the discounting can have a very large effect....
+
+  \begin{columns}[T]
+\begin{column}{9cm}
+  \centering
+  \includegraphics[width=9.5cm]{discounting.pdf}
+\end{column}
+\begin{column}{5cm}
+  \begin{itemize}
+  \item Long-term benefits aren't seen, e.g. long production life of nuclear power plants or benefits of long-lived efficiency measures
+  \item Long-term costs are also suppressed, e.g. decommissioning, waste disposal, climate damages
+  \item This is a \alert{controversial topic!}
+  \end{itemize}
+\end{column}
+  \end{columns}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Programming example: photovoltaic plant}
+
+  \centering
+  \includegraphics[width=10.5cm]{PV_programming_example.png}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Programming example: nuclear plant}
+
+  \centering
+  \includegraphics[width=10.5cm]{nuclear_programming_example.png}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Summary}
+
+  \begin{itemize}
+  \item Future income or costs are worth less from today's point of view
+  \item To calculate the \alert{present value}, multiply the cash flow in year $t$ by the \alert{discount factor}  $\frac{1}{(1+r)^t}$
+  \item To calculate the \alert{net present value (NPV)} for an investment, sum the present values of all income and costs
+  \item If  $NPV > 0$, the investment is worthwhile compared to investing with interest rate $r$
+  \item For two different investments, a higher NPV should be preferred
+  \item \alert{Long-term} costs or benefits are \alert{suppressed} by discounting
+  \end{itemize}
+
+\end{frame}
+
+
+\section{Levelised Cost Of Electricity (LCOE)}
+
+
+
+
+\begin{frame}
+  \frametitle{Levelised Cost Of Energy (LCOE)}
+
+  You can also solve for the market value or feed-in tariff that's
+  necessary to cover all the costs of the investment, i.e. the point
+  where the present value of all income balances the present value of
+  all costs.  You solve for the price $\lambda$ such that
+  \begin{equation*}
+   0 = NPV = -I_0 + (\lambda Q - oQ - B) PVF(r,T)
+  \end{equation*}
+  (using $V = oQ$). We find:
+  \begin{equation*}
+    \lambda = \frac{1}{Q} \left( \frac{I_0}{PVF(r,T)} + B + oQ \right) = \frac{1}{Q} \left( \frac{I_0}{PVF(r,T)} + B  \right) + o
+  \end{equation*}
+
+  In our example we find a price of $\lambda =$ 89 \euro/MWh for $i=0.05$. % One could reduce the feed-in tariff from 100 \euro/MWh to this value!
+
+  This value corresponds to the average long-term costs of the unit, since we've divided the total yearly costs by the total production $Q$. It is called the
+the \alert{Levelised Cost Of Energy (LCOE)}.
+
+  It is also called the  \alert{Long-Run Marginal Cost (LMRC)}, since we've added to the short-run marginal cost $o$ an annualised contribution to the capital cost and the operating costs.
+
+  Check: The higher $I_0$ or $B$ are, the higher the LCOE. The higher $Q$ is, the lower the LCOE.
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Annuity}
+
+  The \alert{annuity} is the annualised investment cost $a = \frac{I_0}{PVF(r,T)}$ and
+  $a(r,T) = \frac{1}{PVF(r,T)}$ is the \alert{annuity factor}, which spreads the capital costs $I_0$ evenly over the operational years of the investment (like a mortgage for a house).
+
+  For a loan $I_0$ from the bank, the bank is compensated for the \alert{opportunity cost} of investing elsewhere at a rate of $r$ by an annual fixed sum $a$ so that the NPV for the bank is zero
+  \begin{equation*}
+    0 = NPV  = -I_0 + \sum_{t=0}^T \frac{a}{(1+r)^t} = -I_0 + PVF(r,T) \frac{I_0}{PVF(r,T)}
+  \end{equation*}
+
+  The formula for the annuity factor is derived from that for the PVF:
+  \begin{equation*}
+     a(r,T)  = \frac{1}{PVF(r,T)} = \frac{ r}{ 1 - (1+r)^{-T}}
+  \end{equation*}
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Examples of annuity factor}
+
+  \begin{columns}[T]
+\begin{column}{6.5cm}
+
+  AF = Annuity Factor, $a(r,T)$
+  \begin{table}[!t]
+	\centering
+	\begin{tabular}{@{}rrr@{}}
+\toprule
+Lifetime $T$  &  Discount Rate $r$ & AF $a(r,T)$ \\
+years & \% & per unit \\
+\midrule
+20 & 0 & 0.05 \\
+20 & 5 & 0.08 \\
+20 & 10 & 0.12 \\
+20 & 20 & 0.21 \\
+40 & 0 & 0.025 \\
+40 & 5 & 0.06 \\
+40 & 10 & 0.10 \\
+40 & 20 & 0.20 \\
+\bottomrule
+	\end{tabular}
+\end{table}
+\end{column}
+\begin{column}{7.5cm}
+  Things to notice:
+  \begin{itemize}
+  \item AF reduce to $1/T$ in limit $r \to 0$
+  \item AF climbs steeply with $r$
+  \item For long lifetimes, AF is similar to short lifetimes for high $r$ - in reality investors try to pay off investments faster than lifetime
+  \item In reality, an investor would provide some capital themselves, e.g. 10-20\% of the capital cost, and borrow the rest from the bank. The weighted average of the investor's desired internal rate of return and that of the bank loan is the \alert{weighted average cost of capital} (WACC).
+  \end{itemize}
+\end{column}
+  \end{columns}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Parameters for different generation technologies}
+
+  Here are some typical investment and operational parameters projected for 2020:
+  \vspace{-.5cm}
+  \begin{table}[!t]
+	\centering
+	\begin{tabular}{@{}lrrrrrrr@{}}
+\toprule
+Source   & Lifetime & Capital Cost &  Fix O\&{}M &  Var O\&{}M & $\eta$ & Fuel Cost & Marg. Cost \\
+& years & \euro kW$^{-1}$  & \euro kW$^{-1}$a$^{-1}$ &  \euro MWh$_{\textrm{el}}^{-1}$ & [\%] & \euro/MWh$_{\textrm{th}}$ & \euro/MWh$_{\textrm{el}}$ \\
+\midrule
+Hard Coal    & 40 & 1200 & 30 & 6 & 39 & 10 & 32 \\
+Gas OCGT     & 30 & 400  & 15 & 3 & 39 & 20 & 54 \\
+Gas CCGT     & 30 & 800  & 20 & 4 & 60 & 20 & 37 \\
+Nuclear      & 40-60 & 6000  & 0 & 6 & 33 & 3.3 & 16 \\
+Wind Onshore & 25 & 1240 & 35 & 0 & & 0 & 0 \\
+Solar PV     & 25 & 750  & 25 & 0 & & 0 & 0 \\
+\bottomrule
+	\end{tabular}
+\end{table}
+O\&{}M = Operation and Maintenance, Var. = Variable, Fix. = Fixed, $\eta$ = efficiency
+
+For a plant with capacity $G_s$ in MW and yearly production $Q$ in MWh$_{\textrm{el}}$, we have $I_0 = 1000 \cdot G_s \cdot (\textrm{Capital Cost})$, $B = 1000\cdot G_s \cdot (\textrm{Fix O\&{}M})$, $V = Q\cdot o$ where o is the marginal cost $o =  (\textrm{Marg. Cost}) = (\textrm{Var O\&{}M}) + (\textrm{Fuel Cost})/\eta$.
+
+\source{\href{https://www.diw.de/documents/publikationen/73/diw_01.c.424566.de/diw_datadoc_2013-068.pdf}{DIW Data Documentation, 2013}}
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{LCOE for dispatchable generators depends on capacity factor}
+
+  The LCOE had the form (Marg. Cost) + (Yearly Fixed Costs)/(Yearly Production). Therefore it decreases with increasing capacity factor:
+
+  \begin{columns}[T]
+    \begin{column}{8.5cm}
+      \vspace{.5cm}
+  \centering
+  \includegraphics[width=8cm]{lcoe_cf.pdf}
+\end{column}
+\begin{column}{6.5cm}
+  \begin{itemize}
+  \item LCOE $>$ marginal cost
+  \item LCOE starts high then reduces as fixed costs are spread over more hours
+  \item There are \alert{crossing points} where some types of generators become cheaper for a given capacity factor
+  \item NB: All generators need downtime for regular maintenance, so cf $< 0.9$
+  \item NB: Carbon pricing would alter this graphic by adding to the marginal cost
+  \end{itemize}
+\end{column}
+  \end{columns}
+
+\end{frame}
+
+
+\begin{frame}{LCOE for wind and solar depends on location: worldwide auction results 2017}
+
+  \centering
+  \includegraphics[width=11.5cm]{baringa-auctions.png}
+
+  \source{\href{https://www.baringa.com/getmedia/99d7aa0f-5333-47ef-b7a8-1ca3b3c10644/Baringa_Scottish-Renewables_UK-Pot-1-CfD-scenario_April-2017_Report_FINA/}{Baringa Partners LLP 2017}}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Levelised Cost of Electricity Since 2009 in US}
+
+  NB: Treat with care since LCOE doesn't take account of time or place of generation!
+
+  \centering
+  \includegraphics[width=14cm]{lazard-cropped.jpg}
+
+  \source{\href{https://www.lazard.com/perspective/levelized-cost-of-energy-2017/}{Lazard's LCOE Analysis V11}}
+
+\end{frame}
+
+
+
+\section{Review}
+
+
+\begin{frame}
+  \frametitle{Short-run efficiency}
+
+  Short-run efficiency is concerned with the \alert{efficient operation} of the existing energy system, assuming that the capacities of all investments are fixed.
+  \begin{columns}[T]
+    \begin{column}{7.5cm}
+
+      \alert{Example}: Power plant dispatch for inelastic demand $d$. All capacities $G_s$ [MW] are fixed. We optimise the \alert{dispatch} $g_s$ [MW], assuming that the \alert{marginal costs} $o_s$ [\euro/MWh] scale linearly with the dispatch. We minimise \alert{total operational costs}:
+      \begin{equation*}
+        \min_{\{g_s\}} \sum_s o_s g_s
+      \end{equation*}
+      with constraints
+  \begin{align*}
+    \sum_s g_s & = d\hspace{1cm} \leftrightarrow \hspace{1cm} \l \\
+        g_s  & \leq  G_s  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_s \\
+    - g_s  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_s
+  \end{align*}
+    \end{column}
+    \begin{column}{6.5cm}
+
+        \vspace{.5cm}
+        %https://www.forum-csr.net/News/7186/Marktwirtschaftparadox.html
+        \includegraphics[trim=0 0cm 0 0cm,width=7cm,clip=true]{merit-order-effekt_neu1.png}
+
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Long-run efficiency}
+
+
+  Long-run efficiency is concerned with the \alert{efficient operation} and \alert{the efficient dimensioning of investments} in the energy system.
+
+  \begin{columns}[T]
+    \begin{column}{7.5cm}
+
+      \alert{Example}: Power plant \alert{dispatch} $g_{s,t}$ (costs $o_s$) and \alert{capacities} $G_s$ (annualised costs $c_s$) are optimised over a year of hourly time periods $t$ with demand $d_t$:
+      \begin{equation*}
+        \min_{\{g_{s,t},G_s\}} \sum_{s,t} o_s g_{s,t} + \sum_s c_s G_s
+      \end{equation*}
+      with constraints
+  \begin{align*}
+    \sum_s g_{s,t} & = d_t\hspace{1cm} \leftrightarrow \hspace{1cm} \l_t \\
+        g_{s,t}   & \leq  G_s  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_{s,t} \\
+    - g_{s,t}  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_{s,t}
+  \end{align*}
+    \end{column}
+    \begin{column}{7cm}
+
+        \includegraphics[width=6cm]{screening-load-duration.png}
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+
+\section{Multi-horizon investment: Motivation}
+
+
+\begin{frame}
+  \frametitle{Multi-horizon investment}
+
+  Dynamic multi-horizon investment is concerned with the \alert{changing capacities of investments} in the energy system over many years or even \alert{decades}.
+
+
+  At which point in time should we invest in renewables/gas/storage?
+
+  We consider several time horizons, typically years, in which plants can be dismantled or built.
+
+  Why are we concerned with changes over decades?
+
+  \pause
+
+  Since many aspects of the energy system change over decades, e.g.:
+  \begin{itemize}
+  \item \alert{Energy consumption} (particularly in developing countries)
+  \item \alert{Resource scarcity} (scarcity of oil, cobalt, rare earth metals, etc.)
+  \item \alert{Political targets} (e.g. reduction of greenhouse gas emissions)
+  \item \alert{Maturity, costs and other parameters} (e.g.. efficiency) of technologies
+  \item \alert{Economic growth}
+  \item \alert{Bahavioural change} (car sharing, online gaming, etc.)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example: political targets}
+
+  \includegraphics[width=14cm]{co2_targets.png}
+
+  \source{Agora Energiewende}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Example: Net-Zero Emissions by 2050}
+
+  Paris-compliant 1.5$^\circ$~C scenarios from European Commission - \alert{net-zero GHG in EU by 2050}
+
+  \vspace{.4cm}
+
+  %Figure 6 from https://ec.europa.eu/clima/sites/clima/files/docs/pages/com_2018_733_en.pdf
+  \includegraphics[width=14cm]{eu-lts-net-zero.png}
+
+
+    \source{\href{https://ec.europa.eu/clima/sites/clima/files/docs/pages/com_2018_733_en.pdf}{European Commission `Clean Planet for All', 2018}}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Example: Cost Developments of Renewable Energy}
+
+  LCOE = \alert{Levelised Cost of Energy} = Total Costs $/$ Energy Output
+  \centering
+  \includegraphics[width=14cm]{lazard-cropped.jpg}
+
+  \source{\href{https://www.lazard.com/perspective/levelized-cost-of-energy-2017/}{Lazard's LCOE Analysis V11}}
+
+\end{frame}
+
+
+\section{Multi-horizon investment: Theoretical formulation}
+
+
+\begin{frame}
+  \frametitle{Discounted Total Costs}
+
+  We will consider the total costs over \alert{multiple years} $a = 1,\dots A$.
+
+
+  How do we compare costs in 2020 to those in 2040?
+
+  \pause
+
+  The totals costs are expressed in their
+  \alert{present value} using the
+ \alert{discount rate} $r$ (see lecture 8), to allow comparison between different years.
+
+ For costs (or income) in year $a$ we \alert{discount} the costs with a factor
+  \begin{equation*}
+    \frac{1}{(1+r)^a}
+  \end{equation*}
+  because we could have invested until this year $a$ with return $r$.
+
+  Costs in the future are \alert{worth less} from today's point of view.
+
+  For rate $r$ we optimised the \alert{discounted total costs}
+  \begin{equation*}
+     \sum_{a=1}^A \frac{1}{(1+r)^a} \left\{ \textrm{Total costs in year } a \right\}
+  \end{equation*}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Warning: Discounting over long time periods}
+
+  Over long time periods the discounting can have a very large effect....
+
+  \begin{columns}[T]
+\begin{column}{9cm}
+  \centering
+  \includegraphics[width=9.5cm]{discounting.pdf}
+\end{column}
+\begin{column}{5cm}
+  \begin{itemize}
+  \item Long-term benefits aren't seen, e.g. long production life of nuclear power plants or benefits of long-lived efficiency measures
+  \item Long-term costs are also suppressed, e.g. decommissioning, waste disposal, climate damages
+  \item This is a \alert{controversial topic!}
+  \end{itemize}
+\end{column}
+  \end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Example of Electricity System until 2050}
+
+We optimise the discounted total costs over 30 years from 2021 to 2050
+  \begin{equation*}
+              \min_{\{g_{s,t,a},Q_{s,a},G_{s,a}\}} \sum_{a=1}^A \frac{1}{(1+r)^a} \left\{ \sum_{s,t} o_{s,a} g_{s,t,a} + \sum_{s,b} c_{s,b} Q_{s,b} \mathbb{I}(a  \geq b) \mathbb{I}(a < b+L_s)
+ \right\}
+  \end{equation*}
+  Here $Q_{s,a}$ is the new capacity built in year $a$, $G_{s,a}$ is the total capacity available in year $a$, $L_s$ is the lifetime  and $\mathbb{I}$ is an indicator function that is $1$ if the condition is fulfilled, $0$ otherwise. $Q_{s,a}$ may also have fixed values for $a<1$ to represent existing capacity. $Q_{s,a}$ and $G_{s,a}$ are related by
+  \begin{equation*}
+    G_{s,a} = \sum_{b = 1}^{L_s} Q_{s,a-b}
+  \end{equation*}
+
+  The old constraints apply for each year $a$
+  \begin{align*}
+    \sum_s g_{s,t,a} & = d_{s,a}\hspace{1cm} \leftrightarrow \hspace{1cm} \l_{t,a} \\
+        g_{s,t,a}   & \leq  G_{s,a}  \hspace{1cm}\leftrightarrow\hspace{1cm} \bar{\m}_{s,t,a} \\
+    - g_{s,t,a}  & \leq  0  \hspace{1cm}\leftrightarrow\hspace{1cm} \ubar{\m}_{s,t,a}
+  \end{align*}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Global constraints}
+
+  With a long-term perspective we can now set exciting constraints.
+
+  For example, we can restrict total \alert{emissions} over the period:
+  \begin{equation*}
+    \sum_{s,t,a} e_i g_{s,t,a}\leq \textrm{CAP}_{\textrm{CO}_2}
+  \end{equation*}
+  where $e_s$ is the specific emissions of technology $s$ (tonnes of CO$_2$ per MWh$_{\textrm{el}}$).
+
+  Or limit \alert{resource consumption} for a technology $s$:
+  \begin{equation*}
+    \sum_{t,a} g_{s,t,a}\leq \textrm{CAP}_{s}
+  \end{equation*}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Learning effects}
+
+  Technology costs sink with accumulated manufacturing experience, particularly for new immature technologies.
+
+  We promote $c_{s,a}$ to an optimisation variable that depends on the cumulative generator capacity.
+
+ A simple \alert{one-factor learning model} for the costs is
+  \begin{equation*}
+    c_{s,a} = c_{s,0} \left(\sum_{b=1}^a Q_{s,b} \right)^{-\gamma_s}
+  \end{equation*}
+  where $c_{s,0}$ is the initial cost, $Q_{s,b}$ is the capacity produced in year $b$ and $\gamma_s$ is the \alert{learning parameter}.
+
+  The \alert{learning rate} $LR$ is the reduction in cost for every doubling of production
+  \begin{equation*}
+    LR_s = 1-2^{-\gamma_s}
+  \end{equation*}
+
+  Example for photovoltaics: $\gamma = 0.33$ $\implies$ if cumulative production doubles, the costs reduce by 20\% (\alert{Swanson's Law}).
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Swanson's Law for photovoltaic modules}
+
+  The underlying dynamic is a fast decay in costs with deployment (\alert{learning-by-doing}).
+
+  \vspace{.2cm}
+
+  \centering
+      \includegraphics[width=9.5cm]{1024px-Swansons-law.png}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{More complicated learning models}
+
+  In the literature there are more sophisticated learning models than the one-factor model, e.g.
+  \begin{itemize}
+  \item \alert{Multi-component learning models}: different parts of the
+    cost experience different learning rates, e.g. some parts of the
+    cost do not experience learning, such as fixed material and labour
+    costs, call it $c_{s,\textrm{base}}$. Only the remainder
+    experiences learning:
+  \begin{equation*}
+    c_{s,a} = c_{s,\textrm{base}} + (c_{s,0}-c_{s,\textrm{base}}) \left(\sum_{b=1}^a Q_{s,b} \right)^{-\gamma_s}
+  \end{equation*}
+  In the case of PV, $c_{s,\textrm{base}}$ would include e.g. the labour costs of installation.
+  \item \alert{Multi-factor learning models}: the cost depends not just on the cumulative capacity, but on other factors such as knowledge stock $KS$ through research and development
+  \begin{equation*}
+    c_{s,a} = c_{s,0}\left(\sum_{b=1}^a Q_{s,b} \right)^{-\gamma_{s,1}} \left(\sum_{b=1}^a KS_{s,b} \right)^{-\gamma_{s,2}}
+  \end{equation*}
+
+
+  \end{itemize}
+
+\end{frame}
+
+\section{Multi-horizon investment: Simplified example}
+
+
+
+\begin{frame}
+  \frametitle{Simplified example}
+
+  \url{https://nworbmot.org/courses/esm-2019/lectures/notebooks/dynamic_investment.ipynb}
+
+  Time period: 2021 until 2070. Discount rate: $r = 0.05$.
+
+  Constant electricity demand $d_{t,a} = d = 100$ GW.
+
+  At the start of the simulation there is already 100~GW of 20-year-old coal plants.
+
+  3 generation technologies are available that are dispatchable (for Concentrating Solar Power (CSP) need good direct solar insolation, e.g. New Mexico or Morocco).
+
+
+  \ra{1.1}
+  \begin{table}[!t]
+    \begin{tabular}{lrrrrrr}
+      \toprule
+      Tech & Capital costs & Marg. costs & LCOE & Cap & Emissions & Lifetime    \\
+       &  (\euro MW$^{-1}$ a$^{-1}$) &  (\euro MWh$_{\textrm{el}}^{-1}$) &  (\euro MWh$_{\textrm{el}}^{-1}$) & factor & (tCO$_2$MWh$_{\textrm{el}}^{-1}$) & years \\
+      \midrule
+      Coal &30*8760 & 20 & 50 & 1 & 1 & 40\\
+      Nuclear & 65*8760 & 10 & 75 & 1 & 0 & 40 \\
+      CSP & 150*8760 & 0 & 150 & 1 & 0 & 30 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Simplified example}
+
+  Since each technology can generate continuously and the demand is constant, we assume $g_{s,t,a}$ is constant for all $t$
+   \begin{equation*}
+    g_{s,t,a} = g_{s,a} \leq G_{s,a}
+   \end{equation*}
+
+  This simplifies the optimisation problem considerably:
+  \begin{equation*}
+              \min_{\{g_{s,t,a},Q_{s,a},G_{s,a}\}} \sum_{a=1}^A \frac{1}{(1+r)^a} \left\{ \sum_{s} o_{s,a} g_{s,a}\cdot 8760 + \sum_{s,b} c_{s,b} Q_{s,b} \mathbb{I}(a  \geq b) \mathbb{I}(a < b+L_s)
+ \right\}
+  \end{equation*}
+  with constraints for each year $a$
+  \begin{align*}
+    \sum_s g_{s,a} & = d
+  \end{align*}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Vanilla Version: No CO$_2$ budget, no learning, no discounting}
+
+  Only new coal is built, since it's cheapest.
+
+  Total costs without discounting: 50\euro/MWh $\cdot$ 8760 $\cdot$ 100 GW $\cdot$ 50 years = 2190 billion \euro
+
+    \centering
+  \includegraphics[width=11cm]{no_co2-no_learning-dispatch.pdf}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Vanilla Version: No CO$_2$ budget, no learning, discounting}
+
+  Only coal is built, since it's cheapest.
+
+  Total costs with discount rate 5\%: 840 billion \euro
+
+   \centering
+  \includegraphics[width=11cm]{no_co2-no_learning-dispatch.pdf}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{CO$_2$ budget, no learning, discounting}
+
+  Limit CO$_2$ to 20\% of coal emissions. Nuclear takes over before coal lifetimes are finished. Why is it built only later in the period (even when no existing plants assumed)? (Hint: discounting)
+
+  Total costs with discount rate 5\%: 1147 billion \euro
+
+  \centering
+  \includegraphics[width=10cm]{co2-0p2-no_learning-dispatch.pdf}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{CO$_2$ budget, learning for CSP, discounting}
+
+
+  Limit CO$_2$ to 20\% of coal emissions. CSP has learning rate 20\%, $\gamma = 0.33$, and a base long-term potential LCOE of 35~\euro/MWh that represents material and labour costs.
+
+  Total costs with discount rate 5\%: 1020 billion \euro
+
+  \centering
+  \includegraphics[width=10cm]{co2-0p2-learning-dispatch.pdf}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{CO$_2$ budget, learning for CSP, discounting}
+
+  LCOE needs subsidy initially to push down learning curve, since it is more expensive than incumbent technologies. But from 2034 onwards it is the most competitive technology.
+
+  \centering
+  \includegraphics[width=11cm]{co2-0p2-learning-lcoe.pdf}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Lessons from this example}
+
+  \begin{itemize}
+  \item Non-linear effects such as learning-by-doing make the results hard to predict
+  \item It may be cost-effective in the long-run to subsidise technologies that are uncompetitive today
+  \item Depending on how subsidy and policy is arranged, there could be \alert{path dependencies}
+  \end{itemize}
+
+  To improve the realism of this example we need to:
+  \begin{itemize}
+  \item Include more technologies, spatial resolution
+  \item Consider more representative times per year to capture the variability of renewables and load
+  \end{itemize}
+
+\end{frame}
+
+\end{document}
