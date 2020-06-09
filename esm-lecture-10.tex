@@ -55,6 +55,12 @@
 \def\mwh{\text{ MWh}}
 \def\emwh{\text{ \euro/MWh}}
 
+
+\def\el{${}_{el}$}
+\def\th{${}_{th}$}
+\def\gas{${}_{gas}$}
+
+
 \newcommand{\ubar}[1]{\text{\b{$#1$}}}
 
 
@@ -250,7 +256,7 @@
     \end{align*}
     to get
     \begin{align*}
-      c_\ell F_\ell^* = F_\ell^* \sum_t \left[ \ubar{\m}^*_{\ell,t} +  \bar{\m}^*_{\ell,t} \right]
+      c_\ell F_\ell^* = - F_\ell^* \sum_t \left[ \ubar{\m}^*_{\ell,t} +  \bar{\m}^*_{\ell,t} \right]
     \end{align*}
    `At the optimal point, fixed costs equal the sum of marginal
     benefits of expanding the line at each time.'
@@ -258,7 +264,7 @@
 
   Next use complementarity for the flows $\bar{\m}_{\ell,t}^* ( f_{\ell,t}^* - F_\ell^*) = 0$ and $\ubar{\m}_{\ell,t}^* ( - f_{\ell,t}^* - F_\ell^*) = 0$ to get
     \begin{align*}
-      c_\ell F_\ell^* =  \sum_t \left[ \bar{\m}^*_{\ell,t} -  \ubar{\m}^*_{\ell,t} \right] f_{\ell,t}^*
+      c_\ell F_\ell^* =  -\sum_t \left[ \bar{\m}^*_{\ell,t} -  \ubar{\m}^*_{\ell,t} \right] f_{\ell,t}^*
     \end{align*}
 
 \end{frame}
@@ -272,10 +278,10 @@
   \end{align*}
     to substitute for the $\m^*$:
     \begin{align*}
-      c_\ell F_\ell^*  &=  \sum_t \left[ \bar{\m}^*_{\ell,t} -  \ubar{\m}^*_{\ell,t}   \right] f_{\ell,t}^* \\
-      & =\sum_t \sum_i \l_{i,t}^*K_{i\ell} f_{\ell,t}^*
+      c_\ell F_\ell^*  &=  -\sum_t \left[ \bar{\m}^*_{\ell,t} -  \ubar{\m}^*_{\ell,t}   \right] f_{\ell,t}^* \\
+      & =-\sum_t \sum_i \l_{i,t}^*K_{i\ell} f_{\ell,t}^*
     \end{align*}
-    $ \sum_i \l_{i,t}^*K_{i\ell} f_{\ell,t}^*$ is nothing other than
+    $ -\sum_i \l_{i,t}^*K_{i\ell} f_{\ell,t}^*$ is nothing other than
     the \alert{congestion rent} on line $\ell$ at time $t$, i.e. the flow $f_{\ell,t}^*$ multiplied by the price difference across the line $\sum_i \l_{i,t}^*K_{i\ell}$.
 
     At the long-term equilibrium, the network operator covers the costs of the line exactly with the congestion rent. The optimum requires congestion at least some of the time!
@@ -314,15 +320,15 @@ could correspond to e.g. political targets for \co2 reduction.
 
 All that changes is stationarity for the generator
 \begin{align*}
-  0 =     \frac{\d \cL}{\d g_{s,t}} =   o_{s}-\l_t^* - \ubar{\m}^*_{s,t} + \bar{\m}^*_{s,t} + \m_{CO2}^* \frac{\varepsilon_s}{\eta_{s}}
+  0 =     \frac{\d \cL}{\d g_{s,t}} =   o_{s}-\l_t^* + \ubar{\m}^*_{s,t} - \bar{\m}^*_{s,t} - \m_{CO2}^* \frac{\varepsilon_s}{\eta_{s}}
 \end{align*}
 and now for each generator cost recovery becomes
 \begin{align*}
   c_s G_s^* +  o_{s}\sum_{t} g_{s,t}^*
-  & = \sum_{t} \l_t^* g_{s,t} -\m_{CO2}^* \sum_{t}  \frac{\varepsilon_s}{\eta_{s}} g_{s,t}^*
+  & = \sum_{t} \l_t^* g_{s,t} +\m_{CO2}^* \sum_{t}  \frac{\varepsilon_s}{\eta_{s}} g_{s,t}^*
 \end{align*}
 
-This shows nicely the duality for exchanging the CO2 constraint for a CO2 price $o_{s} \to o_{s} + \m^*_{CO2} \frac{\varepsilon_s}{\eta_{s}} $.
+This shows nicely the duality for exchanging the CO2 constraint for a CO2 price $o_{s} \to o_{s} - \m^*_{CO2} \frac{\varepsilon_s}{\eta_{s}} $ (remember $\m^*_{CO2} \leq 0$ for minimisation problems).
 
 \end{frame}
 
@@ -339,7 +345,7 @@ This shows nicely the duality for exchanging the CO2 constraint for a CO2 price 
 [$x = (x_1, \dots x_k)$] subject to some \alert{constraints} within $\R^k$:
 \begin{align*}
   g_i(x) & = c_i \hspace{1cm}\leftrightarrow\hspace{1cm} \l_i \hspace{1cm} i = 1,\dots n \\
-  h_0(x) & = d_0  \hspace{1cm}\leftrightarrow\hspace{1cm} \m_0 \\
+  h_0(x) & \leq d_0  \hspace{1cm}\leftrightarrow\hspace{1cm} \m_0 \\
   h_j(x) & \leq d_j \hspace{1cm}\leftrightarrow\hspace{1cm} \m_j \hspace{1cm} j = 1,\dots m
 \end{align*}
 
@@ -485,7 +491,7 @@ Often it can be easier to solve the relaxed problem.
   ($V$ for the inelastic case).
 
   In the Eastern Australian National Electricity Market (NEM), a MPC
-  of A\$13,800/MWh (\euro~9,300/MWh) for the 2015-2016 financial year
+  of A\$15,000/MWh (\euro~9,300/MWh) for the 2020-2021 financial year
   is set, corresponding to the price automatically triggered when AEMO
   directs network service providers to interrupt customer supply in
   order to keep supply and demand in the system in balance.
@@ -501,8 +507,11 @@ Often it can be easier to solve the relaxed problem.
 \end{column}
 \begin{column}{5cm}
 
+  The Electric Reliability Council of Texas (ERCOT) has an energy only market with an MPC of \$9000/MWh.
 
-  This can introduce distortions which make it difficult for some generators to recover costs.
+  \vspace{.5cm}
+
+  MPC can introduce distortions which make it difficult for some generators to recover costs.
 
 \end{column}
 
@@ -589,12 +598,12 @@ Often it can be easier to solve the relaxed problem.
 
 \end{frame}
 
-\begin{frame}{RE Levelised Cost already approaching fossil fuels}
+\begin{frame}{RE Levelised Cost already at/below fossil fuels}
 
   \centering
-  \includegraphics[width=10.5cm]{irena_costs}
+  \includegraphics[width=12cm]{irena-2020.jpg}
 
-  \source{\href{http://www.irena.org/DocumentDownloads/Publications/IRENA_RE_Power_Costs_2014_report.pdf}{IRENA Renewable Generation Costs}}
+  \source{\href{https://www.irena.org/publications/2020/Jun/Renewable-Power-Costs-in-2019}{IRENA Renewable Generation Costs in 2019}}
 \end{frame}
 
 
@@ -698,13 +707,17 @@ Often it can be easier to solve the relaxed problem.
   \frametitle{Spot market price development}
 
   As a result of so much zero-marginal-cost renewable feed-in, spot
-  market prices steadily decreased until 2016 (but since went up again):
+  market prices steadily decreased until 2016. This is called the
+  \alert{Merit Order Effect}.  Since then prices have been rising due
+  to rising gas and CO$_2$ prices.
+
 
   \centering
-  \includegraphics[width=11cm]{price_development}
+  \includegraphics[width=10cm]{strompreis-2019.png}
 
-  \source{Agora Energiewende}
+  \source{\href{https://www.agora-energiewende.de/fileadmin2/Projekte/2019/Jahresauswertung_2019/171_A-EW_Jahresauswertung_2019_WEB.pdf}{Agora Energiewende Jahresauswertung 2019}}
 \end{frame}
+
 
 
 
@@ -719,13 +732,14 @@ Often it can be easier to solve the relaxed problem.
   \item This is unfortunate, because among the fossil fuels, gas and
     hard coal are the most flexible and produce the \emph{lowest} \co2
     per MWh
-  \item It also massively reduces the profits that nuclear and brown coal make
+  \item It also reduces the profits that nuclear and brown coal make
   \item Will there be enough backup power plants for times with no wind/solar?
   \end{itemize}
 
-  This has led to lots of political tension...
+  This has led to lots of political tension, but has been counteracted in recent years by the rising CO$_2$ price.
 
 \end{frame}
+
 
 \begin{frame}{Market value}
 
@@ -869,6 +883,553 @@ plants are running.
   technologies (with a longer-term view of pushing them down the
   learning curve), there are sunk costs for existing plants, excess
   capacity supported outside the energy-only market, etc.
+\end{frame}
+
+\begin{frame}{Market value: more details}
+
+  For more details on market value, the zero profit rule and how market value is affected by CO$_2$ prices and VRE subsidies, see the paper
+
+  \href{https://arxiv.org/abs/2002.05209}{\bf\color{blue}\underline{Decreasing market value of variable renewables is a result of policy, not variability}} (2020)
+
+  This paper examines how to maintain market value even at high shares of wind and solar.
+
+
+\end{frame}
+
+\section{Networks Versus Storage for Highly-Renewable European Electricity System}
+
+
+
+\begin{frame}
+  \frametitle{Warm-up: Determine optimal electricity system}
+
+
+\begin{columns}[T]
+\begin{column}{7cm}
+  \begin{itemize}
+  \item Meet all electricity demand.
+  \item Reduce \co2{} by 95\% compared to 1990.
+  \item \alert{Generation} (where potentials allow): onshore and offshore
+    wind, solar, hydroelectricity, backup from natural gas.
+  \item \alert{Storage}: batteries for short term, electrolyse hydrogen gas for long term.
+  \item \alert{Grid expansion}: simulate everything from no grid expansion (like a \alert{decentralised solution}) to optimal grid expansion (with significant \alert{cross-border trade}).
+  \end{itemize}
+\end{column}
+\begin{column}{6.5cm}
+
+
+  \vspace{0.3cm}
+\centering
+
+\includegraphics[width=7cm]{europe_map}
+
+\end{column}
+\end{columns}
+
+
+\source{PyPSA-Eur, based on ENTSO-E map}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Linear optimisation problem}
+
+
+  Objective is the minimisation of \alert{total annual system costs}, composed of \alert{capital costs} $c_*$ (investment costs) and \alert{operating costs} $o_*$ (fuel ,etc.):
+  \begin{equation*}
+\min    f(F_\ell, f_{\ell,t}, G_{i,s},  g_{i,s,t}) =  \sum_{\ell} c_l F_\ell + \sum_{i,s} c_{i,s} G_{i,s} + \sum_{i,s,t} w_t o_{i,s} g_{i,s,t}
+  \end{equation*}
+  We optimise for $i$ nodes, representative times $t$ and transmission lines $l$:
+  \begin{itemize}
+  \item the transmission capacity $F_\ell$ of all the lines $\ell$
+  \item the flows $f_{\ell,t}$ on each line $\ell$ at each time $t$
+  \item the generation and storage capacities $G_{i,s}$ of all technologies (wind/solar/gas etc.) $s$ at each node $i$
+  \item the dispatch $g_{i,s,t}$ of each generator and storage unit at each point in time $t$
+  \end{itemize}
+
+  Representative time points are weighted $w_t$ such that $\sum_t w_t = 365*24$ and the capital costs $c_*$ are annualised, so that the objective function represents the annual system cost.
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Constraints 1/6: Nodal energy balance}
+
+  Demand $d_{i,t}$ at each node $i$ and time $t$ is always met by
+  generation/storage units $g_{i,s,t}$ at the node or from transmission
+  flows $f_{\ell,t}$ on lines attached at the node (Kirchhoff's Current Law):
+    \begin{equation*}
+      \sum_{s} g_{i,s,t} - d_{i,t} =  \sum_{\ell } K_{i\ell} f_{\ell,t}  \hspace{1cm}\leftrightarrow\hspace{1cm} \l_{i,t}
+    \end{equation*}
+
+    Nodes are shown as thick busbars connected by transmission lines (thin lines):
+
+\centering
+\begin{circuitikz}
+  \draw (1.5,14.5) to [short,i^=$f_1$] (1.5,13);
+  \draw [ultra thick] (0,13) node[anchor=south]{i} -- (4,13);
+  \draw(2.5,13) |- +(0,0.5) to [short,i^=$f_2$] +(5,0.5) |- +(0,-0.5);
+  \draw [ultra thick] (6,13) node[anchor=south]{j} -- +(4,0);
+  \draw (8.5,14.5) to [short,i^=$f_3$] +(0,-1.5);
+  \draw (0,-0.5) ;
+  \draw (0.5,13) -- +(0,-0.5) node[sground]{};
+  \draw (2,12) node[vsourcesinshape, rotate=270](V2){}
+  (V2.left) -- +(0,0.6);
+  \draw (3.5,12) node[vsourcesinshape, rotate=270](V2){}
+  (V2.left) -- +(0,0.6);
+  \draw (0.5,11) node{$d_i$};
+  \draw (2,11) node{$g_{i,w}$};
+  \draw (3.5,11) node{$g_{i,s}$};
+  \draw (2,10.3) node{$ g_{i,w} + g_{i,s} - d_i = f_2 -f_1$};
+  \draw (6.5,13) -- +(0,-0.5) node[sground]{};
+  \draw (8,12) node[vsourcesinshape, rotate=270](V2){}
+  (V2.left) -- +(0,0.6);
+  \draw (9.5,12) node[vsourcesinshape, rotate=270](V2){}
+  (V2.left) -- +(0,0.6);
+  \draw (6.5,11) node{$d_j$};
+  \draw (8,11) node{$g_{j,w}$};
+  \draw (9.5,11) node{$g_{j,s}$};
+  \draw (8,10.3) node{$ g_{j,w} + g_{j,s} - d_{j} = -f_2 - f_3$};
+
+\end{circuitikz}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Constraints 2/6: Generation availability}
+  Generator/storage dispatch $g_{i,s,t}$ cannot exceed availability $G_{i,s,t}*G_{i,s}$, made up of per unit availability $0 \leq G_{i,s,t} \leq 1$ multiplied by the capacity $G_{i,s}$. The capacity is bounded by the installable potential $\hat{G}_{i,s}$.
+    \begin{equation*}
+      0 \leq g_{i,s,t} \leq G_{i,s,t}* G_{i,s} \leq  G_{i,s} \leq  \hat{G}_{i,s}
+    \end{equation*}
+
+    \centering
+      \includegraphics[width=11cm]{scigrid-curtailment}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Installation potentials limited by geography}
+
+  Expansion potentials are limited by \alert{land usage} and
+  \alert{conservation areas}; potential yearly energy yield at each site
+  limited by \alert{weather conditions}:
+
+  \centering
+  \includegraphics[width=14.5cm]{average_power_density_potential-eps-converted-to.pdf}
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Constraints 3/6: Storage consistency}
+
+  Storage units such as batteries or hydrogen storage can work in both
+  storage and dispatch mode. This has to be consistent with the state
+  of charge $e_{i,s,t}$:
+  \begin{align*}
+    e_{i,s,t} = \eta_0e_{i,s,t-1} + \eta_1g_{i,s,t,\textrm{store}} -  \eta_2^{-1} g_{i,s,t,\textrm{dispatch}}
+  \end{align*}
+
+  The state of charge is limited by the energy capacity $E_{i,s}$:
+  \begin{align*}
+    0 \leq e_{i,s,t} \leq E_{i,s} \quad \forall i,s,t
+  \end{align*}
+
+
+  There are efficiency losses $\eta$; hydroelectric dams can also have a river inflow.
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Constraints 4/6: Kirchoff's Laws for Physical Flow}
+
+  The linearised \alert{power flows} $f_\ell$ for each line $\ell \in
+  \{1,\dots L\}$ in an AC network are determined by the
+  \alert{reactances} $x_\ell$ of the transmission lines and the
+  \alert{net power injection} at each node $p_i$ for $i\in\{1,\dots
+  N\}$.
+
+
+  We have to satisfy Kirchoff's Laws, which can be compactly expressed
+  using the \alert{incidence matrix} $K \in \R^{N\times L}$ (boundary
+  operator in homology theory) of the graph and the \alert{cycle
+    basis} $C \in \R^{L\times(L-N+1)}$ (kernel of $K$)
+
+  \begin{itemize}
+  \item  Kirchoff's Current Law: $p_i = \sum_{\ell} K_{i\ell} f_\ell$
+  \item  Kirchoff's Voltage Law: $\sum_\ell C_{\ell c} x_\ell f_\ell = 0$
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Constraints 5/6: Transmission Line Thermal Limits}
+
+    Transmission flows cannot exceed the thermal capacities of the transmission lines (otherwise they sag and hit buildings/trees):
+    \begin{equation*}
+      | f_{\ell,t} | \leq  F_\ell
+    \end{equation*}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Constraints 6/6: Global constraints on \co2 and transmission volumes}
+  CO${}_2$ limits are respected, given emissions $\varepsilon_{i,s}$ for each fuel source $s$:
+    \begin{equation*}
+      \sum_{i,s,t}  g_{i,s,t} \frac{\varepsilon_{i,s}}{\eta_{s}} \leq \textrm{CAP}_{\textrm{CO}_2} \hspace{1cm} \leftrightarrow \hspace{1cm} \m_{\textrm{CO}_2}
+    \end{equation*}
+    We enforce a reduction of \co2 emissions by 95\% compared to 1990
+    levels, in line with German and EU targets for 2050.
+
+    Transmission volume limits are respected, given length $d_\ell$ and capacity $F_\ell$ of each line:
+    \begin{equation*}
+      \sum_{\ell} d_\ell   F_\ell \leq \textrm{CAP}_{\textrm{trans}} \hspace{1cm} \leftrightarrow \hspace{1cm} \m_{\textrm{trans}}
+    \end{equation*}
+    We  successively change the transmission limit, to assess the costs of balancing power in time (i.e. storage) versus space (i.e. transmission networks).
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Model Inputs and Outputs}
+
+\begin{columns}
+  \begin{column}{6cm}
+
+
+    \begin{table}[!t]
+	\centering
+	\begin{tabular}{@{}p{1.15cm}p{4.54cm}@{}}
+\toprule
+\alert{Inputs} & Description \\
+\midrule
+$d_{i,t}$ & Demand (inelastic) \\
+$G_{i,s,t}$ & Per unit availability for wind and solar \\
+$\hat{G}_{i,s}$ & Generator installable potentials \\
+various & Existing hydro data \\
+various & Grid topology \\
+$\eta_*$ & Storage efficiencies \\
+$c_{i,s}$ & Generator capital costs \\
+$o_{i,s,t}$ & Generator marginal costs \\
+$c_\ell$ & Line costs \\
+\bottomrule
+	\end{tabular}
+\end{table}
+  \end{column}
+    \begin{column}{1cm}
+
+
+      \vspace{1cm}
+
+      $\to$
+
+    \end{column}
+  \begin{column}{6cm}
+
+
+    \begin{table}[!t]
+	\centering
+	\begin{tabular}{@{}p{1.15cm}p{4.54cm}@{}}
+\toprule
+\alert{Outputs} & Description \\
+\midrule
+$G_{i,s}$ &  Generator capacities \\
+$g_{i,s,t}$ & Generator dispatch \\
+$F_\ell$ & Line capacities \\
+$f_{\ell,t}$ & Line flows \\
+$\lambda_*,\mu_*$ & Lagrange/KKT multipliers of all constraints \\
+f & Total system costs \\
+\bottomrule
+	\end{tabular}
+\end{table}
+  \end{column}
+
+\end{columns}
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Costs and assumptions for the electricity sector (projections for 2030)}
+
+  \begin{table}
+\centering
+\begin{tabular}{@{}lrlrr@{}}
+\toprule
+Quantity                &Overnight  Cost [\euro]  &Unit & FOM [\%/a] & Lifetime [a] \\
+\midrule
+Wind onshore    &1182   &kW\el &3 & 20   \\
+Wind offshore  &2506   &kW\el  &3& 20  \\
+Solar PV           &600   &kW\el &4 & 20   \\
+Gas             &400    &kW\el  &4& 30  \\
+%Gas marginal            &75     &\euro{}/MWh$_{\textrm{e}}$    \\
+Battery storage         &1275   &kW\el  & 3 & 20 \\
+Hydrogen storage        &2070   &kW\el  & 1.7 &20 \\
+Transmission line       &400    &MWkm & 2 & 40\\
+\bottomrule
+\end{tabular}
+\end{table}
+  Interest rate of 7\%, storage efficiency losses, only gas has \co2 emissions, gas marginal costs.
+
+  Batteries can store for 6 hours at maximal rating (efficiency $0.9\times 0.9$), hydrogen storage for 168 hours (efficiency $0.75\times 0.58$).
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+  \frametitle{Costs: No interconnecting transmission allowed}
+
+
+
+\begin{columns}[T]
+  \begin{column}{4.9cm}
+
+  Technology~by~energy:
+  % left bottom right top
+  \begin{tabular}{cc}
+    \includegraphics[trim=0 0cm 0 0cm,width=3.2cm,clip=true]{total-pie-0-0} &
+  \end{tabular}
+
+
+  Average~cost~\alert{\euro 86/MWh}:
+
+  \includegraphics[width=3.6cm]{total-costs-joint-1}
+
+  \end{column}
+
+  \begin{column}{9cm}
+    % left bottom right top
+    \centering
+    \includegraphics[trim=0 4cm 0 4cm,width=8cm,clip=true]{euro-pie-0-0}
+
+    \raggedright
+    Countries must be self-sufficient at all times; lots of storage and some gas to deal with fluctuations of wind and solar.
+  \end{column}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Dispatch with no interconnecting transmission}
+
+  For Great Britain with no interconnecting transmission, excess wind is either stored as hydrogen or curtailed:
+
+  \centering
+  \includegraphics[width=13cm]{GB-0}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Costs: Cost-optimal expansion of interconnecting transmission}
+
+
+\begin{columns}[T]
+  \begin{column}{5.3cm}
+
+  Technology~by~energy:
+  % left bottom right top
+    \begin{tabular}{cc}
+    \includegraphics[trim=0 0cm 0 0cm,width=3.2cm,clip=true]{total-pie-0-5} &
+  \end{tabular}
+
+  Average~cost~\alert{\euro 64/MWh}:
+
+  \includegraphics[width=4.7cm]{total-costs-joint-2}
+
+  \end{column}
+
+  \begin{column}{9cm}
+    % left bottom right top
+    \centering
+    \includegraphics[trim=0 4cm 0 4cm,width=8cm,clip=true]{euro-pie-0-5}
+
+    \raggedright
+    Large transmission expansion; onshore wind dominates. This optimal solution may run into public acceptance problems.
+  \end{column}
+
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Dispatch with cost-optimal interconnecting transmission}
+
+  Almost all excess wind can be now be exported:
+
+  \centering
+  \includegraphics[width=13cm]{GB-1}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Electricity Only Costs Comparison}
+
+\begin{columns}[T]
+  \begin{column}{9cm}
+
+    \vspace{0.5cm}
+  \includegraphics[width=9cm]{opteu_paper2-elec_only-costs-curve}
+
+  \end{column}
+
+  \begin{column}{5cm}
+    \begin{itemize}
+    \item Average total system costs can be as low as \euro~64/MWh
+     \item Energy is dominated by wind (64\% for the cost-optimal system), followed
+       by hydro (15\%) and solar (17\%)
+     \item Restricting transmission results in more storage to deal with variability, driving up the costs by up to 34\%
+     \item Many benefits already locked in at a few multiples of today's grid
+    \end{itemize}
+
+  \end{column}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Grid expansion CAP shadow price $\m_{\textrm{trans}}$ as CAP relaxed}
+
+
+\begin{columns}[T]
+\begin{column}{9cm}
+\centering
+  \includegraphics[width=9cm]{shadow_price_LV_N1_5_diw2030_solar1_7-eps-converted-to}
+  %\includegraphics[width=6cm]{pre-2-costs_de_storage}
+\end{column}
+\begin{column}{4cm}
+  \begin{itemize}
+%\item   %Big reduction in curtailment
+  \item With overhead lines the optimal system has around 7 times today's transmission volume
+  \item With underground cables (5-8 times more expensive) the optimal system has around 3 times today's transmission volume
+  \end{itemize}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+  \frametitle{Distribution of costs}
+
+  As transmission volumes increase, costs become more unequally distributed...
+
+  \centering
+  \includegraphics[width=13cm]{costs_ct_N1_5_HFOM-diw2030_solar1_7-LVs_0-0_0-25_Opt-eps-converted-to.pdf}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Distribution of prices}
+
+  ...while market prices converge.
+
+  \centering
+
+  \includegraphics[width=13cm]{local_marginal_price_ct_N1_5-diw2030_solar1_7_angles-LVs_0-0_0-25_Opt-eps-converted-to.pdf}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Different flexibility options have difference temporal scales}
+
+\begin{columns}[T]
+  \begin{column}{10.5cm}
+
+    \vspace{0.5cm}
+  \includegraphics[width=11cm]{soc_series_LV0-25_H2_hydro_diw2030_solar1_7-eps-converted-to.pdf}
+
+  \end{column}
+
+  \begin{column}{3cm}
+    \vspace{1cm}
+    \begin{itemize}
+    \item Hydro reservoirs are \alert{seasonal}
+    \item Hydrogen storage is \alert{synoptic}
+    \end{itemize}
+
+  \end{column}
+
+\end{columns}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Different flexibility options have difference temporal scales}
+
+\begin{columns}[T]
+  \begin{column}{10.5cm}
+
+    \vspace{0.5cm}
+  \includegraphics[width=11cm]{soc_series_LV0-25_all_2011-08_diw2030_solar1_7-eps-converted-to.pdf}
+
+  \end{column}
+
+  \begin{column}{3cm}
+        \vspace{2cm}
+    \begin{itemize}
+    \item Pumped hydro and battery storage are \alert{daily}
+    \end{itemize}
+
+  \end{column}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{You Try}
+
+  For more details, see the paper \href{https://arxiv.org/abs/1704.05492}{\bf\color{blue}\underline{The Benefits of Cooperation}} (2017).
+
+
+  The basic result (benefit of European interconnection versus national balancing) can also be seen using the online toy model:
+
+  \vspace{.5cm}
+  \centering
+  \url{https://model.energy/}
+  \vspace{.5cm}
+
+  \raggedright
+  Look at the differences of wind and solar feed-in and optimal storage solutions for:
+  \begin{itemize}
+  \item \alert{City: Karlsruhe}
+  \item \alert{Country: Germany}
+    \item \alert{Continent: Europe}
+  \end{itemize}
+
 \end{frame}
 
 
