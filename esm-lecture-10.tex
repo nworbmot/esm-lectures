@@ -591,17 +591,18 @@ Often it can be easier to solve the relaxed problem.
   \item \alert{Low Marginal Cost} (no fuel costs)
   \item \alert{High Capital Cost}
   \item \alert{No Direct Carbon Dioxide Emissions} (but some indirect ones from manufacturing)
-  \item \alert{Small unit size} (wind turbine is 2-3~MW; coal/nuclear is 1000~MW)
+  \item \alert{Small unit size} (onshore wind turbine is 3-5~MW; coal/nuclear is 1000~MW)
   \item \alert{Somewhat Decentralised Distribution} for some VRE (e.g. solar panels on household rooves); offshore is however very centralised
     \item \alert{Provision of system services}: Increasing
   \end{itemize}
 
 \end{frame}
 
-\begin{frame}{RE Levelised Cost already at/below fossil fuels}
+\begin{frame}{RE Levelised Cost in 2019 USD/kWh  (already at/below fossil fuels)}
 
   \centering
-  \includegraphics[width=12cm]{irena-2020.jpg}
+      % left bottom right top
+  \includegraphics[trim=2.6cm 2cm 0 0cm,width=11cm,clip=true]{irena-2020.jpg}
 
   \source{\href{https://www.irena.org/publications/2020/Jun/Renewable-Power-Costs-in-2019}{IRENA Renewable Generation Costs in 2019}}
 \end{frame}
@@ -1002,13 +1003,18 @@ plants are running.
 
 \begin{frame}
   \frametitle{Constraints 2/6: Generation availability}
-  Generator/storage dispatch $g_{i,s,t}$ cannot exceed availability $G_{i,s,t}*G_{i,s}$, made up of per unit availability $0 \leq G_{i,s,t} \leq 1$ multiplied by the capacity $G_{i,s}$. The capacity is bounded by the installable potential $\hat{G}_{i,s}$.
+  Generator/storage dispatch $g_{i,s,t}$ cannot exceed availability $G_{i,s,t}\cdot G_{i,s}$, made up of per unit availability $0 \leq G_{i,s,t} \leq 1$ multiplied by the capacity $G_{i,s}$. The capacity is bounded by the installable potential $\hat{G}_{i,s}$.
     \begin{equation*}
-      0 \leq g_{i,s,t} \leq G_{i,s,t}* G_{i,s} \leq  G_{i,s} \leq  \hat{G}_{i,s}
+      0 \leq g_{i,s,t} \leq G_{i,s,t}\cdot G_{i,s} \leq  G_{i,s} \leq  \hat{G}_{i,s}
     \end{equation*}
 
     \centering
-      \includegraphics[width=11cm]{scigrid-curtailment}
+        \begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=10.5cm]{scigrid-curtailment}};
+\draw (3,2.85) node[text=blue]{$g_{i,s,t}$};
+\draw (3,3.6) node[text=red]{$G_{i,s,t}\cdot G_{i,s}$};
+\draw (3,4.95) node[text=cyan]{$G_{i,s}$};
+  \end{tikzpicture}
 
 \end{frame}
 
