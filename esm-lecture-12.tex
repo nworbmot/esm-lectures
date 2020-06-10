@@ -850,6 +850,29 @@ They are usually defined to be uni-directional:
   \includegraphics[trim=0 0cm 0 0cm,width=14cm,clip=true]{de-cop.pdf}
 \end{frame}
 
+
+\begin{frame}
+  \frametitle{Long-duration thermal energy storage}
+
+  In Vojens, Denmark, an enormous pit storage of 203,000~m$^3$ is charged in summer with hot water at 80-95~C using 70,000~m$^2$ of solar thermal collectors, to provide heat to the district heating network in winter.
+
+  \vspace{.7cm}
+    \begin{columns}[T]
+\begin{column}{6cm}
+
+
+        \includegraphics[trim=0 0cm 0 0cm,width=6cm,clip=true]{pit-zoom}
+\end{column}
+\begin{column}{6cm}
+
+        \includegraphics[trim=0 0cm 0 0cm,width=6cm,clip=true]{vojens_seasonal_storage_august_2014.jpg}
+\end{column}
+    \end{columns}
+
+    \source{\href{https://www.solarthermalworld.org/news/denmark-37-mw-field-203000-m3-storage-underway}{Solar Thermal World}}
+\end{frame}
+
+
 \begin{frame}
   \frametitle{Cost and other assumptions}
 
@@ -1147,42 +1170,120 @@ Methanation+DAC & 1000 & kW$_{H_2}$ & 3 & 25  & 0.6\\
 \section{Industry, Shipping and Aviation}
 
 
-
-
-
 \begin{frame}
-  \frametitle{Remaining sectors: non-electric industry processes, aviation, shipping}
+  \frametitle{CO$_2$ direct emissions from industry by sector in Europe}
 
-  For `hard-to-defossilise' sectors, we assume some process- and fuel-switching (under review):
-    \begin{table}
-\centering
-\begin{tabular}{@{}lp{10cm}@{}}
-  \toprule
-  %Sector & Assumption  \\
-  %\midrule
-  Iron \& Steel & 70\% from scrap, rest from direct reduction with 1.7~MWhH$_2$/tSteel $+$ electric arc (process emissions 0.03~tCO$_2$/tSteel)\\
-  Aluminium & 80\% recycling, for rest: methane for high-enthalpy heat (bauxite to alumina) followed by electrolysis (process emissions 1.5 tCO$_2$/tAl) \\
-  Cement &  Waste and solid biomass \\
-  Ceramics \& other NMM &  Electrification\\
-  Chemicals & Synthetic methane, synthetic naphtha and hydrogen \\
-  Other industry & Electrification; process heat from biomass\\
-  Shipping & Liquid hydrogen  (could be replaced by other liquid fuels) \\
-  Aviation & Kerosene from Fischer-Tropsch  \\
-  \bottomrule
-\end{tabular}
-\end{table}
 
- Carbon is tracked through system: 90\% of industrial process emissions are captured; direct air capture (DAC); synthetic methane and liquid hydrocarbons; transport and sequestration costs 20~\euro/tCO$_2$
+\begin{columns}[T]
+  \begin{column}{9.5cm}
+
+    \includegraphics[width=10cm]{CO2_emissions_sectors.png}
+
+  \end{column}
+
+
+  \begin{column}{4cm}
+
+    \vspace{0.2cm}
+
+    \begin{itemize}
+    \item Non-ferrous metals: mainly aluminium, but also copper, lead etc.
+    \item Non-metallic minerals: mainly cement, ceramics and glass
+    \item Emissions come from combustion of fossil fuels for heat, as
+      well as \alert{process emissions} from chemical reactions
+    \end{itemize}
+
+  \end{column}
+
+\end{columns}
 
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{Including all sectors needs careful management of carbon}
+  \frametitle{Process heat demand in Europe by sector and temperature}
+
+  Temperatures $>$100~C not accessible via regular heat pumps. Need direct electrification, biomass, synthetic fuels (hydrogen, methane), nuclear or carbon capture.
+
+    \includegraphics[width=14cm]{process_heat_demand.png}
+
+
+\source{\href{https://link.springer.com/article/10.1007\%2Fs12053-017-9571-y}{Rehfeldt et al, 2017}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Iron and steel: direct reduce with hydrogen instead of coke}
+\begin{columns}[T]
+  \begin{column}{8cm}
+
+    \includegraphics[width=9cm]{hybrit.jpg}
+
+  \end{column}
+
+
+  \begin{column}{5cm}
+
+    \vspace{0.1cm}
+
+    \begin{itemize}
+    \item Normally coke is used as a reducing agent in blast furnaces for smelting iron ore
+      \begin{equation*}
+        2\textrm{Fe}_2\textrm{O}_3 + 3\textrm{C} \to 4\textrm{Fe} + 3\textrm{CO}_2
+      \end{equation*}
+    \item Instead: use hydrogen as the reducing agent
+      \begin{equation*}
+        \textrm{Fe}_2\textrm{O}_3 + 3\textrm{H}_2 \to 2\textrm{Fe} + 3\textrm{H}_2\textrm{O}
+      \end{equation*}
+    \item Should scale up in late 2020s and 2030s.
+    \item See \href{https://doi.org/10.1016/J.JCLEPRO.2018.08.279}{\bf\color{blue}\underline{Vogl et al, 2018}}.
+    \end{itemize}
+
+  \end{column}
+
+\end{columns}
+\source{\href{http://www.hybritdevelopment.com/steel-making-today-and-tomorrow}{HYBRIT project}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Cement}
+
+  Cement is used in construction to make concrete. CO$_2$ is emitted from fossil fuels to provide process heat and from the calcination reaction for fossil limestone
+  \begin{equation*}
+        \textrm{CaCO}_3  \to \textrm{CaO} + \textrm{CO}_2
+  \end{equation*}
+  This is the biggest source of \alert{process emissions} in industry in Europe. While we can replace process heat with low-carbon sources, process emissions are harder. Unless alternatives can be found for cement, this CO$_2$ can be captured and either sequestered underground (CCS) or used (CCU) to make chemicals like methane, liquid hydrocarbons or methanol.
 
   \centering
-  \includegraphics[width=8.5cm]{20200223_multisector_figure.pdf}
+  \includegraphics[width=13cm]{CemKilnKiln.jpg}
 
+  \source{Wikipedia}
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Chemicals}
+\begin{columns}[T]
+  \begin{column}{8cm}
+
+    \includegraphics[width=9cm]{chemicals.png}
+
+  \end{column}
+
+
+  \begin{column}{6cm}
+
+    \begin{itemize}
+    \item Fossil fuels are used for process heat in the chemicals industry, but also as a \alert{feedstock} for chemicals like ammonia (NH$_3$), ethylene (C$_2$H$_4$) and methanol (CH$_3$OH or MeOH)
+    \item Ammonia, used for fertiliser, can be made from hydrogen and nitrogen using the Haber-Bosch process
+    \item Ethylene, used for plastics, can be made by steam cracking from naphtha or ethane
+    \end{itemize}
+
+  \end{column}
+
+\end{columns}
+\source{\href{https://dechema.de/dechema_media/Downloads/Positionspapiere/Technology_study_Low_carbon_energy_and_feedstock_for_the_European_chemical_industry-p-20002750.pdf}{DECHEMA}}
 \end{frame}
 
 
@@ -1205,6 +1306,53 @@ Methanation+DAC & 1000 & kW$_{H_2}$ & 3 & 25  & 0.6\\
     \source{\href{https://doi.org/10.1126/science.aas9793}{Davis et al, 2018}}
 \end{frame}
 
+
+\begin{frame}
+  \frametitle{Defossilising non-electric industry processes, aviation, shipping}
+
+  We assume higher recycling levels as well as process- and fuel-switching (under review):
+    \begin{table}
+\centering
+\begin{tabular}{@{}lp{10cm}@{}}
+  \toprule
+  %Sector & Assumption  \\
+  %\midrule
+  Iron \& Steel & 70\% from scrap, rest from direct reduction with 1.7~MWhH$_2$/tSteel $+$ electric arc (process emissions 0.03~tCO$_2$/tSteel)\\
+  Aluminium & 80\% recycling, for rest: methane for high-enthalpy heat (bauxite to alumina) followed by electrolysis (process emissions 1.5 tCO$_2$/tAl) \\
+  Cement &  Waste and solid biomass for heat; capture process emissions \\
+  Ceramics \& other NMM &  Electrification\\
+  Chemicals & Synthetic methane, synthetic naphtha and hydrogen \\
+  Other industry & Electrification; process heat from biomass\\
+  Shipping & Liquid hydrogen  (could be replaced by other liquid fuels) \\
+  Aviation & Kerosene from Fischer-Tropsch  \\
+  \bottomrule
+\end{tabular}
+\end{table}
+
+ Carbon is tracked through system: 90\% of industrial emissions are captured; direct air capture (DAC); synthetic methane and liquid hydrocarbons; transport and sequestration 20~\euro/tCO$_2$
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Including all sectors needs careful management of carbon}
+
+  \centering
+  \includegraphics[width=8.5cm]{20200223_multisector_figure.pdf}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Worldwide trade in synthetic fuels}
+
+  Today fossil fuels are traded across the globe. Electrolytic-hydrogen-based synthetic fuels (e.g. hydrogen, ammonia, methane, liquid hydrocarbons and methanol) could also be piped/shipped worldwide.  Possible future scenario for hydrogen trade from Helmholtz colleagues at FZJ IEK-3:
+
+  \centering
+  \includegraphics[width=12cm]{h2_worldwide.png}
+
+
+\source{\href{https://www.preprints.org/manuscript/202002.0100/v1}{Heuser et al, 2020}}
+\end{frame}
 
 \section{Open Energy Modelling}
 
@@ -1341,8 +1489,8 @@ Methanation+DAC & 1000 & kW$_{H_2}$ & 3 & 25  & 0.6\\
     \item There are \alert{lots of cost-effective solutions} thanks to falling price of renewables
 
     \item \alert{Electrification of other energy sectors} like heating,
-      transport and industry is important,  to take advantage of
-      low-carbon electricity provision
+      transport and industry is important (direct or indirect with synthetic fuels),  to take advantage of
+      low-carbon electricity
 
     \item \alert{Grid helps} to make CO2 reduction easier $=$ cheaper
 
