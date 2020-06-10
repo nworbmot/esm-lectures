@@ -1,0 +1,1961 @@
+% NB: use pdflatex to compile NOT pdftex.  Also make sure youngtab is
+% there...
+
+% converting eps graphics to pdf with ps2pdf generates way too much
+% whitespace in the resulting pdf, so crop with pdfcrop
+% cf. http://www.cora.nwra.com/~stockwel/rgspages/pdftips/pdftips.shtml
+
+
+
+
+\documentclass[10pt,aspectratio=169,dvipsnames]{beamer}
+
+\usetheme[color/block=transparent]{metropolis}
+
+\usepackage[absolute,overlay]{textpos}
+\usepackage{booktabs}
+
+\usepackage{graphbox} %loads graphicx package
+
+\usepackage{pbox}
+
+\usepackage{adjustbox}
+
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[scale=2]{ccicons}
+
+
+\usepackage[official]{eurosym}
+
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+
+
+\usepackage[europeanresistors,americaninductors]{circuitikz}
+
+
+
+\setbeamerfont{alerted text}{series=\bfseries}
+%\setbeamercolor{alerted text}{fg=BurntOrange}
+%\setbeamercolor{alerted text}{fg=mDarkTeal}
+%\setbeamercolor{alerted text}{fg=Brown}  % Goran
+\setbeamercolor{alerted text}{fg=Mahogany}  % Goran
+
+\setbeamercolor{background canvas}{bg=white}
+
+
+\newcommand{\R}{\mathbb{R}}
+
+\def\l{\lambda}
+\def\m{\mu}
+\def\d{\partial}
+\def\cL{\mathcal{L}}
+\def\co2{CO${}_2$}
+
+
+\def\el{${}_{el}$}
+\def\th{${}_{th}$}
+\def\gas{${}_{gas}$}
+
+
+
+\newif\ifgoat
+
+\goattrue                       %
+
+
+
+\newcommand*\rot{\rotatebox{90}}
+
+
+\usepackage{pifont}
+\newcommand*\OK{\ding{51}}
+
+
+%use this to add space between rows
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+
+% for sources http://tex.stackexchange.com/questions/48473/best-way-to-give-sources-of-images-used-in-a-beamer-presentation
+
+\setbeamercolor{framesource}{fg=gray}
+\setbeamerfont{framesource}{size=\tiny}
+
+
+\newcommand{\source}[1]{\begin{textblock*}{5cm}(10.5cm,8.35cm)
+    \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
+        \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
+    \end{beamercolorbox}
+\end{textblock*}}
+
+\usepackage{hyperref}
+
+
+%\usepackage[pdftex]{graphicx}
+
+
+\graphicspath{{graphics/}}
+
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png,.jpg}
+
+
+
+\def\goat#1{{\scriptsize\color{green}{[#1]}}}
+
+
+
+\let\olditem\item
+\renewcommand{\item}{%
+\olditem\vspace{5pt}}
+
+\title{Energy System Modelling\\ Summer Semester 2019, Lecture 9}
+%\subtitle{---}
+\author{
+  {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
+  \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
+}
+
+\date{\vspace{.3cm}14th June 2019}
+
+
+\titlegraphic{%
+  \vspace{6cm}
+  \hspace{10cm}
+    \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{frame}
+
+  \frametitle{Table of Contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\section{Energy System Challenges}
+
+
+\begin{frame}
+  \frametitle{What to do about variable renewables?}
+
+  Backup energy costs money and may also cause CO${}_2$ emissions.
+
+  Curtailing renewable energy is also a waste.
+
+  We consider \alert{four options} to deal with variable renewables:
+  \begin{enumerate}
+  \item Smoothing stochastic variations of renewable feed-in over \alert{larger areas using networks}, e.g. the whole of European continent.
+  \item Using \alert{storage} to shift energy from times of surplus to deficit.
+  \item \alert{Shifting demand} to different times, when renewables are abundant.
+    \item Consuming the electricity in \alert{other sectors}, e.g. transport or heating.
+  \end{enumerate}
+
+\alert{Optimisation} in energy networks is a tool to assess these options.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Sector coupling}
+
+  In this lecture we will consider \alert{sector coupling}: the deeper
+  coupling of electricity with other sectors, i.e. transport, heating
+  and industry.
+
+  In fact we will see that sector coupling is not just `an option for
+  dealing with variable renewables' but is \alert{unavoidable} if we
+  are going to reduce carbon dioxide emissions in the other
+  sectors. It began decades ago with the coupling of power and
+  heat in CHPs.
+
+  Furthermore sector coupling involves both \alert{storage} (since in
+  transport energy-dense fuels/batteries are required for vehicles; in
+  heating some chemical storage may be unavoidable for cold snaps) and
+  \alert{demand-side management} (e.g. for shifting battery electric
+  vehicle charging, or shifting heat pump operation).
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{The Global Carbon Dioxide Challenge: Net-Zero Emissions by 2050}
+
+  \begin{columns}[T]
+\begin{column}{7.5cm}
+
+  \includegraphics[width=8cm]{ipcc-sr15}
+
+
+\end{column}
+\begin{column}{6cm}
+  \begin{itemize}
+\item Scenarios for global CO$_2$ emissions that limit warming to 1.5$^\circ$C about industrial levels (\alert{Paris agreement})
+\item Today emissions \alert{still rising}
+\item Level of use of negative emission technologies (NET) depends on rate of progress
+\item 2$^\circ$C target without NET also needs
+  rapid fall by 2050
+\item Common theme: \alert{net-zero by 2050}
+\end{itemize}
+\end{column}
+  \end{columns}
+
+    \source{\href{http://ipcc.ch/report/sr15/}{IPCC SR15 on 1.5C, 2018}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{The Greenhouse Gas Challenge: Net-Zero Emissions by 2050}
+
+  Paris-compliant 1.5$^\circ$~C scenarios from European Commission - \alert{net-zero GHG in EU by 2050}
+
+  \vspace{.4cm}
+
+  %Figure 6 from https://ec.europa.eu/clima/sites/clima/files/docs/pages/com_2018_733_en.pdf
+  \includegraphics[width=14cm]{eu-lts-net-zero.png}
+
+
+    \source{\href{https://ec.europa.eu/clima/sites/clima/files/docs/pages/com_2018_733_en.pdf}{European Commission `Clean Planet for All', 2018}}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{It's not just about electricity demand...}
+
+  %GHG in 2016 are 4.291~Gt, CO2 is 3.489 ~Gt without LULUCF and without indirect
+  %Global is 36.2 Gt (EU figure from carbonbrief excludes LULUCF, so assume global also)
+%https://www.carbonbrief.org/analysis-global-co2-emissions-set-to-rise-2-percent-in-2017-following-three-year-plateau
+  EU28 \co2{} emissions in 2016 (total 3.5~Gt \co2, 9.7\% of global):
+
+  \centering
+    % left bottom right top
+  \includegraphics[trim=0 0.7cm 0 0.5cm,width=12cm]{EU28-emissions_pie-2016-CO2-190311.pdf}
+
+%  ...\alert{but} wind and solar will dominate primary energy in all sectors, so electrification is critical.
+
+  \source{Brown, data from \href{https://www.eea.europa.eu/data-and-maps/data/national-emissions-reported-to-the-unfccc-and-to-the-eu-greenhouse-gas-monitoring-mechanism-13}{EEA}}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{...but electification of other sectors is critical for decarbonisation}
+
+  Wind and solar dominate the expandable potentials for low-carbon
+  energy provision, so \alert{electrification is essential} to decarbonise
+  sectors such as transport and heating.
+
+  \vspace{0.5cm}
+
+  \begin{columns}[T]
+\begin{column}{6cm}
+  \includegraphics[trim=0 0cm 0 0cm,width=6cm,clip=true]{tesla.jpg}
+\end{column}
+\begin{column}{6cm}
+
+  \includegraphics[trim=0 0cm 0 0cm,width=6cm,clip=true]{640px-Heat_Pump.jpg}
+\end{column}
+\end{columns}
+
+    \vspace{0.7cm}
+  Fortunately, these sectors can also offer crucial \alert{flexibility} back to the electricity system.
+
+
+\source{Tesla; heat pump: \href{https://commons.wikimedia.org/w/index.php?curid=10795550}{Kristoferb at English Wikipedia}}
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}{Low cost of renewable energy 2017 (NB: ignores variability)}
+
+  \centering
+  \includegraphics[width=14cm]{lazard-cropped.jpg}
+
+  \source{\href{https://www.lazard.com/perspective/levelized-cost-of-energy-2017/}{Lazard's LCOE Analysis V11}}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Energy System Design: Research Questions}
+
+\begin{columns}[T]
+  \begin{column}{9cm}
+
+    \vspace{.2cm}
+  \begin{itemize}
+  \item What \alert{infrastructure} does a highly renewable energy system
+    require?
+  \item \alert{Where} should it go? And \alert{when}?
+  \item Given a desired \co2 reduction, how much will it \alert{cost}?
+    \item How to deal with the \alert{variability}  of wind and solar?
+  \end{itemize}
+
+  \hspace{0.15cm}
+
+  The answers to these questions affect \alert{hundreds of billions}
+  of euros of spending per year.
+
+  \hspace{0.15cm}
+
+  Researchers deal with these questions by solving large \alert{optimisation} problems.
+  \end{column}
+  \begin{column}{4.5cm}
+    \vspace{.2cm}
+  \includegraphics[width=4.7cm]{goat-clean}
+  \end{column}
+\end{columns}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Take account of social and political constraints}
+
+
+
+\begin{columns}[T]
+
+  \begin{column}{4.5cm}
+
+
+\centering
+\includegraphics[width=5cm]{nein_zur_monstertrasse}
+
+  \end{column}
+
+
+  \begin{column}{7.6cm}
+
+
+  \vspace{.7cm}
+
+  The Energy Transition is not just a case of ``cost optimisation
+  under CO${}_2$ constraints''.  There are also \alert{social and political constraints}.
+
+  We need to assess:
+  \begin{itemize}
+    \item Reducing need for transmission using \alert{storage / sector coupling} (e.g. battery electric vehicles, thermal storage)
+    \item \alert{New technologies} that can minimise the landscape impact of transmission
+    \item \alert{Efficiency} and \alert{sufficiency} to reduce demand
+  \end{itemize}
+
+  \vspace{0.2cm}
+
+  \alert{Transparency is critical} for public acceptance.
+  \end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+
+
+
+\section{Variability of Wind, Solar \& Demand}
+
+
+\begin{frame}
+  \frametitle{Variability: Different wind conditions over Europe}
+
+  Wind, solar and demand vary at different time scales, e.g. wind is
+  particularly affected by large weather
+  systems at the \alert{continental scale} that pass in 1-2 weeks. See videos of \href{https://www.youtube.com/watch?v=ttfuEnMz2UM}{wind} and \href{https://www.youtube.com/watch?v=XqJAD666Elk}{solar}.
+
+  \centering
+  \includegraphics[width=10cm]{2015-11-30-0300.png}
+
+  \source{\url{https://earth.nullschool.net/}}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Daily variations: challenges and solutions}
+
+  \begin{columns}[T]
+    \begin{column}{5cm}
+      \includegraphics[trim=0 0cm 0 0cm,width=5cm,clip=true]{DE-solar-day.pdf}
+      \includegraphics[trim=0 0cm 0 0cm,width=5cm,clip=true]{DE-transport-day.pdf}
+    \end{column}
+    \begin{column}{4cm}
+      Daily variations in supply and demand can be balanced by
+      \begin{itemize}
+      \item \alert{short-term storage} (e.g. batteries, pumped-hydro, small thermal storage)
+      \item \alert{demand-side management} (e.g. battery electric vehicles,
+        industry)
+      \item \alert{east-west grids over multiple time zones}
+      \end{itemize}
+
+    \end{column}
+    \begin{column}{5cm}
+      \includegraphics[trim=0 0cm 0 0cm,width=5cm,clip=true]{pumped-storage-diagram-best1.jpg}
+
+      \vspace{.5cm}
+
+      \includegraphics[trim=0 0cm 0 0cm,width=5cm,clip=true]{tesla-charging.jpg}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Synoptic variations: challenges and solutions}
+
+  \begin{columns}[T]
+    \begin{column}{5cm}
+      \includegraphics[trim=0 0cm 0 0cm,width=5cm,clip=true]{2015-11-30-0300.png}
+
+      \vspace{.2cm}
+
+      \includegraphics[trim=0 0cm 0 0cm,width=5.5cm,clip=true]{DE-wind-month.pdf}
+    \end{column}
+    \begin{column}{4cm}
+      Synoptic variations in supply and demand can be balanced by
+      \begin{itemize}
+      \item \alert{medium-term storage} (e.g. chemically with hydrogen or methane storage, thermal energy storage, hydro reservoirs)
+      \item \alert{continent-wide grids}
+      \end{itemize}
+
+    \end{column}
+    \begin{column}{5cm}
+      \includegraphics[trim=0 0cm 0 0cm,width=4.5cm,clip=true]{1024px-Gasometer_in_East_London.jpg}
+
+      \includegraphics[trim=0 0cm 0 0cm,width=4.5cm,clip=true]{europe_map.pdf}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Seasonal variations: challenges and solutions}
+
+  \begin{columns}[T]
+    \begin{column}{5cm}
+      \includegraphics[trim=0 0cm 0 0cm,width=5cm,clip=true]{DE-wind-solar-year.pdf}
+      \includegraphics[trim=0 0cm 0 0cm,width=5cm,clip=true]{DE-heat-year.pdf}
+    \end{column}
+    \begin{column}{4cm}
+      Seasonal variations in supply and demand can be balanced by
+      \begin{itemize}
+      \item \alert{long-term storage} (e.g. chemically with hydrogen or methane storage, long-term thermal energy storage, hydro reservoirs)
+      \item \alert{north-south grids over multiple latitudes}
+      \end{itemize}
+
+    \end{column}
+    \begin{column}{5cm}
+      \includegraphics[trim=0 0cm 0 0cm,width=4.7cm,clip=true]{1024px-Gasometer_in_East_London.jpg}
+
+      \vspace{.2cm}
+
+      \includegraphics[trim=0 0cm 0 0cm,width=4.7cm,clip=true]{pit-zoom.png}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{German onshore wind spectrum}
+
+  If we Fourier transform, seasonal, synoptic and daily patterns become visible.
+
+  \centering
+  \includegraphics[width=14cm]{DE-onwind-spectrum}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{German solar spectrum}
+
+  For solar, the daily pattern is dominant, also some seasonal modes.
+
+  \centering
+  \includegraphics[width=14cm]{DE-solar-spectrum}
+
+\end{frame}
+
+
+\section{Optimising Electricity Only}
+
+
+\begin{frame}
+  \frametitle{Research approach}
+
+  Avoid too many assumptions. Fix the \alert{boundary conditions}:
+
+  \begin{itemize}
+  \item Meet demand for energy services
+  \item Reduce \co2 emissions
+  \item Conservative predictions for cost developments
+  \item No/minimal/optimal grid expansion
+  \end{itemize}
+
+  Then \alert{let the math decide the rest}, i.e. choose the number of
+  wind turbines / solar panels / storage units / transmission lines to
+  minimise total costs (investment \alert{and} operation).
+
+  \vspace{.3cm}
+
+  Generation, storage and transmission optimised \alert{jointly}
+  because they are \alert{strongly interacting}.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Linear optimisation of annual system costs}
+
+Find the long-term cost-optimal energy system, including investments and short-term costs:
+\begin{equation*}
+  \textrm{Minimise} \left(\parbox{6em}{Yearly system costs}\right) = \sum_n \left(\parbox{6em}{Annualised capital costs}\right) + \sum_{n,t} \left(\parbox{6em}{Marginal costs}\right)
+\end{equation*}
+subject to
+\begin{itemize}
+\item meeting energy demand at each node $n$ (e.g. countries) and time $t$ (e.g. hours of year)
+\item wind, solar, hydro (variable renewables) availability $\forall\: n,t$
+\item electricity transmission constraints between nodes
+\item (installed capacity) $\leq$ (geographical potential for renewables)
+\item CO${}_2$ constraint (95\% reduction compared to 1990)
+\item Flexibility from gas plants, battery storage, hydrogen storage, networks
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+  \frametitle{Linear optimisation problem}
+
+
+  Objective is the minimisation of \alert{total annual system costs}, composed of \alert{capital costs} $c_*$ (investment costs) and \alert{operating costs} $o_*$ (fuel ,etc.):
+  \begin{equation*}
+\min    f(F_\ell, f_{\ell,t}, G_{i,s},  g_{i,s,t}) =  \sum_{\ell} c_l F_\ell + \sum_{i,s} c_{i,s} G_{i,s} + \sum_{i,s,t} w_t o_{i,s} g_{i,s,t}
+  \end{equation*}
+  We optimise for $i$ nodes, representative times $t$ and transmission lines $l$:
+  \begin{itemize}
+  \item the transmission capacity $F_\ell$ of all the lines $\ell$
+  \item the flows $f_{\ell,t}$ on each line $\ell$ at each time $t$
+  \item the generation and storage capacities $G_{i,s}$ of all technologies (wind/solar/gas etc.) $s$ at each node $i$
+  \item the dispatch $g_{i,s,t}$ of each generator and storage unit at each point in time $t$
+  \end{itemize}
+
+  Representative time points are weighted $w_t$ such that $\sum_t w_t = 365*24$ and the capital costs $c_*$ are annualised, so that the objective function represents the annual system cost.
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Constraints 1/6: Nodal energy balance}
+
+  Demand $d_{i,t}$ at each node $i$ and time $t$ is always met by
+  generation/storage units $g_{i,s,t}$ at the node or from transmission
+  flows $f_{\ell,t}$ on lines attached at the node (Kirchhoff's Current Law):
+    \begin{equation*}
+      \sum_{s} g_{i,s,t} - d_{i,t} =  \sum_{\ell } K_{i\ell} f_{\ell,t}  \hspace{1cm}\leftrightarrow\hspace{1cm} \l_{i,t}
+    \end{equation*}
+
+    Nodes are shown as thick busbars connected by transmission lines (thin lines):
+
+\centering
+\begin{circuitikz}
+  \draw (1.5,14.5) to [short,i^=$f_1$] (1.5,13);
+  \draw [ultra thick] (0,13) node[anchor=south]{i} -- (4,13);
+  \draw(2.5,13) |- +(0,0.5) to [short,i^=$f_2$] +(5,0.5) |- +(0,-0.5);
+  \draw [ultra thick] (6,13) node[anchor=south]{j} -- +(4,0);
+  \draw (8.5,14.5) to [short,i^=$f_3$] +(0,-1.5);
+  \draw (0,-0.5) ;
+  \draw (0.5,13) -- +(0,-0.5) node[sground]{};
+  \draw (2,12) node[vsourcesinshape, rotate=270](V2){}
+  (V2.left) -- +(0,0.6);
+  \draw (3.5,12) node[vsourcesinshape, rotate=270](V2){}
+  (V2.left) -- +(0,0.6);
+  \draw (0.5,11) node{$d_i$};
+  \draw (2,11) node{$g_{i,w}$};
+  \draw (3.5,11) node{$g_{i,s}$};
+  \draw (2,10.3) node{$ g_{i,w} + g_{i,s} - d_i = f_2 -f_1$};
+  \draw (6.5,13) -- +(0,-0.5) node[sground]{};
+  \draw (8,12) node[vsourcesinshape, rotate=270](V2){}
+  (V2.left) -- +(0,0.6);
+  \draw (9.5,12) node[vsourcesinshape, rotate=270](V2){}
+  (V2.left) -- +(0,0.6);
+  \draw (6.5,11) node{$d_j$};
+  \draw (8,11) node{$g_{j,w}$};
+  \draw (9.5,11) node{$g_{j,s}$};
+  \draw (8,10.3) node{$ g_{j,w} + g_{j,s} - d_{j} = -f_2 - f_3$};
+
+\end{circuitikz}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Constraints 2/6: Generation availability}
+  Generator/storage dispatch $g_{i,s,t}$ cannot exceed availability $G_{i,s,t}*G_{i,s}$, made up of per unit availability $0 \leq G_{i,s,t} \leq 1$ multiplied by the capacity $G_{i,s}$. The capacity is bounded by the installable potential $\hat{G}_{i,s}$.
+    \begin{equation*}
+      0 \leq g_{i,s,t} \leq G_{i,s,t}* G_{i,s} \leq  G_{i,s} \leq  \hat{G}_{i,s}
+    \end{equation*}
+
+    \centering
+      \includegraphics[width=11cm]{scigrid-curtailment}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Installation potentials limited by geography}
+
+  Expansion potentials are limited by \alert{land usage} and
+  \alert{conservation areas}; potential yearly energy yield at each site
+  limited by \alert{weather conditions}:
+
+  \centering
+  \includegraphics[width=14.5cm]{average_power_density_potential-eps-converted-to.pdf}
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Constraints 3/6: Storage consistency}
+
+  Storage units such as batteries or hydrogen storage can work in both
+  storage and dispatch mode. This has to be consistent with the state
+  of charge $e_{i,s,t}$:
+  \begin{align*}
+    e_{i,s,t} = \eta_0e_{i,s,t-1} + \eta_1g_{i,s,t,\textrm{store}} -  \eta_2^{-1} g_{i,s,t,\textrm{dispatch}}
+  \end{align*}
+
+  The state of charge is limited by the energy capacity $E_{i,s}$:
+  \begin{align*}
+    0 \leq e_{i,s,t} \leq E_{i,s} \quad \forall i,s,t
+  \end{align*}
+
+
+  There are efficiency losses $\eta$; hydroelectric dams can also have a river inflow.
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Constraints 4/6: Kirchoff's Laws for Physical Flow}
+
+  The linearised \alert{power flows} $f_\ell$ for each line $\ell \in
+  \{1,\dots L\}$ in an AC network are determined by the
+  \alert{reactances} $x_\ell$ of the transmission lines and the
+  \alert{net power injection} at each node $p_i$ for $i\in\{1,\dots
+  N\}$.
+
+
+  We have to satisfy Kirchoff's Laws, which can be compactly expressed
+  using the \alert{incidence matrix} $K \in \R^{N\times L}$ (boundary
+  operator in homology theory) of the graph and the \alert{cycle
+    basis} $C \in \R^{L\times(L-N+1)}$ (kernel of $K$)
+
+  \begin{itemize}
+  \item  Kirchoff's Current Law: $p_i = \sum_{\ell} K_{i\ell} f_\ell$
+  \item  Kirchoff's Voltage Law: $\sum_\ell C_{\ell c} x_\ell f_\ell = 0$
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Constraints 5/6: Transmission Line Thermal Limits}
+
+    Transmission flows cannot exceed the thermal capacities of the transmission lines (otherwise they sag and hit buildings/trees):
+    \begin{equation*}
+      | f_{\ell,t} | \leq  F_\ell
+    \end{equation*}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Constraints 6/6: Global constraints on \co2 and transmission volumes}
+  CO${}_2$ limits are respected, given emissions $\varepsilon_{i,s}$ for each fuel source $s$:
+    \begin{equation*}
+      \sum_{i,s,t}  g_{i,s,t} \frac{\varepsilon_{i,s}}{\eta_{s}} \leq \textrm{CAP}_{\textrm{CO}_2} \hspace{1cm} \leftrightarrow \hspace{1cm} \m_{\textrm{CO}_2}
+    \end{equation*}
+    We enforce a reduction of \co2 emissions by 95\% compared to 1990
+    levels, in line with German and EU targets for 2050.
+
+    Transmission volume limits are respected, given length $d_\ell$ and capacity $F_\ell$ of each line:
+    \begin{equation*}
+      \sum_{\ell} d_\ell   F_\ell \leq \textrm{CAP}_{\textrm{trans}} \hspace{1cm} \leftrightarrow \hspace{1cm} \m_{\textrm{trans}}
+    \end{equation*}
+    We  successively change the transmission limit, to assess the costs of balancing power in time (i.e. storage) versus space (i.e. transmission networks).
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Model Inputs and Outputs}
+
+\begin{columns}
+  \begin{column}{6cm}
+
+
+    \begin{table}[!t]
+	\centering
+	\begin{tabular}{@{}p{1.15cm}p{4.54cm}@{}}
+\toprule
+\alert{Inputs} & Description \\
+\midrule
+$d_{i,t}$ & Demand (inelastic) \\
+$G_{i,s,t}$ & Per unit availability for wind and solar \\
+$\hat{G}_{i,s}$ & Generator installable potentials \\
+various & Existing hydro data \\
+various & Grid topology \\
+$\eta_*$ & Storage efficiencies \\
+$c_{i,s}$ & Generator capital costs \\
+$o_{i,s,t}$ & Generator marginal costs \\
+$c_\ell$ & Line costs \\
+\bottomrule
+	\end{tabular}
+\end{table}
+  \end{column}
+    \begin{column}{1cm}
+
+
+      \vspace{1cm}
+
+      $\to$
+
+    \end{column}
+  \begin{column}{6cm}
+
+
+    \begin{table}[!t]
+	\centering
+	\begin{tabular}{@{}p{1.15cm}p{4.54cm}@{}}
+\toprule
+\alert{Outputs} & Description \\
+\midrule
+$G_{i,s}$ &  Generator capacities \\
+$g_{i,s,t}$ & Generator dispatch \\
+$F_\ell$ & Line capacities \\
+$f_{\ell,t}$ & Line flows \\
+$\lambda_*,\mu_*$ & Lagrange/KKT multipliers of all constraints \\
+f & Total system costs \\
+\bottomrule
+	\end{tabular}
+\end{table}
+  \end{column}
+
+\end{columns}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Warm-up: Determine optimal electricity system}
+
+
+\begin{columns}[T]
+\begin{column}{7cm}
+  \begin{itemize}
+  \item Meet all electricity demand.
+  \item Reduce \co2{} by 95\% compared to 1990.
+  \item \alert{Generation} (where potentials allow): onshore and offshore
+    wind, solar, hydroelectricity, backup from natural gas.
+  \item \alert{Storage}: batteries for short term, electrolyse hydrogen gas for long term.
+  \item \alert{Grid expansion}: simulate everything from no grid expansion (like a \alert{decentralised solution}) to optimal grid expansion (with significant \alert{cross-border trade}).
+  \end{itemize}
+\end{column}
+\begin{column}{6.5cm}
+
+
+  \vspace{0.3cm}
+\centering
+
+\ifgoat
+\includegraphics[width=7cm]{europe_map}
+\fi
+
+\end{column}
+\end{columns}
+
+
+\source{PyPSA-Eur, based on ENTSO-E map}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Costs and assumptions for the electricity sector (projections for 2030)}
+
+  \begin{table}
+\centering
+\begin{tabular}{@{}lrlrr@{}}
+\toprule
+Quantity                &Overnight  Cost [\euro]  &Unit & FOM [\%/a] & Lifetime [a] \\
+\midrule
+Wind onshore    &1182   &kW\el &3 & 20   \\
+Wind offshore  &2506   &kW\el  &3& 20  \\
+Solar PV           &600   &kW\el &4 & 20   \\
+Gas             &400    &kW\el  &4& 30  \\
+%Gas marginal            &75     &\euro{}/MWh$_{\textrm{e}}$    \\
+Battery storage         &1275   &kW\el  & 3 & 20 \\
+Hydrogen storage        &2070   &kW\el  & 1.7 &20 \\
+Transmission line       &400    &MWkm & 2 & 40\\
+\bottomrule
+\end{tabular}
+\end{table}
+  Interest rate of 7\%, storage efficiency losses, only gas has \co2 emissions, gas marginal costs.
+
+  Batteries can store for 6 hours at maximal rating (efficiency $0.9\times 0.9$), hydrogen storage for 168 hours (efficiency $0.75\times 0.58$).
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+  \frametitle{Costs: No interconnecting transmission allowed}
+
+
+
+\begin{columns}[T]
+  \begin{column}{4.9cm}
+
+  Technology~by~energy:
+  % left bottom right top
+  \begin{tabular}{cc}
+    \includegraphics[trim=0 0cm 0 0cm,width=3.2cm,clip=true]{total-pie-0-0} &
+  \end{tabular}
+
+
+  Average~cost~\alert{\euro 86/MWh}:
+
+  \includegraphics[width=3.6cm]{total-costs-joint-1}
+
+  \end{column}
+
+  \begin{column}{9cm}
+    % left bottom right top
+    \centering
+    \includegraphics[trim=0 4cm 0 4cm,width=8cm,clip=true]{euro-pie-0-0}
+
+    \raggedright
+    Countries must be self-sufficient at all times; lots of storage and some gas to deal with fluctuations of wind and solar.
+  \end{column}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Dispatch with no interconnecting transmission}
+
+  For Great Britain with no interconnecting transmission, excess wind is either stored as hydrogen or curtailed:
+
+  \centering
+  \includegraphics[width=13cm]{GB-0}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Costs: Cost-optimal expansion of interconnecting transmission}
+
+
+\begin{columns}[T]
+  \begin{column}{5.3cm}
+
+  Technology~by~energy:
+  % left bottom right top
+    \begin{tabular}{cc}
+    \includegraphics[trim=0 0cm 0 0cm,width=3.2cm,clip=true]{total-pie-0-5} &
+  \end{tabular}
+
+  Average~cost~\alert{\euro 64/MWh}:
+
+  \includegraphics[width=4.7cm]{total-costs-joint-2}
+
+  \end{column}
+
+  \begin{column}{9cm}
+    % left bottom right top
+    \centering
+    \includegraphics[trim=0 4cm 0 4cm,width=8cm,clip=true]{euro-pie-0-5}
+
+    \raggedright
+    Large transmission expansion; onshore wind dominates. This optimal solution may run into public acceptance problems.
+  \end{column}
+
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Dispatch with cost-optimal interconnecting transmission}
+
+  Almost all excess wind can be now be exported:
+
+  \centering
+  \includegraphics[width=13cm]{GB-1}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Electricity Only Costs Comparison}
+
+\begin{columns}[T]
+  \begin{column}{9cm}
+
+    \vspace{0.5cm}
+  \includegraphics[width=9cm]{opteu_paper2-elec_only-costs-curve}
+
+  \end{column}
+
+  \begin{column}{5cm}
+    \begin{itemize}
+    \item Average total system costs can be as low as \euro~64/MWh
+     \item Energy is dominated by wind (64\% for the cost-optimal system), followed
+       by hydro (15\%) and solar (17\%)
+     \item Restricting transmission results in more storage to deal with variability, driving up the costs by up to 34\%
+     \item Many benefits already locked in at a few multiples of today's grid
+    \end{itemize}
+
+  \end{column}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Grid expansion CAP shadow price as CAP relaxed}
+
+
+\begin{columns}[T]
+\begin{column}{9cm}
+\centering
+  \includegraphics[width=9cm]{shadow_price_LV_N1_5_diw2030_solar1_7-eps-converted-to}
+  %\includegraphics[width=6cm]{pre-2-costs_de_storage}
+\end{column}
+\begin{column}{4cm}
+  \begin{itemize}
+%\item   %Big reduction in curtailment
+  \item With overhead lines the optimal system has around 7 times today's transmission volume
+  \item With underground cables (5-8 times more expensive) the optimal system has around 3 times today's transmission volume
+  \end{itemize}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+  \frametitle{Distribution of costs}
+
+  As transmission volumes increase, costs become more unequally distributed...
+
+  \centering
+  \includegraphics[width=11cm]{costs_ct_N1_5_HFOM-diw2030_solar1_7-LVs_0-0_0-25_Opt-eps-converted-to.pdf}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Distribution of prices}
+
+  ...while market prices converge.
+
+  \centering
+
+  \includegraphics[width=11cm]{local_marginal_price_ct_N1_5-diw2030_solar1_7_angles-LVs_0-0_0-25_Opt-eps-converted-to.pdf}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Different flexibility options have difference temporal scales}
+
+\begin{columns}[T]
+  \begin{column}{10.5cm}
+
+    \vspace{0.5cm}
+  \includegraphics[width=11cm]{soc_series_LV0-25_H2_hydro_diw2030_solar1_7-eps-converted-to.pdf}
+
+  \end{column}
+
+  \begin{column}{3cm}
+    \vspace{1cm}
+    \begin{itemize}
+    \item Hydro reservoirs are \alert{seasonal}
+    \item Hydrogen storage is \alert{synoptic}
+    \end{itemize}
+
+  \end{column}
+
+\end{columns}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Different flexibility options have difference temporal scales}
+
+\begin{columns}[T]
+  \begin{column}{10.5cm}
+
+    \vspace{0.5cm}
+  \includegraphics[width=11cm]{soc_series_LV0-25_all_2011-08_diw2030_solar1_7-eps-converted-to.pdf}
+
+  \end{column}
+
+  \begin{column}{3cm}
+        \vspace{2cm}
+    \begin{itemize}
+    \item Pumped hydro and battery storage are \alert{daily}
+    \end{itemize}
+
+  \end{column}
+
+\end{columns}
+\end{frame}
+
+
+\section{Electricity, Heat and Transport}
+
+
+\begin{frame}
+  \frametitle{Include other sectors: heating and land transport}
+
+  Electricity,  (low-temperature) heating and land transport cover 77\% of 2015 CO$_2$ emissions:
+
+  \centering
+    % left bottom right top
+  \includegraphics[trim=0 0.7cm 0 0.5cm,width=12cm]{EU28-emissions_pie-2016-CO2-190311.pdf}
+
+
+  \source{Brown, data from \href{https://www.eea.europa.eu/data-and-maps/data/national-emissions-reported-to-the-unfccc-and-to-the-eu-greenhouse-gas-monitoring-mechanism-13}{EEA}}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Efficiency of renewables and sector coupling}
+
+
+  \includegraphics[width=\linewidth,trim=2.7cm 20cm 3.2cm 1.8cm,clip=true]{./graphics/bmwi-whitepaper-figure_18.pdf}
+
+  \source{\href{https://www.bmwi.de/Redaktion/EN/Publikationen/whitepaper-electricity-market.html}{BMWi White Paper 2015}}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Challenge: Heating and transport demand highly peaked}
+
+
+  \begin{columns}[T]
+\begin{column}{6cm}
+  Compared to electricity, heating and transport are \alert{strongly peaked}.
+  \begin{itemize}
+  \item   Heating is strongly seasonal, but also with synoptic variations.
+    \item   Transport has strong daily periodicity.
+  \end{itemize}
+
+  \vspace{.3cm}
+
+  \includegraphics[trim=0 0cm 0 0cm,width=6cm,clip=true]{elec_demand.pdf}
+
+\end{column}
+\begin{column}{6cm}
+  \includegraphics[trim=0 0cm 0 0cm,width=5.7cm,clip=true]{heat_demand.pdf}
+  \includegraphics[trim=0 0cm 0 0cm,width=5.7cm,clip=true]{transport_profiles.pdf}
+\end{column}
+\end{columns}
+
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Sector Coupling}
+
+  \alert{Idea}: Couple the electricity sector to heating and mobility.
+
+  This enables decarbonisation of these sectors \alert{and} offers more flexibility to the power system.
+
+  \vspace{0.2cm}
+
+  \begin{columns}[T]
+\begin{column}{6cm}
+  \alert{Battery electric vehicles} can change their charging pattern to benefit the
+  system and even feed back into the grid if necessary
+
+  \includegraphics[trim=0 0cm 0 0cm,width=6cm,clip=true]{tesla.jpg}
+\end{column}
+\begin{column}{6cm}
+  \alert{Heat} and \alert{synthetic fuels} are easier and cheaper to store than electricity, even over many months
+
+  \vspace{0.5cm}
+
+        \includegraphics[trim=0 0cm 0 0cm,width=6cm,clip=true]{pit-zoom}
+\end{column}
+\end{columns}
+
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Power-to-Gas (P2G)}
+
+  \begin{columns}[T]
+    \begin{column}{4cm}
+      \includegraphics[trim=0 0cm 0 0cm,width=5cm,clip=true]{pem_electrolyzer.png}
+
+
+      \vspace{.4cm}
+
+      \includegraphics[trim=0 0cm 0 0cm,width=5cm,clip=true]{Methanation_of_CO2_circle.png}
+    \end{column}
+    \begin{column}{7cm}
+
+      Power-to-Gas (P2G) describes concepts to use electricity to
+      electrolyse water to \alert{hydrogen} H$_2$ (and oxygen O$_2$).
+      We can combine hydrogen with carbon oxides to get
+      \alert{hydrocarbons} such as methane CH$_4$ (main component of
+      natural gas) or liquid fuels C$_n$H$_m$.
+
+      These can be used for \alert{hard-to-defossilise sectors}:
+            \begin{itemize}
+            \item
+              \alert{dense fuels} for transport (planes, ships)
+            \item \alert{steel-making}
+              \item \alert{chemicals industry}
+              \item \alert{high-temperature heat}
+              \item \alert{heat for buildings}
+                \item \alert{backup energy} for cold low-wind winter periods
+            \end{itemize}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Power-to-Gas (P2G)}
+
+  \begin{columns}[T]
+    \begin{column}{4.5cm}
+      \includegraphics[trim=0 0cm 0 0cm,width=4.5cm,clip=true]{salt_caverns.jpg}
+
+      \vspace{.4cm}
+
+      \includegraphics[trim=0 0cm 0 0cm,width=4.5cm,clip=true]{Gas-pipeline.jpg}
+    \end{column}
+
+    \begin{column}{5cm}
+      Gases and liquids are easy to \alert{store} and \alert{transport} than electricity.
+
+      Storage capacity of the German natural gas network in terms of energy: ca 200 TWh. In addition, losses in the gas network are small.
+
+   (NB: Volumetric energy density of hydrogen, i.e. MWh/m$^3$, is around three times lower than natural gas.)
+
+      Pipelines can carry many GW underground, out of sight.
+    \end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Sector coupling: A new source of flexibility}
+
+  Couple the electricity sector (electric demand, generators,
+  electricity storage, grid) to electrified
+  transport and low-T heating demand (model covers 75\% of final energy consumption in 2014).
+  Also allow production of synthetic hydrogen and methane.
+% graphic generated in
+\begin{figure}[!t]
+\begin{adjustbox}{scale=0.70,trim=5 8.8cm 0 1cm}
+
+
+  \begin{circuitikz}
+  \draw (1.5,14.5) to [short,i^=electricity grid] (1.5,13);
+  \draw [ultra thick] (-5,13) node[anchor=south]{electric bus} -- (6,13);
+  \draw(2.5,13) |- +(0,0.5) to [short,i^=$$] +(2,0.5);
+  \draw (0,-0.5) ;
+  \draw (0.5,13) -- +(0,-0.5) node[sground]{};
+  \draw (2.5,12) node[vsourcesinshape, rotate=270](V2){}
+  (V2.left) -- +(0,0.6);
+  \draw (2.5,11.2) node{generators};
+    \node[draw,minimum width=1cm,minimum height=0.6cm,anchor=south west] at (3.4,11.9){storage};
+    \draw (4,13) to (4,12.5);
+
+
+  \draw [ultra thick] (-6,10) node[anchor=south]{transport} -- (-3,10);
+  \draw (-5.5,10) -- +(0,-0.5) node[sground]{};
+  \draw (-3.5,10) to [short,i_=${}$] (-3.5,13);
+  \draw (-3.2,11.5)  node[rotate=90]{discharge};
+  \draw (-4.5,13) to [short,i^=${}$] (-4.5,10);
+  \draw (-4.2,11.5)  node[rotate=90]{charge};
+  \node[draw,minimum width=1cm,minimum height=0.6cm,anchor=south west] at (-4.5,8.9){battery};
+  \draw (-4,10) to (-4,9.5);
+
+    \draw [ultra thick] (2,10) -- (6.5,10)  node[anchor=south]{heat};
+  \draw (3.5,10) -- +(0,-0.5) node[sground]{};
+  % esource (empty source) is a dipole, so remove the legs by making it connect a distance of its own width
+  % follows: http://tex.stackexchange.com/questions/87275/use-circuitikz-voltage-source-icon-as-a-node
+  \draw (4.5,9.35) to [esource] (4.5,8.5);
+  \draw (4.5,10) -- (4.5,9.35);
+  \draw (4.5,8.3) node{solar thermal};
+  \draw (5,13) to [short,i^=heat pump;] (5,10);
+  \draw (6.2,11) node{resistive heater};
+  \node[draw,minimum width=1cm,minimum height=0.6cm,anchor=south west] at (5.5,8.9){hot water tank};
+  \draw (6,10) to (6,9.5);
+
+
+  \draw [ultra thick] (-2,10)  -- (0.5,10) node[anchor=south]{hydrogen};
+  \draw (-1.5,13) to [short,i_=${}$] (-1.5,10);
+    \draw (-1.2,11.5)  node[rotate=90]{electrolysis};
+  \draw (-0.5,10) to [short,i^=${}$] (-0.5,13);
+  \draw (-0.2,11.5)  node[rotate=90]{fuel cell};
+  \draw (-1,10) to (-1,9.5);
+  \node[draw,minimum width=1cm,minimum height=0.6cm,anchor=south west] at (-1.5,8.9){storage};
+
+  \draw (0,10) to [short,i_=${}$] (0,8);
+  \draw [ultra thick] (-1,8) node[anchor=south]{methane} -- (3,8);
+  \draw(2,8) to (2,7.3) to [short,i^=gas grid] (4,7.3);
+  \draw (1.5,8) to [short,i_=${}$] (1.5,13);
+  \draw (2.5,8) to [short,i_=${}$] (2.5,10);
+  \node[draw,minimum width=1cm,minimum height=0.6cm,anchor=south west] at (0.5,6.9){storage};
+  \draw (1,8) to (1,7.5);
+  \draw (0.3,9)  node[rotate=90]{methanation};
+  \draw (1.8,9.2)  node[rotate=90]{generator/CHP};
+  \draw (2.8,9)  node[rotate=90]{boiler/CHP};
+  \end{circuitikz}
+
+\end{adjustbox}
+\end{figure}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Transport sector: Electrification of Transport}
+\begin{columns}[T]
+\begin{column}{7cm}
+    \includegraphics[trim=0 0cm 0 0cm,width=8cm,clip=true]{transport_profiles.pdf}
+
+    Weekly profile for the transport demand based on statistics gathered by the German Federal Highway Research Institute (BASt).
+
+\end{column}
+\begin{column}{7cm}
+  \begin{itemize}
+  \item All road and rail transport in each country is electrified, where it is not already electrified
+    \item Because of higher efficiency of electric motors, final
+      energy consumption 3.5 times lower than today at 1102~TWh\el/a for the 30
+      countries
+            \item In model can replace Electric Vehicles (EVs) with Fuel Cell Vehicles (FCVs) consuming hydrogen. Advantage: hydrogen cheap to store. Disadvantage: efficiency of fuel cell only 60\%, compared to 90\% for battery discharging.
+  \end{itemize}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Transport sector: Battery Electric Vehicles}
+\begin{columns}[T]
+\begin{column}{7cm}
+    \includegraphics[trim=0 0cm 0 0cm,width=8cm,clip=true]{bev_availability.pdf}
+
+    Availability (i.e. fraction of vehicles plugged in) of Battery Electric Vehicles (BEV).
+\end{column}
+\begin{column}{7cm}
+  \begin{itemize}
+  \item Passenger cars to Battery Electric Vehicles (BEVs), 50~kWh battery available and 11~kW charging power
+  \item Can participate in DSM and V2G, depending on scenario (state of charge returns to at least 75\% every morning)
+    \item All BEVs have time-dependent availability, averaging 80\%, max 95\% (at night)
+    \item No changes in consumer behaviour assumed (e.g. car-sharing/pooling)
+    \item BEVs are treated as exogenous (capital costs NOT included in calculation)
+  \end{itemize}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Coupling Transport to Electricity}
+  \begin{columns}[T]
+    \begin{column}{9cm}
+      \includegraphics[width=9cm]{RGI-t-0.pdf}
+
+
+    \end{column}
+    \begin{column}{5cm}
+      \begin{itemize}
+      \item If all road and rail transport is electrified, electrical demand increases 37\%
+      \item Costs increase 41\% because charging profiles are very peaked (NB: distribution grid costs NOT included)
+      \item Stronger preference for PV and storage in system mix because of daytime peak
+      \item Can now use flexible charging
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Using Battery Electric Vehicle Flexibility}
+  \begin{columns}[T]
+    \begin{column}{9cm}
+      \includegraphics[width=9cm]{RGI-transport-0.pdf}
+
+
+    \end{column}
+    \begin{column}{6cm}
+      \begin{itemize}
+      \item Shifting the charging time can reduce system costs by up to 14\%.
+      \item If only 25\% of vehicles participate: already a 10\% benefit.
+      \item Allowing battery EVs to feed back into the grid (V2G) reduces costs by a further 10\%.
+      \item This removes case for stationary batteries and allows more solar.
+      \item If fuel cells replace electric vehicles, hydrogen electrolysis increases costs because of conversion losses.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{frame}
+  \frametitle{Heating sector: Many Options with Thermal Energy Storage (TES)}
+\begin{columns}[T]
+\begin{column}{7cm}
+
+    \includegraphics[trim=0 0cm 0 0cm,width=8cm,clip=true]{heat_demand.pdf}
+
+    Heat demand profile from 2011 in all 30 countries using population-weighted average daily T in each country, degree-day approx. and scaled to Eurostat total heating demand.
+
+
+\end{column}
+\begin{column}{7cm}
+  \begin{itemize}
+  \item All space and water heating in the residential and services
+    sectors is considered, with no additional efficiency measures
+    (conservative) - total heating demand is  3585~TWh\th/a.
+  \item Heating demand can be met by heat pumps, resistive heaters, gas boilers, solar thermal, Combined-Heat-and-Power (CHP) units. No industrial waste heat.
+    \item Thermal Energy Storage (TES) is available to the system as hot water tanks.
+  \end{itemize}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+  \frametitle{Centralised District Heating versus Decentralised Heating}
+
+  We model both fully decentralised heating and cases where up to 45\%
+  of heat demand is met with district heating in northern countries.
+
+\begin{columns}[T]
+\begin{column}{5cm}
+  \alert{Decentral individual heating} can be supplied by:
+  \begin{itemize}
+    \item Air- or Ground-sourced heat pumps
+  \item Resistive heaters
+  \item Gas boilers
+    \item Small solar thermal
+  \item Water tanks with short time constant $\tau = 3$ days
+  \end{itemize}
+\end{column}
+\begin{column}{5cm}
+  \alert{Central heating} can be supplied via district heating networks by:
+  \begin{itemize}
+    \item Air-sourced heat pumps
+\item Resistive heaters
+\item Gas boilers
+        \item Large solar thermal
+  \item Water tanks with long time constant $\tau = 180$ days
+\item CHPs
+  \end{itemize}
+\end{column}
+
+\begin{column}{5cm}
+  CHP feasible dispatch:
+    \includegraphics[trim=0 0cm 0 0cm,width=5cm,clip=true]{chp_feasible.pdf}
+\end{column}
+
+\end{columns}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Heat pumps}
+
+  \alert{Heat pumps} use external work (usually electricity) to move
+  thermal energy in the opposite direction of spontaneous heat
+  transfer, e.g. by absorbing heat from a cold space (\alert{source}) and release it into a
+  warmer one (\alert{sink}).
+
+  When the sink is a building, the source is usually the outside air or ground.
+
+\begin{columns}[T]
+\begin{column}{6cm}
+  Air-source heat pumps (ASHP):
+
+  \vspace{.2cm}
+
+  \includegraphics[trim=0 0cm 0 0cm,width=6.5cm,clip=true]{ashp.png}
+
+\end{column}
+\begin{column}{6cm}
+  Ground-source heat pumps (GSHP):
+
+  \vspace{.2cm}
+
+  \includegraphics[trim=0 0cm 0 0cm,width=6.5cm,clip=true]{gshp.png}
+
+\end{column}
+\end{columns}
+
+\source{\href{http://dx.doi.org/10.1039/c2ee22653g}{Staffell et al, 2012}}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Heat pumps}
+
+  The \alert{coefficient of performance} (COP) is defined as the ratio:
+  \begin{equation*}
+    COP = \frac{\textrm{thermal energy moved from source to sink}}{\textrm{input work (electricity)}} \propto \frac{1}{T_{\textrm{sink}} - T_{\textrm{source}}}
+  \end{equation*}
+
+
+  \centering
+  \includegraphics[trim=0 0cm 0 0cm,width=12cm,clip=true]{cop-staffel.png}
+
+
+\source{\href{http://dx.doi.org/10.1039/c2ee22653g}{Staffell et al, 2012}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Heat pumps}
+
+  Example of time-dependent COP for air-source and ground-source heat pumps in a location in Germany. The ground temperature is more stable over the year, leading to a stable COP.
+
+  \centering
+  \includegraphics[trim=0 0cm 0 0cm,width=14cm,clip=true]{de-cop.pdf}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Cost and other assumptions}
+
+  \begin{table}
+\centering
+\begin{tabular}{@{}lrlrrr@{}}
+\toprule
+Quantity                & O'night cost [\euro]  &Unit & FOM [\%/a] & Lifetime [a] & Efficiency \\
+\midrule
+GS Heat pump decentral & 1400 & kW\th  & 3.5& 20 \\
+AS Heat pump decentral & 1050 & kW\th  & 3.5& 20 \\
+AS Heat pump central & 700 & kW\th  & 3.5& 20 \\
+Resistive heater & 100  & kW\th  & 2& 20 & 0.9\\
+Gas boiler decentral & 175  & kW\th  & 2& 20 & 0.9 \\
+Gas boiler central & 63  & kW\th  & 1& 22 & 0.9 \\
+CHP & 650 & kW\el & 3& 25\\
+Central water tanks & 30 & m${}^3$  & 1& 40 & $\tau = 180$d\\
+District heating & 220 & kW\th & 1 & 40 &  \\
+Methanation+DAC & 1000 & kW$_{H_2}$ & 3 & 25  & 0.6\\
+%Gas plant efficiency    &30     &\%     \\
+%Interest rate           &7      &\%     \\
+\bottomrule
+\end{tabular}
+\end{table}
+  Costs oriented towards Henning \& Palzer (2014, Fraunhofer ISE) and Danish Energy Database
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Coupling Heating to Transport and Electricity: Electricity Demand}
+  \begin{columns}[T]
+    \begin{column}{9cm}
+      \includegraphics[width=9cm]{RGI-supply_energy.pdf}
+
+    \end{column}
+    \begin{column}{5cm}
+      \begin{itemize}
+      \item To 4062~TWh\el/a demand from electricity and transport, 3585~TWh\th/a heating demand is added
+      \item Much of the heating demand is met via electricity, but with high efficiency from heat pumps
+      \item Electricity demand 80\% higher than current electricity demand
+        %5600/3100
+      \item Efficiency savings can reduce this \dots
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Coupling Heating to Transport and Electricity: Costs}
+  \begin{columns}[T]
+    \begin{column}{9cm}
+      \includegraphics[width=9cm]{RGI-h-0.pdf}
+
+    \end{column}
+    \begin{column}{5cm}
+      \begin{itemize}
+      \item Costs jump by 117\% to cover new energy supply and heating infrastructure
+      \item 95\% \co2{} reduction means most heat is generated by heat pumps using renewable electricity
+      \item Cold winter weeks with high demand, low wind, low solar and low heat pump COP mean backup gas boilers required
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Cold week in winter}
+
+    \begin{columns}[T]
+    \begin{column}{6cm}
+
+  \centering
+\includegraphics[trim=0 0cm 0 0cm,width=5.5cm,clip=true]{cold_week-base-0-DE}
+
+\includegraphics[trim=0 0cm 0 0cm,width=5.5cm,clip=true]{cold_week-base-0_urban_heat-DE}
+    \end{column}
+    \begin{column}{7cm}
+      \vspace{1.5cm}
+        There are difficult periods in winter with:
+        \begin{itemize}
+        \item \alert{Low} wind and solar generation
+        \item \alert{High} space heating demand
+        \item \alert{Low} air temperatures, which are bad for air-sourced heat pump performance
+        \end{itemize}
+
+        Solution: \alert{backup gas boilers} burning either natural gas, or
+        synthetic methane.
+    \end{column}
+    \end{columns}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Using heating flexibility}
+  \begin{columns}[T]
+    \begin{column}{8.3cm}
+      \includegraphics[width=9cm]{RGI-heating-0.pdf}
+    \end{column}
+    \begin{column}{6cm}
+
+      \vspace{.5cm}
+        Successively activating couplings and flexibility \alert{reduces costs} by 28\%.
+        These options include:
+        \begin{itemize}
+          \item  production of \alert{synthetic methane}
+          \item  centralised \alert{district heating} in areas with dense heat demand
+          \item long-term \alert{thermal energy storage} (TES)  in district heating networks
+          \item \alert{demand-side management} and vehicle-to-grid from battery electric vehicles (BEV)
+        \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Cold week in winter: inflexible (left); smart (right)}
+
+  \begin{columns}[T]
+    \begin{column}{6.5cm}
+  \centering
+\includegraphics[trim=0 0cm 0 0cm,width=5.5cm,clip=true]{cold_week-base-0-DE}
+
+\includegraphics[trim=0 0cm 0 0cm,width=5.5cm,clip=true]{cold_week-base-0_urban_heat-DE}
+    \end{column}
+    \begin{column}{6.5cm}
+  \centering
+
+  \includegraphics[trim=0 0cm 0 0cm,width=5.5cm,clip=true]{cold_week-central-tes-0-DE}
+
+  \includegraphics[trim=0 0cm 0 0cm,width=5.5cm,clip=true]{cold_week-central-tes-0_urban_heat-DE}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+
+
+
+\begin{frame}
+  \frametitle{Sector Coupling with All Extra Flexibility (V2G and TES)}
+
+  Benefit of cross-border transmission is weaker with full sector flexibility (right) than with inflexible sector coupling (left); comes close to today's costs of around \euro~377~billion per year
+
+  \centering
+  \includegraphics[width=13cm]{transmission.pdf}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Spatial distribution of primary energy for All-Flex-Central}
+
+  Including optimal transmission sees a shift of energy production to wind in Northern Europe.
+
+\begin{columns}[T]
+  \begin{column}{7cm}
+
+    \vspace{0.5cm}
+  \includegraphics[width=7.6cm]{spatial-all_flex-central-0.pdf}
+
+  \end{column}
+  \begin{column}{7cm}
+
+    \vspace{0.5cm}
+  \includegraphics[width=7.6cm]{spatial-all_flex-central-opt.pdf}
+
+  \end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Storage energy levels: different time scales}
+
+\begin{columns}[T]
+  \begin{column}{9cm}
+
+    \vspace{0.5cm}
+  \includegraphics[width=9cm]{scales.pdf}
+
+  \end{column}
+
+  \begin{column}{6cm}
+    \begin{itemize}
+    \item Methane storage is depleted in winter, then replenished
+      throughout the summer with synthetic methane
+    \item Hydrogen storage fluctuates every 2–3 weeks, dictated by
+      wind variations
+    \item Long-Term Thermal Energy Storage (LTES) has a dominant
+      seasonal pattern, with synoptic-scale fluctuations are
+      super-imposed
+    \item Battery Electric Vehicles (BEV) and battery storage
+      vary daily
+    \end{itemize}
+
+  \end{column}
+
+\end{columns}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Pathway down to zero emissions in electricity, heating and transport}
+\begin{columns}[T]
+  \begin{column}{9cm}
+
+    \includegraphics[width=9cm]{RGI-CO2-twin}
+
+  \end{column}
+
+
+  \begin{column}{6cm}
+
+    \vspace{0.5cm}
+
+    If we look at investments to eradicate \co2{} emissions in
+    electricity, heating and transport we see:
+
+    \begin{itemize}
+    \item Electricity and transport are decarbonised first
+    \item Transmission increasingly important below 30\%
+    \item Heating comes next with expansion of heat pumps below 20\%
+    \item Below 10\%, power-to-gas solutions replace natural gas
+    \end{itemize}
+
+  \end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{CO$_2$ price rises to displace cheap natural gas}
+
+  \centering
+    \includegraphics[width=11.245cm]{co2_price.pdf}
+
+\end{frame}
+
+
+\begin{frame}{Electricity price statistics: zero-price hours gone thanks to P2G}
+
+  \centering
+    \includegraphics[width=11.245cm]{price_statistics.pdf}
+
+\end{frame}
+
+
+
+\begin{frame}{Curtailment also much reduced}
+
+  \centering
+    \includegraphics[width=11.245cm]{curtailment.pdf}
+
+\end{frame}
+
+
+
+\begin{frame}{Market values relative to average load-weighted price re-converge}
+
+  \centering
+    \includegraphics[width=11.245cm]{market_values.pdf}
+
+\end{frame}
+
+
+
+
+\begin{frame}{Gas production/consumption tightly coupled to price}
+
+  \centering
+    \includegraphics[width=11cm]{gas_v_prices.pdf}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Outlook}
+
+  \begin{itemize}
+  \item Develop improvements on  algorithmic side to enable larger problems (clustering, improved optimisation routines)
+  \item Apply sector coupling to 200-node European model (instead of
+    one-node-per-country) to see real transmission bottlenecks with scope, scale and sectors
+  \item Explore pathway from here to 2050 (is P2X cost-effective sooner for local transmission bottlenecks? - these are not seen in the one-node-per-country sector model)
+  \item Improve technology palette: bioenergy, waste heat, CCS, DAC, more synthetic electrofuels
+ \item Complete sectoral coverage: aviation, shipping, process heat
+   in industry
+    \item Explore more grid optimisation options: HTC, DLR, PST, SPS with
+      storage/DSM
+  \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Remaining sectors: non-electric industry processes, aviation, shipping}
+
+  For `hard-to-defossilise' sectors, we assume some process- and fuel-switching (under review):
+    \begin{table}
+\centering
+\begin{tabular}{@{}lp{10cm}@{}}
+  \toprule
+  %Sector & Assumption  \\
+  %\midrule
+  Iron \& Steel & 70\% from scrap, rest from direct reduction with 1.7~MWhH$_2$/tSteel $+$ electric arc (process emissions 0.03~tCO$_2$/tSteel)\\
+  Aluminium & 80\% recycling, for rest: methane for high-enthalpy heat (bauxite to alumina) followed by electrolysis (process emissions 1.5 tCO$_2$/tAl) \\
+  Cement &  Waste and solid biomass \\
+  Ceramics \& other NMM &  Electrification\\
+  Chemicals & Synthetic methane, synthetic naphtha and hydrogen \\
+  Other industry & Electrification; process heat from biomass\\
+  Shipping & Liquid hydrogen  (could be replaced by other liquid fuels) \\
+  Aviation & Kerosene from Fischer-Tropsch  \\
+  \bottomrule
+\end{tabular}
+\end{table}
+
+ Carbon is tracked through system: 90\% of industrial process emissions are captured; direct air capture (DAC); synthetic methane and liquid hydrocarbons; transport and sequestration costs 20~\euro/tCO$_2$
+
+\end{frame}
+
+
+\section{Open Energy Modelling}
+
+
+\begin{frame}
+  \frametitle{Idea of Open Energy Modelling}
+
+  The whole chain from raw data to modelling results should be open:
+
+  \vspace{0.2cm}
+
+  \centering
+  \includegraphics[width=13cm]{open-model-process}
+
+  \vspace{0.1cm}
+  \centering
+  \large
+  \textbf{Open data + free software $\Rightarrow$ Transparency + Reproducibility}
+
+  \normalsize
+  \vspace{0.1cm}
+
+  There's an initiative for that! Sign up for the mailing list / come to the next workshop:
+  \vspace{0.1cm}
+
+  \centering
+
+  \includegraphics[width=8cm]{openmod-logo-large}
+
+  \large
+  \textbf{\href{http://openmod-initiative.org/}{openmod-initiative.org}}
+
+  \normalsize
+  \raggedright
+
+  \source{openmod initiative}
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Python for Power System Analysis (PyPSA)}
+
+  Our free software PyPSA is online at \url{https://pypsa.org/} and on
+  github. It can do:
+
+
+
+\begin{columns}[T]
+  \begin{column}{6cm}
+
+  \begin{itemize}
+  \item Static \alert{power flow}
+  \item \alert{Linear optimal power flow} (LOPF) (multiple periods, unit commitment,
+    storage, coupling to other sectors)
+    \item \alert{Security-constrained LOPF}
+    \item Total electricity system \alert{investment optimisation}
+  \end{itemize}
+
+  It has models for storage, meshed AC grids, meshed DC grids, hydro plants, variable renewables and sector coupling.
+
+  \end{column}
+
+\begin{column}{7cm}
+
+  \vspace{0.3cm}
+\centering
+\includegraphics[width=8cm]{lmp}
+
+
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+
+\section{Conclusions}
+
+\begin{frame}{Conclusions}
+
+  \begin{itemize}
+    \item Meeting \alert{Paris targets} is much more urgent than widely recognised
+
+    \item There are \alert{lots of cost-effective solutions} thanks to falling price of renewables
+
+    \item \alert{Electrification of other energy sectors} like heating
+      and transport is important, since wind and solar will dominate
+      low-carbon primary energy provision
+
+    \item \alert{Grid helps} to make CO2 reduction easier $=$ cheaper
+
+
+    \item \alert{Cross-sectoral} approaches are important to reduce
+      CO2 emissions \alert{and} for flexibility
+
+    \item \alert{Policy prerequisites}: high, increasing and
+      transparent \alert{price for \co2{} pollution}; to manage grid
+      congestion better: \alert{smaller bidding zones}
+
+    \item The energy system is complex and contains some uncertainty
+      (e.g. cost developments, scaleability of power-to-gas, consumer behaviour), so
+      \alert{openness is critical}
+
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Copyright}
+
+
+  Unless otherwise stated, the graphics and text are Copyright \copyright Tom Brown, 2018-2019.
+
+
+  The graphics and text for which no other attribution are given are licensed under a
+  \href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons
+  Attribution 4.0 International Licence}.
+
+  \begin{center}\ccby\end{center}
+
+\end{frame}
+
+
+\end{document}
