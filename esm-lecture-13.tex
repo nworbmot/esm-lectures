@@ -1,0 +1,834 @@
+% NB: use pdflatex to compile NOT pdftex.  Also make sure youngtab is
+% there...
+
+% converting eps graphics to pdf with ps2pdf generates way too much
+% whitespace in the resulting pdf, so crop with pdfcrop
+% cf. http://www.cora.nwra.com/~stockwel/rgspages/pdftips/pdftips.shtml
+
+
+
+
+\documentclass[10pt,aspectratio=169,dvipsnames]{beamer}
+
+
+\usetheme[color/block=transparent]{metropolis}
+
+\usepackage[absolute,overlay]{textpos}
+\usepackage{booktabs}
+
+\usepackage{graphbox} %loads graphicx package
+
+\usepackage{pbox}
+
+\usepackage{adjustbox}
+
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[scale=2]{ccicons}
+
+
+\usepackage[official]{eurosym}
+
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+
+
+\usepackage[europeanresistors,americaninductors]{circuitikz}
+
+
+
+\setbeamerfont{alerted text}{series=\bfseries}
+%\setbeamercolor{alerted text}{fg=BurntOrange}
+%\setbeamercolor{alerted text}{fg=mDarkTeal}
+%\setbeamercolor{alerted text}{fg=Brown}  % Goran
+\setbeamercolor{alerted text}{fg=Mahogany}  % Goran
+
+\setbeamercolor{background canvas}{bg=white}
+
+
+\newcommand{\R}{\mathbb{R}}
+
+\def\l{\lambda}
+\def\m{\mu}
+\def\d{\partial}
+\def\cL{\mathcal{L}}
+\def\co2{CO${}_2$}
+
+
+\def\el{${}_{el}$}
+\def\th{${}_{th}$}
+\def\gas{${}_{gas}$}
+
+
+
+\newif\ifgoat
+
+\goattrue                       %
+
+
+
+\newcommand*\rot{\rotatebox{90}}
+
+
+\usepackage{pifont}
+\newcommand*\OK{\ding{51}}
+
+
+%use this to add space between rows
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+
+% for sources http://tex.stackexchange.com/questions/48473/best-way-to-give-sources-of-images-used-in-a-beamer-presentation
+
+\setbeamercolor{framesource}{fg=gray}
+\setbeamerfont{framesource}{size=\tiny}
+
+
+\newcommand{\source}[1]{\begin{textblock*}{5cm}(10.5cm,8.35cm)
+    \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
+        \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
+    \end{beamercolorbox}
+\end{textblock*}}
+
+\usepackage{hyperref}
+
+
+%\usepackage[pdftex]{graphicx}
+
+
+\graphicspath{{graphics/}}
+
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png,.jpg}
+
+
+
+\def\goat#1{{\scriptsize\color{green}{[#1]}}}
+
+
+
+\let\olditem\item
+\renewcommand{\item}{%
+\olditem\vspace{5pt}}
+
+\title{Energy System Modelling\\ Summer Semester 2019, Lecture 11}
+%\subtitle{---}
+\author{
+  {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
+  \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
+}
+
+\date{\vspace{.3cm}14th June 2019}
+
+
+\titlegraphic{%
+  \vspace{6cm}
+  \hspace{10cm}
+    \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{frame}
+
+  \frametitle{Table of Contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+
+
+\section{Effect of spatial scale on results of energy system optimisations}
+
+
+
+
+\begin{frame}{Motivation: Transmission bottlenecks}
+
+  Many of the results we've examined so far have aggregated countries
+  to a single node. However, there are also transmission network
+  bottlenecks \alert{within} countries (e.g. North to South Germany).
+
+
+\centering
+\includegraphics[width=8cm]{europe-transmission}
+\source{ENTSO-E}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}{Motivation: Wind and solar resource variation}
+
+  There is also considerable variation in wind and solar resources...
+
+    \begin{columns}[T]
+\begin{column}{5cm}
+  \includegraphics[trim=0 0cm 0 0cm,width=4.7cm,clip=true]{SolarGIS-Solar-map-Germany-de}
+\end{column}
+\begin{column}{6cm}
+  \vspace{.3cm}
+  \includegraphics[trim=0 0cm 0 0cm,width=6cm,clip=true]{43_Mittlere_Windgeschwindigkeit_100_m_Deutschland}
+\end{column}
+    \end{columns}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+  \frametitle{Spatial resolution}
+
+\begin{columns}
+\begin{column}{7cm}
+We need spatial resolution to:
+\begin{itemize}
+\item capture the \alert{geographical variation} of renewables resources and the load
+\item capture \alert{spatio-temporal effects} (e.g. size of wind correlations across the continent)
+\item represent important \alert{transmission constraints}
+\end{itemize}
+
+BUT we do not want to have to model all 5,000 network nodes of the European system.
+\end{column}
+\begin{column}{6cm}
+\centering
+% No, we really do not not want to optimise a model of 4653 substation, 5613 AC lines and 26 DC lines of the European HV electricity network.
+\includegraphics[width=6.5cm]{pre-2-network-full.pdf}
+\source{Own representation of Bart Wiegman's GridKit extract of the
+  online ENTSO-E map, \url{https://doi.org/10.5281/zenodo.55853}}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Clustering: Many algorithms in the literature}
+
+  There are lots of algorithms for clustering networks, particularly in the engineering literature:
+  \begin{itemize}
+    \item $k$-means clustering on (electrical) distance
+    \item $k$-means on load distribution
+    \item Community clustering (e.g. Louvain)
+    \item Spectral analysis of Laplacian matrix
+    \item Clustering of Locational Marginal Prices with nodal pricing (sees congestion and RE generation)
+    \item PTDF clustering
+    \item Cluster nodes with correlated RE time series
+  \end{itemize}
+
+  The algorithms all serve different purposes (e.g. reducing part of
+  the network on the boundary, to focus on another part).
+
+  Not always tested on real network data.
+\end{frame}
+
+\begin{frame}
+  \frametitle{$k$-means clustering on load \& conventional generation}
+
+  Our \alert{goal}: maintain main transmission corridors of today to
+  investigate highly renewable scenarios with no grid expansion. Since generation fleet is totally rebuilt, do not want to rely on current generation dispatch (like e.g. LMP algorithm).
+
+  Today's grid was laid out to connect big generators and load centres.
+
+  \alert{Solution}:
+  Cluster nodes based on load and conventional generation capacity using
+  $k$-means.
+
+  I.e. find $k$ centroids and the corresponding $k$-partition of the
+  original nodes that minimises the sum of squared distances from each
+  centroid to its nodal members:
+  \begin{equation}
+    \min_{\{x_c\}} \sum_{c=1}^k \sum_{n \in N_c} w_n || x_c - x_n ||^2
+  \end{equation}
+  where each node is weighted $w_n$ by the average load and the
+  average conventional generation there.
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Reconstitution of network}
+
+  Once the partition of nodes is determined:
+  \begin{itemize}
+  \item A new node is created to represent each set of clustered nodes
+  \item Hydro capacities and load is aggregated at the node; VRE (wind and solar) time series are aggregated, weighted by capacity factor; potentials for VRE aggregated
+  \item Lines between clusters replaced by single line with length 1.25 $\times$ crow-flies-distance, capacity and impedance according to replaced lines
+    \item $n-1$ blanket safety margin factor grows from 0.3 with $\geq 200$ nodes to 0.5 with 37 nodes (to account for aggregation)
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{$k$-means clustering: Networks}
+
+\centering
+ \includegraphics[width=13cm]{networks-clustered-crop}
+  % $\vcenter{\hbox{\includegraphics[width=4cm]{pre-2-network-full}}}$
+  % $\vcenter{\hbox{\includegraphics[width=4cm]{pre-2-network-362-LV-1}}}$
+  % $\vcenter{\hbox{\includegraphics[width=4cm]{pre-2-network-181-LV-1}}}$ \\
+  % $\vcenter{\hbox{\includegraphics[width=4cm]{pre-2-network-128-LV-1}}}$
+  % $\vcenter{\hbox{\includegraphics[width=4cm]{pre-2-network-64-LV-1}}}$
+  % $\vcenter{\hbox{\includegraphics[width=4cm]{pre-2-network-37-LV-1}}}$
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Question of spatial resolution}
+
+  How is the overall minimum of the cost objective (building and
+  running the electricity system) affected by an increase of spatial
+  resolution in each country?
+
+  We expect
+  \begin{itemize}
+  \item A better representation of existing internal bottlenecks will prevent the transport of e.g. offshore wind to the South of Germany.
+  \item Localised areas of e.g. good wind can be better exploited by the optimisation.
+  \end{itemize}
+
+  Which effect will win?
+
+  First we only optimize the gas, wind and solar generation
+  capacities, the long-term and short-term storage capacities and
+  their economic dispatch including the available hydro facilities
+  \alert{without grid expansion}.
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Nodal energy shares per technology (w/o grid expansion)}
+
+\includegraphics[width=15cm]{legend-flat}
+\begin{columns}[T]
+\begin{column}{8cm}
+
+
+  \includegraphics[trim=0 0cm 0 2cm,width=8cm]{euro-pie-pre-7-branch_limit-1-37.png}
+
+\end{column}
+\begin{column}{8cm}
+
+  \raisebox{-6.6cm}{
+
+  \includegraphics[trim=0 0cm 0 2cm,width=8cm]{euro-pie-pre-7-branch_limit-1-256.png}
+  }
+
+\end{column}
+
+\end{columns}
+
+
+\end{frame}
+
+\begin{frame}
+   \frametitle{Costs: System cost w/o grid expansion}
+
+
+\begin{columns}[T]
+\begin{column}{8.5cm}
+  \includegraphics[width=9.5cm]{cost_eu_1}
+\end{column}
+\begin{column}{6cm}
+
+  \vspace{2cm}
+
+  \begin{itemize}
+  \item Steady total system cost at \euro~260 billion per year
+   \item This translates to \euro~82/MWh (compared to today of \euro~50/MWh to \euro~60/MWh)
+  \end{itemize}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Costs: System cost and break-down into technologies {\large (w/o grid expansion)}}
+\begin{columns}[T]
+\begin{column}{8.5cm}
+  \includegraphics[width=8.5cm]{cost_eu_breakdown_by_cap-1}
+\end{column}
+\begin{column}{6cm}
+
+  If we break this down into technologies:
+  \begin{itemize}
+  \item 37 clusters captures around half of total network volume
+  \item Redistribution of capacities from offshore wind to solar
+  \item Increasing solar share is accompanied by an increase of
+    battery storage
+  \item Single countries do not stay so stable
+  \end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Costs: Focus on Germany (w/o grid expansion)}
+
+\begin{columns}[T]
+\begin{column}{8.5cm}
+\centering
+  \includegraphics[width=8.5cm]{cost_de_breakdown-1-0}
+  %\includegraphics[width=6cm]{pre-2-costs_de_storage}
+\end{column}
+\begin{column}{6cm}
+  \begin{itemize}
+  \item Offshore wind replaced by onshore wind at better sites and solar (plus batteries), since
+  the represented transmission bottlenecks make it impossible to
+  transport the wind energy away from the coast
+  \item the effective onshore wind capacity factors increase from $26\%$ to up to $42\%$
+  \item Investments stable at 181 clusters and above
+  \end{itemize}
+\end{column}
+\end{columns}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Interaction between network expansion and spatial scale}
+
+  6 different scenarios of network expansion by constraining the
+  overall transmission line volume in relation to today's line volume $\mathrm{CAP}_{\mathrm{trans}}^{\mathrm{today}}$, given length $d_\ell$ and capacity
+  $F_\ell$ of each line $\ell$:
+  \begin{align}
+    F_\ell & \geq F_\ell^{\mathrm{today}} \\
+    \sum_\ell d_\ell F_\ell & \leq \mathrm{CAP}_{\mathrm{trans}}
+  \end{align}
+  where
+  \begin{equation}
+    \mathrm{CAP}_{\mathrm{trans}} = x \, \mathrm{CAP}_{\mathrm{trans}}^{\mathrm{today}}
+  \end{equation}
+
+  for $x = 1$ (today's grid) $x = 1.125,1.25,1.5,2$, $x=3$ (optimal for overhead line at high number of cluster).
+\end{frame}
+
+
+
+
+
+\begin{frame}
+  \frametitle{With expansion}
+
+  \includegraphics[width=15cm]{legend-flat}
+  \begin{columns}[T]
+
+\begin{column}{8cm}
+
+  \includegraphics[trim=0 0cm 0 2cm,width=8cm]{euro-pie-pre-7-branch_limit-1-5-256.png}
+
+\end{column}
+\begin{column}{8cm}
+
+  \raisebox{-6.6cm}{
+
+  \includegraphics[trim=0 0cm 0 2cm,width=8cm]{euro-pie-pre-7-branch_limit-3-256.png}
+  }
+
+\end{column}
+
+\end{columns}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Costs: Total system cost}
+
+\centering
+
+\begin{columns}[T]
+\begin{column}{8.5cm}
+  \includegraphics[width=9.5cm]{cost_eu}
+
+\end{column}
+\begin{column}{7cm}
+
+  \begin{itemize}
+  \item Steady cost for No Expansion (1)
+  \item For expansion scenarios, as clusters increase, the better expoitation of good sites decreases costs faster than transmission bottlenecks increase them
+  \item Decrease in cost is v. non-linear as grid expanded (25\% grid expansion gives 50\% of optimal cost reduction)
+  \item Only a moderate $20-25\%$ increase in costs from the Optimal Expansion
+    scenario (3) to the No Expansion scenario (1).
+  \end{itemize}
+
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Costs: Break-down into technologies}
+
+\centering
+
+  \includegraphics[width=12cm]{cost_eu_breakdown_by_cap}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Costs: Focus on Germany (CAP = 3)}
+
+\begin{columns}[T]
+\begin{column}{8.5cm}
+\centering
+  \includegraphics[width=8.5cm]{cost_de_breakdown-3-0}
+  %\includegraphics[width=6cm]{pre-2-costs_de_storage}
+\end{column}
+\begin{column}{6cm}
+  \begin{itemize}
+  \item Investment reasonably stable at 128 clusters and above
+  \item System consistently dominated by wind
+  \item No solar or battery for any number of clusters
+  \end{itemize}
+\end{column}
+\end{columns}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Behaviour as CAP is changed}
+
+
+\begin{columns}[T]
+\begin{column}{8.5cm}
+\centering
+  \includegraphics[width=8.5cm]{costs_per_cluster_181}
+  %\includegraphics[width=6cm]{pre-2-costs_de_storage}
+\end{column}
+\begin{column}{6cm}
+  \begin{itemize}
+%\item   %Big reduction in curtailment
+    \item Same non-linear development with high number of nodes that we saw with one node per country
+      \item Most of cost reduction happens with small expansion; cost
+        rather flat once capacity has doubled, reaching minimum (for
+        overhead lines) at 3 times today's capacities
+      \item Solar and batteries decrease significantly as grid expanded
+  \item  Reduction in storage losses too
+  \end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Locational Marginal Prices CAP=1 versus CAP=3}
+
+
+
+  \begin{columns}[T]
+
+\begin{column}{8cm}
+
+  \hspace{1cm}  With today's capacities:
+
+  \includegraphics[width=8cm]{lmp-1-256.pdf}
+
+\end{column}
+\begin{column}{8cm}
+
+  \hspace{1cm}With three times today's grid:
+
+  \includegraphics[width=8cm]{lmp-3-256.pdf}
+
+\end{column}
+
+\end{columns}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Grid expansion CAP shadow price for 181 nodes as CAP relaxed}
+
+
+\begin{columns}[T]
+\begin{column}{10cm}
+\centering
+  \includegraphics[width=11cm]{shadows-branch_limit}
+  %\includegraphics[width=6cm]{pre-2-costs_de_storage}
+\end{column}
+\begin{column}{4cm}
+  \begin{itemize}
+%\item   %Big reduction in curtailment
+  \item With overhead lines the optimal system has around 3 times today's transmission volume
+  \item With underground cables (5-8 times more expensive) the optimal system has around 1.3 to 1.6 times today's transmission volume
+  \end{itemize}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{CO2 prices versus line cap for 181 clusters}
+
+
+
+\begin{columns}[T]
+\begin{column}{10cm}
+\centering
+  \includegraphics[width=11cm]{shadows-co2}
+  %\includegraphics[width=6cm]{pre-2-costs_de_storage}
+\end{column}
+\begin{column}{4cm}
+  \begin{itemize}
+    \vspace{2cm}
+%\item   %Big reduction in curtailment
+  \item CO2 price of between 150 and 250 \euro/tCO2 required to reach these solutions, depending on line volume cap
+  \end{itemize}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+
+
+% \begin{frame}
+%   \frametitle{Comparison of results: energy}
+
+% \centering
+
+%   \includegraphics[width=4.5cm]{pre-2-clusters-yearly_energy-LV-inf}
+%   \includegraphics[width=4.5cm]{pre-2-clusters-yearly_energy-LV-4}
+%   \includegraphics[width=4.5cm]{pre-2-clusters-yearly_energy-LV-1}
+
+% \end{frame}
+
+
+% \section{Conclusions}
+
+
+
+
+\begin{frame}
+  \frametitle{Conclusions}
+
+  \begin{itemize}
+    \item This is \alert{no single solution} for highly renewable systems, but a \alert{family of solutions}  with different costs and compromises
+    \item Generation costs always dominate grid costs, but the grid can cause higher generation costs if expansion is restricted
+    \item Systems with no grid extension beyond today are up to 25\% more expensive, but small grid extensions (e.g. 25\% more capacity than today) can lock in big savings
+    \item Need at least around 200 clusters for Europe to see grid bottlenecks if no expansion
+    \item Can get away with $\sim 120$ clusters for Europe if grid expansion is allowed
+      \item Much of the stationary storage needs can be eliminated by sector-coupling: DSM with electric vehicles, thermal storage; this makes grid expansion less beneficial
+    \item Understanding the need for \alert{flexibility at different temporal and spatial scales} is key to mastering the complex interactions in the energy system
+  \end{itemize}
+\end{frame}
+
+\section{Algorithms to accelerate computations}
+
+
+
+\begin{frame}
+  \frametitle{Cycle formulation of linear power flow}
+
+  We can use dual graph theory to decompose the flows in the network into two parts:
+  \begin{enumerate}
+  \item A flow on a spanning tree of the network, uniquely determined by nodal $\mathbf{p}$ (ensuring KCL)
+  \item Cycle flows, which don't affect KCL; their strength is fixed by enforcing KVL
+  \end{enumerate}
+
+\begin{circuitikz}
+  \draw
+  (0,3)
+  to [short,i^=$f_1$,*-*] (3,3)
+  to [short,i>=$f_2$,*-*] (3,0)
+  to [short,i>=$f_3$,*-*] (0,0)
+  to [short,i>=$f_4$,*-*] (0,3);
+  \draw (3,3)   to [short,i^=$f_5$,*-*] (0,0);
+
+  \draw (1.5,-1.2) node{$f_\ell$};
+
+
+  \draw (4,1.5) node{$=$};
+
+  \draw (4,-1.2) node{$=$};
+
+
+  \draw[red]
+  (5,3)
+  to [short,i^=$t_1$,*-*] (8,3)
+  to [short,i>=$t_2$,*-*] (8,0)
+  to [short,i>=$t_3$,*-*] (5,0);
+
+  \draw (6.5,-1.2) node{$t_\ell$};
+
+
+  \draw (9,1.5) node{$+$};
+
+  \draw (9,-1.2) node{$+$};
+
+
+
+  \draw[blue]
+  (10,3)
+  to [short,i>=$$,*-*] (12.8,3)
+  to [short,i>=$$,*-*] (10,0.2)
+  to [short,i>=$c_1$,*-*] (10,3);
+
+  \draw[blue]
+  (13,0)
+  to [short,i>=$$,*-*] (10.2,0)
+  to [short,i>=$$,*-*] (13,2.8)
+  to [short,i>=$c_2$,*-*] (13,0);
+
+
+  \draw (11.5,-1.2) node{$\sum_k C_{\ell,k} c_k$};
+
+
+\end{circuitikz}
+
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Cycle formulation of linear power flow}
+
+  The $N-1$ tree flows $\mathbf{t}$ are determined directly from the
+  $N$ nodal powers $p_n$ and the network power balance constraint
+  $\sum_n p_n = 0$.
+
+  We solve for the $L-N+1$ cycle flows $c_k$ by enforcing  the $L-N+1$ KVL equations:
+  \begin{equation*}
+    C^t X \mathbf{f} = C^t X (\mathbf{t} + C \mathbf{c}) = 0
+  \end{equation*}
+
+  The matrix $C$ is the incidence matrix of the \alert{weak dual
+    graph}, $C^t X C$ is the weighted Laplacian of the dual graph and
+  the above equation becomes a discrete Poisson equation:
+  \begin{equation*}
+    C^t X C \mathbf{c} =  - C^t X \mathbf{t}
+  \end{equation*}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{LOPF speedup with cycle flows}
+\begin{columns}[T]
+  \begin{column}{7cm}
+  \includegraphics[width=7.5cm]{lopf-ne-speedup-per-nodes-mean-with-ci-99-regression}
+  \end{column}
+  \begin{column}{6cm}
+    \vspace{0.5cm}
+    Using \alert{cycle flows instead of voltage angles} we found for generation expansion optimisation (fixed grid):
+    \begin{itemize}
+    \item A speed-up of up to \alert{200 times}
+    \item Average speed-up of \alert{factor 12}
+    \item Speed-up is highest for \alert{large networks with lots of renewables}
+    \end{itemize}
+  \end{column}
+
+\end{columns}
+
+\vspace{.3cm}
+
+  \footnotesize
+H.~Ronellenfitsch, D.~Manik, J.~Hörsch, {\bf T.~Brown, D.~Witthaut}, \emph{``Dual theory of transmission line outages,''} 2017, IEEE Transactions on Power Systems
+
+J.~Hörsch, H.~Ronellenfitsch, {\bf D.~Witthaut, T.~Brown}, \emph{``Linear Optimal Power Flow Using Cycle Flows,''} 2017
+
+\end{frame}
+
+
+
+\begin{frame}{Copyright}
+
+
+  Unless otherwise stated, the graphics and text are Copyright \copyright Tom Brown, 2017.
+
+  The source \LaTeX, self-made graphics and Python code used to
+  generate the self-made graphics are available here:
+
+  \url{http://nworbmot.org/talks.html}
+
+  The graphics and text for which no other attribution are given are licensed under a
+  \href{http://creativecommons.org/licenses/by-sa/4.0/}{Creative Commons
+  Attribution-ShareAlike 4.0 International License}.
+
+  \begin{center}\ccbysa\end{center}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Cost and other assumptions}
+
+  \begin{table}
+\centering
+\begin{tabular}{@{}lrlrr@{}}
+\toprule
+Quantity                &Overnight  Cost [\euro]  &Unit & FOM [\%/a] & Lifetime [a] \\
+\midrule
+Wind onshore    &1182   &kW\el &3 & 20   \\
+Wind offshore  &2506   &kW\el  &3& 20  \\
+Solar PV           &600   &kW\el &4 & 20   \\
+Gas             &400    &kW\el  &4& 30  \\
+%Gas marginal            &75     &\euro{}/MWh$_{\textrm{e}}$    \\
+Battery storage         &1275   &kW\el  & 3 & 20 \\
+Hydrogen storage        &2070   &kW\el  & 1.7 &20 \\
+Transmission line       &400    &MWkm & 2 & 40\\
+\bottomrule
+\end{tabular}
+\end{table}
+  Interest rate of 7\%, storage efficiency losses, only gas has \co2 emissions, gas marginal costs.
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Shadow costs of line extension CAP for 3 times today's volume}
+
+
+
+\begin{columns}[T]
+\begin{column}{8.5cm}
+\centering
+  \includegraphics[width=8.5cm]{shadows}
+  %\includegraphics[width=6cm]{pre-2-costs_de_storage}
+\end{column}
+\begin{column}{6cm}
+  \begin{itemize}
+%\item   %Big reduction in curtailment
+  \item For 200+ nodes the shadow price converges on the annual cost of a MWkm of overhead line (around \euro~30/a/MWkm)
+  \item Value of lines is much higher with smaller number of clusters. Why?
+\item Possible reasons: inter-connectors in general weaker than country-internal connectors;  more nodes means more flexibility to avoid network expansion
+  \end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\end{document}
