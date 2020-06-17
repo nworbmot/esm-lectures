@@ -72,20 +72,29 @@
 \renewcommand{\item}{%
 \olditem\vspace{5pt}}
 
-\title{Energy System Modelling\\ Summer Semester 2019\\ Lecture on Principal Component Analysis in Power Systems}
+\title{Energy System Modelling\\ Summer Semester 2020, Lecture 14}
 %\subtitle{---}
 \author{
   {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
   \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
 }
 
-\date{\vspace{.3cm}27th June 2019}
+\date{}
 
 
-\titlegraphic{%
-  \vspace{6cm}
+\titlegraphic{
+  \vspace{0cm}
   \hspace{10cm}
     \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+
+\vspace{5.1cm}
+
+  {\footnotesize
+
+  Unless otherwise stated, graphics and text are Copyright \copyright Tom Brown, 2020.
+  Graphics and text for which no other attribution are given are licensed under a
+  \href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons
+  Attribution 4.0 International Licence}. \ccby}
 }
 
 \begin{document}
@@ -101,7 +110,7 @@
 \end{frame}
 
 
-\section{Idea of PCA}
+\section{Idea of Principal Component Analysis (PCA)}
 
 
 \begin{frame}
@@ -134,13 +143,15 @@
 
 
     \end{column}
-  \end{columns}
+    \end{columns}
+
+    \source{\url{https://energy-charts.de/}}
 
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{Procedure}
+  \frametitle{Procedure 1/2}
 
   \begin{itemize}
   \item Calculate the \alert{covariance matrix}:
@@ -148,13 +159,14 @@
       \Sigma_{ij} = \langle x_i(t) x_j(t) \rangle -\langle x_i(t) \rangle \langle x_j (t) \rangle = \langle x_i(t) x_j(t) \rangle
     \end{equation*}
     remembering that we've arranged $\langle x_i(t) \rangle = 0$. NB: The covariance matrix is \alert{symmetric} ($\Rightarrow$ $N$ orthogonal eigenvectors) and \alert{positive semi-definite} ($\Rightarrow$ eigenvalues $\l_k \geq 0$).
+
+    The diagonal entries $\Sigma_{ii}$ give the variance of each $x_i(t)$.
+
   \item Find the \alert{eigenvectors} $\rho^k_i$ and \alert{eigenvalues} $\lambda_k$ for $k=1,\dots N$ of the \alert{normalised covariance matrix} $\frac{\Sigma}{\textrm{tr}(\Sigma)}$
     \begin{equation*}
       \frac{1}{\textrm{tr}(\Sigma)}\sum_j \Sigma_{ij} \rho^k_j = \lambda_k \rho^k_i
     \end{equation*}
     The normalization is chosen such that $\sum_{k=1}^N \lambda_k = \textrm{tr} \left(\frac{\Sigma}{\textrm{tr}(\Sigma)}\right) = 1$.
-  \item Order the eigenvectors $\rho^k_i$ and eigenvalues $\lambda_k$ from highest $\lambda_k$ to lowest. The value $\lambda_k$ represents the share of the variance of $x_i(t)$ associated with the $k$th component $\rho^k_i$.
-    \item We can discard components with low variance, e.g. only keep the first $K$ components such that $\sum_{k=1}^K\lambda_k \geq  0.95$, i.e. that represent 95\% of the variance.
   \end{itemize}
 
 \end{frame}
@@ -162,10 +174,31 @@
 
 
 \begin{frame}
+  \frametitle{Procedure 2/2}
+
+  \begin{itemize}
+      \item Order the eigenvectors $\rho^k_i$ and eigenvalues $\lambda_k$ from highest $\lambda_k$ to lowest. The value $\lambda_k$ represents the share of the variance of $x_i(t)$ associated with the $k$th component $\rho^k_i$.
+    \item We can discard components with low variance, e.g. only keep the first $K$ \alert{principal components} such that $\sum_{k=1}^K\lambda_k \geq  0.95$, i.e. that represent 95\% of the variance.
+  \end{itemize}
+
+  Note that the $\rho^k_i$ is an orthogonal matrix  that defines a new basis for the $N$-dimensional space such that the projections of $x_i(t)$ onto this new basis are uncorrelated with variance $\propto\lambda_k$.
+
+  Orthogonal means the matrix multiplied by its transpose gives the identity matrix $\mathbb{I}$:
+  \begin{equation*}
+    \sum_i \rho^k_i \rho^l_i = \mathbb{I}_{kl} = \left\{\begin{array}{lr} 0 \text{ if } k \neq l \\ 1  \text{ if } k = l \end{array} \right.
+  \end{equation*}
+  If we now project $x_i(t)$ onto the $\rho^k_i$, $x_i(t) = \sum_k a_k(t) \rho^k_i$, show that $a_k(t) = \sum_i  \rho^k_i x_i(t)$ and now
+  \begin{equation*}
+    \langle a_k(t) a_l(t) \rangle = \sum_{i,j}\rho^k_i \rho^l_j \langle x_i(t) x_j(t) \rangle  = \sum_{i,j}\rho^k_i    \Sigma_{ij} \rho^l_j =  \sum_{i}\rho^k_i \textrm{tr}(\Sigma) \lambda_l \rho^l_i = \textrm{tr}(\Sigma) \lambda_k \mathbb{I}_{kl}
+  \end{equation*}
+
+\end{frame}
+
+\begin{frame}
   \frametitle{PCA as optimisation problem}
   We can also represent this procedure as an optimisation problem.
 
-  We define the projection of $x_i(t)$ onto some unit vector $\rho^1_i(t)$ ($\rho^1 \cdot \rho^1 =1$):
+  We define the projection of $x_i(t)$ onto some unit vector $\rho^1_i$ ($\rho^1 \cdot \rho^1 =1$):
   \begin{equation*}
     a_1(t) = x(t) \cdot \rho^1
   \end{equation*}
@@ -379,7 +412,7 @@
   \end{equation*}
   Note that the first term $\Sigma^p$ comes from the injection
   pattern, whereas the second part $H^tH$ is entirely determined by
-  the topology of the matrix (built from $K$ and $L$).
+  the topology of the network (built from $K$ and $L$).
 
   If $\nu^k$ is an eigenvector of $M$ with eigenvalue $\eta_k$, $M\nu^k = \eta_k \nu^k$, show that $H\nu^k$ is an eigenvector of $\Sigma^f$ with eigenvalue $\eta_k$.
   \pause
@@ -398,7 +431,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Network Topology reinforces flow pattern}
+  \frametitle{Network topology reinforces power injection pattern to magnify flow pattern}
 
   \centering
   \includegraphics[trim=0 0cm 0 0cm,width=14cm,clip=true]{pca_magnification.png}
@@ -412,7 +445,7 @@
 
   To find out more, see our paper:
 
-  \href{https://arxiv.org/abs/1807.07771}{Fabian Hofmann, Mirko Schäfer, Tom Brown, Jonas Hörsch, Stefan Schramm, Martin Greiner, ``Principal Flow Patterns across renewable electricity networks,'' EPL, 2018}
+  Fabian Hofmann, Mirko Schäfer, Tom Brown, Jonas Hörsch, Stefan Schramm, Martin Greiner, ``Principal Flow Patterns across renewable electricity networks,'' EPL, 2018, \href{https://arxiv.org/abs/1807.07771}{\bf\color{blue}\underline{link}}
 
 \end{frame}
 \end{document}
