@@ -111,20 +111,29 @@
 \renewcommand{\item}{%
 \olditem\vspace{5pt}}
 
-\title{Energy System Modelling\\ Summer Semester 2019, Lecture 11}
+\title{Energy System Modelling\\ Summer Semester 2020, Lecture 13}
 %\subtitle{---}
 \author{
   {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
   \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
 }
 
-\date{\vspace{.3cm}14th June 2019}
+\date{}
 
 
-\titlegraphic{%
-  \vspace{6cm}
+\titlegraphic{
+  \vspace{0cm}
   \hspace{10cm}
     \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+
+\vspace{5.1cm}
+
+  {\footnotesize
+
+  Unless otherwise stated, graphics and text are Copyright \copyright Tom Brown, 2020.
+  Graphics and text for which no other attribution are given are licensed under a
+  \href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons
+  Attribution 4.0 International Licence}. \ccby}
 }
 
 \begin{document}
@@ -137,6 +146,157 @@
   \frametitle{Table of Contents}
   \setbeamertemplate{section in toc}[sections numbered]
   \tableofcontents[hideallsubsections]
+\end{frame}
+
+
+\section{Workflow management for complex models}
+
+
+\begin{frame}{Motivation: More detailed data-driven models, more scenarios}
+
+
+When we upgrade from the 30-node model to 5000+ nodes for a detailed grid model, and calculate 100 scenarios with different settings, \alert{data management becomes important}.
+
+\begin{columns}[T]
+  \begin{column}{6cm}
+
+    % left bottom right top
+    \includegraphics[trim=0 0.7cm 0 3.5cm,width=6.4cm]{europe_map}
+  \end{column}
+
+  \begin{column}{6cm}
+
+    \includegraphics[width=6.5cm]{pypsa-eur-grid.pdf}
+  \end{column}
+\end{columns}
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Data-Driven Modelling}
+
+  Lots of different types of data come together for the modelling...
+
+
+    \includegraphics[width=14cm]{data_driven.png}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Problems}
+
+  \begin{itemize}
+  \item Many different data sources
+  \item Many data sources need cleaning and processing before they can be used
+  \item Many intermediate scripts and datasets
+  \item Many colleagues hack something together in a folder - hard to reproduce later
+  \item Often dependencies are not clear (both data and software)
+  \item Data and code change over time
+  \item Want to run many parameteric scenarios for same model
+  \end{itemize}
+
+  \vspace{.5cm}
+  \pause
+  What we need is a \alert{workflow management tool}.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Workflow Management Tool: Snakemake}
+
+  ``The \href{https://snakemake.readthedocs.io/en/stable/}{Snakemake} workflow management system is a tool to create \alert{reproducible and scalable data analyses}. Workflows are described via a human readable, Python based language. They can be seamlessly scaled to server, cluster, grid and cloud environments, without the need to modify the workflow definition. Finally, Snakemake workflows can entail a description of required software, which will be automatically deployed to any execution environment.''
+
+ \vspace{1cm}
+
+  See \href{https://slides.com/johanneskoester/snakemake-short}{\bf\color{blue}\underline{Snakemake presentation}}.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Snakemake for PyPSA-Eur: Building Model}
+
+    The \href{https://snakemake.readthedocs.io/en/stable/}{\bf\color{blue}\underline{Snakemake}} workflow management system is a tool to create \alert{reproducible and scalable data analyses}. Dependency graph: \alert{nodes} for scripts, \alert{directed edges} map outputs to inputs.
+
+
+    \vspace{.3cm}
+
+  \includegraphics[width=14.8cm]{workflow.png}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Snakemake for PyPSA-Eur: Managing Scenarios}
+
+  \centering
+  \includegraphics[width=14cm]{scenarios.png}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{PyPSA-Eur}
+
+\begin{columns}[T]
+  \begin{column}{4cm}
+
+    \vspace{1.5cm}
+
+    See \href{https://docs.google.com/presentation/d/1mzj4X9uuO58gUvkhVMRCFWOJUWbs6NR9SNZe-RIkkNo/edit?usp=sharing}{\bf\color{blue}\underline{PyPSA-Eur slidedeck}} for breakdown of PyPSA-Eur snakemake rules.
+
+    \vspace{.5cm}
+
+    Checkout also the \href{https://github.com/PyPSA/pypsa-eur}{\bf\color{blue}\underline{PyPSA-Eur GitHub repository}}.
+  \end{column}
+
+  \begin{column}{8cm}
+
+    \vspace{.2cm}
+
+
+\includegraphics[width=8.5cm]{pypsa-eur-grid}
+  \end{column}
+\end{columns}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{PyPSA-Eur-Sec builds on PyPSA-Eur}
+
+  \begin{columns}[T]
+
+  \begin{column}{7cm}
+
+    \vspace{.2cm}
+
+    \begin{itemize}
+      \item \href{https://github.com/PyPSA/pypsa-eur-sec}{\bf\color{blue}\underline{PyPSA-Eur-Sec}} includes PyPSA-Eur as a \alert{snakemake subworkflow}.
+      \item PyPSA-Eur builds the clustered power grid and renewable generators.
+      \item Then PyPSA-Eur-Sec adds other sectors.
+    \end{itemize}
+
+    \vspace{.2cm}
+    \centering
+    \includegraphics[trim={1.5cm 1.5cm 1.5cm 1.5cm},clip,width=4.5cm]{today.pdf}
+  \end{column}
+
+    \begin{column}{5.5cm}
+
+    \vspace{1cm}
+
+  \centering
+  \includegraphics[width=6cm]{20200223_multisector_figure.pdf}
+  \end{column}
+\end{columns}
+
 \end{frame}
 
 
@@ -235,20 +395,39 @@ BUT we do not want to have to model all 5,000 network nodes of the European syst
 
   Today's grid was laid out to connect big generators and load centres.
 
-  \alert{Solution}:
-  Cluster nodes based on load and conventional generation capacity using
-  $k$-means.
+  \begin{columns}
 
-  I.e. find $k$ centroids and the corresponding $k$-partition of the
-  original nodes that minimises the sum of squared distances from each
-  centroid to its nodal members:
-  \begin{equation}
-    \min_{\{x_c\}} \sum_{c=1}^k \sum_{n \in N_c} w_n || x_c - x_n ||^2
-  \end{equation}
-  where each node is weighted $w_n$ by the average load and the
+    \begin{column}{5cm}
+
+      \vspace{0.5cm}
+  \alert{Solution}:
+  Cluster nodes based on spatial distribution using $k$-means, with a weighting to sites with higher average load and conventional generation capacity.
+    \end{column}
+
+    \begin{column}{7cm}
+      \vspace{.3cm}
+            \includegraphics[width=6.5cm]{clustering.pdf}
+    \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{$k$-means clustering on load \& conventional generation}
+
+  Suppose the $N$ nodes $i$ have spatial coordinates $(x_i,y_i)$. The $k$-means algorithm works by partitioning them into $k\leq N$ sets $N_c$ for $c = 1, \dots k$ such that the sum of squared distance to the centroid $(x_c,y_c)$ (mean point inside each set) is minimised:
+  \begin{equation*}
+    \min_{\{(x_c,y_c)\}} \sum_{c=1}^k \sum_{i \in N_c} w_i \left|\left| \left(\begin{matrix}
+      x_c \\
+      y_c
+\end{matrix}\right) -  \left(\begin{matrix}
+      x_i \\
+      y_i
+\end{matrix}\right)\right|\right|^2
+  \end{equation*}
+  Each node $i$ is weighted $w_i$ by the average load and the
   average conventional generation there.
 
-
+  Use the centroid as the location of the new clustered node.
 \end{frame}
 
 
@@ -629,29 +808,81 @@ BUT we do not want to have to model all 5,000 network nodes of the European syst
 
 
 
+\begin{frame}
+  \frametitle{More Details in Paper}
+
+  For more details, see the following paper:
+  \begin{itemize}
+  \item J. Hörsch, T. Brown, ``The role of spatial scale in joint optimisations of generation and transmission for European highly renewable scenarios,'' EEM 2017, \href{https://arxiv.org/abs/1705.07617}{\bf\color{blue}\underline{link}}.
+  \end{itemize}
+
+  In an upcoming paper with Martha Frysztacki and the same authors, we disentangle the effects of the network resolution from the renewable resource resolution.
+
+\end{frame}
+
 
 \begin{frame}
   \frametitle{Conclusions}
 
   \begin{itemize}
-    \item This is \alert{no single solution} for highly renewable systems, but a \alert{family of solutions}  with different costs and compromises
     \item Generation costs always dominate grid costs, but the grid can cause higher generation costs if expansion is restricted
     \item Systems with no grid extension beyond today are up to 25\% more expensive, but small grid extensions (e.g. 25\% more capacity than today) can lock in big savings
     \item Need at least around 200 clusters for Europe to see grid bottlenecks if no expansion
     \item Can get away with $\sim 120$ clusters for Europe if grid expansion is allowed
-      \item Much of the stationary storage needs can be eliminated by sector-coupling: DSM with electric vehicles, thermal storage; this makes grid expansion less beneficial
+    \item This is \alert{no single solution} for highly renewable systems, but a \alert{family of solutions}  with different costs and compromises
+    \item Much of the stationary storage needs can be eliminated by sector-coupling: DSM with electric vehicles, thermal storage; this makes grid expansion less beneficial
     \item Understanding the need for \alert{flexibility at different temporal and spatial scales} is key to mastering the complex interactions in the energy system
   \end{itemize}
 \end{frame}
 
-\section{Algorithms to accelerate computations}
+\section{Cycle formulations of optimal power flow}
 
+\begin{frame}
+  \frametitle{Angle-based formulation of linear optimal power flow is slow}
+
+  The most common way of implementing optimization models with linear power flow is to use the \alert{angle formulation}.
+  We start with energy conservation (KCL)
+  \begin{equation*}
+    p_i = \sum_{\ell} K_{i\ell}f_\ell
+  \end{equation*}
+  This puts $N-1$ constraints on the $L$ flows $f_\ell$ (since $\sum_i K_{i\ell} = 0$). For KVL we add $N$ \alert{auxiliary variables} for the voltage angles $\theta_i$ with $L+1$ additional constraints on $f_\ell$ and $\theta_i$:
+  \begin{align*}
+    f_\ell  & = \frac{1}{x_\ell}\sum_{i} K_{i\ell} \theta_i \\
+    \theta_0 & = 0
+  \end{align*}
+
+  Check totals: $N+L$ variables $\theta_i,f_\ell$ with $N-1 + L+1 = L+N$ independent, sparse constraints $\Rightarrow$ $\theta_i,f_\ell$ fully determined by the $p_i$, which is what we want.
+
+  But we don't really care about the angles $\theta_i$ and they introduce more variables and constraints.
+
+  \alert{Is there a better way?}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Cycle-based ``Kirchhoff'' formulation is faster}
+
+  The cycle-based \alert{Kirchhoff formulation} avoids the auxiliary variables $\theta_i$ altogether by implementing the Kirchhoff Voltage Law (KVL) directly on the flows $f_\ell$ themselves.
+
+  We start again with our $N-1$ KCL constraints:
+  \begin{equation*}
+    p_i = \sum_{\ell} K_{i\ell}f_\ell
+  \end{equation*}
+  and add the $L-N+1$ cycle constraints of KVL from Lecture 4:
+  \begin{equation*}
+    \sum_\ell C_{\ell c} x_\ell f_\ell = 0
+  \end{equation*}
+
+  Check totals: $L$ variables $f_\ell$ with $N-1 + L-N+1 = L$  independent, sparse constraints $\Rightarrow$ $f_\ell$ fully determined by the $p_i$, which is what we want.
+
+  This has fewer variables and fewer constraints than the angle-based formulation, so we can expect it to perform better.
+\end{frame}
 
 
 \begin{frame}
   \frametitle{Cycle formulation of linear power flow}
 
-  We can use dual graph theory to decompose the flows in the network into two parts:
+  A third \alert{cycle formulation} decomposes the flows in the network into two parts:
   \begin{enumerate}
   \item A flow on a spanning tree of the network, uniquely determined by nodal $\mathbf{p}$ (ensuring KCL)
   \item Cycle flows, which don't affect KCL; their strength is fixed by enforcing KVL
@@ -730,6 +961,7 @@ BUT we do not want to have to model all 5,000 network nodes of the European syst
     C^t X C \mathbf{c} =  - C^t X \mathbf{t}
   \end{equation*}
 
+  Now we have only $L-N+1$ variables $c_k$ with $L-N+1$ independent, \alert{semi-dense} constraints.
 \end{frame}
 
 
@@ -755,80 +987,12 @@ BUT we do not want to have to model all 5,000 network nodes of the European syst
 \vspace{.3cm}
 
   \footnotesize
-H.~Ronellenfitsch, D.~Manik, J.~Hörsch, {\bf T.~Brown, D.~Witthaut}, \emph{``Dual theory of transmission line outages,''} 2017, IEEE Transactions on Power Systems
+H.~Ronellenfitsch, D.~Manik, J.~Hörsch, {\bf T.~Brown, D.~Witthaut}, \emph{``Dual theory of transmission line outages,''} 2017, IEEE Transactions on Power Systems, \href{https://arxiv.org/abs/1606.07276}{\bf\color{blue}\underline{link}}.
 
-J.~Hörsch, H.~Ronellenfitsch, {\bf D.~Witthaut, T.~Brown}, \emph{``Linear Optimal Power Flow Using Cycle Flows,''} 2017
-
+J.~Hörsch, H.~Ronellenfitsch, {\bf D.~Witthaut, T.~Brown}, \emph{``Linear Optimal Power Flow Using Cycle Flows,''} 2017, Electric Power Systems Research,
+\href{https://arxiv.org/abs/1704.01881}{\bf\color{blue}\underline{link}}.
 \end{frame}
 
-
-
-\begin{frame}{Copyright}
-
-
-  Unless otherwise stated, the graphics and text are Copyright \copyright Tom Brown, 2017.
-
-  The source \LaTeX, self-made graphics and Python code used to
-  generate the self-made graphics are available here:
-
-  \url{http://nworbmot.org/talks.html}
-
-  The graphics and text for which no other attribution are given are licensed under a
-  \href{http://creativecommons.org/licenses/by-sa/4.0/}{Creative Commons
-  Attribution-ShareAlike 4.0 International License}.
-
-  \begin{center}\ccbysa\end{center}
-
-\end{frame}
-
-
-
-
-\begin{frame}
-  \frametitle{Cost and other assumptions}
-
-  \begin{table}
-\centering
-\begin{tabular}{@{}lrlrr@{}}
-\toprule
-Quantity                &Overnight  Cost [\euro]  &Unit & FOM [\%/a] & Lifetime [a] \\
-\midrule
-Wind onshore    &1182   &kW\el &3 & 20   \\
-Wind offshore  &2506   &kW\el  &3& 20  \\
-Solar PV           &600   &kW\el &4 & 20   \\
-Gas             &400    &kW\el  &4& 30  \\
-%Gas marginal            &75     &\euro{}/MWh$_{\textrm{e}}$    \\
-Battery storage         &1275   &kW\el  & 3 & 20 \\
-Hydrogen storage        &2070   &kW\el  & 1.7 &20 \\
-Transmission line       &400    &MWkm & 2 & 40\\
-\bottomrule
-\end{tabular}
-\end{table}
-  Interest rate of 7\%, storage efficiency losses, only gas has \co2 emissions, gas marginal costs.
-\end{frame}
-
-
-\begin{frame}
-  \frametitle{Shadow costs of line extension CAP for 3 times today's volume}
-
-
-
-\begin{columns}[T]
-\begin{column}{8.5cm}
-\centering
-  \includegraphics[width=8.5cm]{shadows}
-  %\includegraphics[width=6cm]{pre-2-costs_de_storage}
-\end{column}
-\begin{column}{6cm}
-  \begin{itemize}
-%\item   %Big reduction in curtailment
-  \item For 200+ nodes the shadow price converges on the annual cost of a MWkm of overhead line (around \euro~30/a/MWkm)
-  \item Value of lines is much higher with smaller number of clusters. Why?
-\item Possible reasons: inter-connectors in general weaker than country-internal connectors;  more nodes means more flexibility to avoid network expansion
-  \end{itemize}
-\end{column}
-\end{columns}
-\end{frame}
 
 
 \end{document}
