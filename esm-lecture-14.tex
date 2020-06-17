@@ -1,0 +1,418 @@
+% NB: use pdflatex to compile NOT pdftex.  Also make sure youngtab is
+% there...
+
+% converting eps graphics to pdf with ps2pdf generates way too much
+% whitespace in the resulting pdf, so crop with pdfcrop
+% cf. http://www.cora.nwra.com/~stockwel/rgspages/pdftips/pdftips.shtml
+
+
+
+
+\documentclass[10pt,aspectratio=169,dvipsnames]{beamer}
+\usetheme[color/block=transparent]{metropolis}
+
+\usepackage[absolute,overlay]{textpos}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[scale=2]{ccicons}
+
+\usepackage[official]{eurosym}
+
+%use this to add space between rows
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+
+
+\setbeamerfont{alerted text}{series=\bfseries}
+\setbeamercolor{alerted text}{fg=Mahogany}
+\setbeamercolor{background canvas}{bg=white}
+
+
+\newcommand{\R}{\mathbb{R}}
+
+\def\l{\lambda}
+\def\m{\mu}
+\def\d{\partial}
+\def\cL{\mathcal{L}}
+\def\co2{CO${}_2$}
+
+
+
+% for sources http://tex.stackexchange.com/questions/48473/best-way-to-give-sources-of-images-used-in-a-beamer-presentation
+
+\setbeamercolor{framesource}{fg=gray}
+\setbeamerfont{framesource}{size=\tiny}
+
+
+\newcommand{\source}[1]{\begin{textblock*}{5cm}(10.5cm,8.35cm)
+    \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
+        \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
+    \end{beamercolorbox}
+\end{textblock*}}
+
+\usepackage{hyperref}
+
+
+%\usepackage[pdftex]{graphicx}
+
+
+\graphicspath{{graphics/}}
+
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png,.jpg}
+
+
+
+\def\goat#1{{\scriptsize\color{green}{[#1]}}}
+
+
+\newcommand{\ubar}[1]{\text{\b{$#1$}}}
+
+\let\olditem\item
+\renewcommand{\item}{%
+\olditem\vspace{5pt}}
+
+\title{Energy System Modelling\\ Summer Semester 2019\\ Lecture on Principal Component Analysis in Power Systems}
+%\subtitle{---}
+\author{
+  {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
+  \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
+}
+
+\date{\vspace{.3cm}27th June 2019}
+
+
+\titlegraphic{%
+  \vspace{6cm}
+  \hspace{10cm}
+    \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{frame}
+
+  \frametitle{Table of Contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+
+\section{Idea of PCA}
+
+
+\begin{frame}
+  \frametitle{The idea of Principal Component Analysis (PCA)}
+
+
+
+    \begin{columns}[T]
+    \begin{column}{7.5cm}
+
+      Suppose we have a set of time series $x_i(t)$ for $i=1,\dots N$ whose means $\langle \cdot \rangle$ are centred at the origin $\langle x_i(t) \rangle = 0$ for all $i$.
+
+      \vspace{.2cm}
+
+      \alert{Principal Component Analysis (PCA)} is a tool to find the directions in the $N$-dimensional $x_i$ space which cause the biggest variance.
+
+      \vspace{.2cm}
+
+      We change to a new (orthonormal) basis $\rho^k_i$ ($k=1,\dots N$) in $N$-dimensional $x_i$ space where the first basis vector $\rho^1$ is in the direction of highest variance, the second $\rho^2$ in the next highest, etc.
+
+      \vspace{.2cm}
+
+      We can then use this for \alert{dimensional reduction} and ignore directions with low variance.
+    \end{column}
+    \begin{column}{6.5cm}
+
+        \vspace{.3cm}
+        %https://www.forum-csr.net/News/7186/Marktwirtschaftparadox.html
+        \includegraphics[trim=0 0cm 0 0cm,width=7cm,clip=true]{price-residual_load-1806.png}
+
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Procedure}
+
+  \begin{itemize}
+  \item Calculate the \alert{covariance matrix}:
+    \begin{equation*}
+      \Sigma_{ij} = \langle x_i(t) x_j(t) \rangle -\langle x_i(t) \rangle \langle x_j (t) \rangle = \langle x_i(t) x_j(t) \rangle
+    \end{equation*}
+    remembering that we've arranged $\langle x_i(t) \rangle = 0$. NB: The covariance matrix is \alert{symmetric} ($\Rightarrow$ $N$ orthogonal eigenvectors) and \alert{positive semi-definite} ($\Rightarrow$ eigenvalues $\l_k \geq 0$).
+  \item Find the \alert{eigenvectors} $\rho^k_i$ and \alert{eigenvalues} $\lambda_k$ for $k=1,\dots N$ of the \alert{normalised covariance matrix} $\frac{\Sigma}{\textrm{tr}(\Sigma)}$
+    \begin{equation*}
+      \frac{1}{\textrm{tr}(\Sigma)}\sum_j \Sigma_{ij} \rho^k_j = \lambda_k \rho^k_i
+    \end{equation*}
+    The normalization is chosen such that $\sum_{k=1}^N \lambda_k = \textrm{tr} \left(\frac{\Sigma}{\textrm{tr}(\Sigma)}\right) = 1$.
+  \item Order the eigenvectors $\rho^k_i$ and eigenvalues $\lambda_k$ from highest $\lambda_k$ to lowest. The value $\lambda_k$ represents the share of the variance of $x_i(t)$ associated with the $k$th component $\rho^k_i$.
+    \item We can discard components with low variance, e.g. only keep the first $K$ components such that $\sum_{k=1}^K\lambda_k \geq  0.95$, i.e. that represent 95\% of the variance.
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{PCA as optimisation problem}
+  We can also represent this procedure as an optimisation problem.
+
+  We define the projection of $x_i(t)$ onto some unit vector $\rho^1_i(t)$ ($\rho^1 \cdot \rho^1 =1$):
+  \begin{equation*}
+    a_1(t) = x(t) \cdot \rho^1
+  \end{equation*}
+  We choose the $\rho^1$ such that the variance of $a_1(t)$:
+  \begin{equation*}
+    \langle a_1(t)^2 \rangle = \langle (x(t) \cdot \rho^1)^2 \rangle
+  \end{equation*}
+  is maximised. This is an optimisation problem!
+  \begin{equation*}
+    \max_{\{\rho_i^1\}} \sum_{i,j} \left\langle x_i(t)x_j(t) \rho^1_i  \rho^1_j \right\rangle
+  \end{equation*}
+  such that
+  \begin{equation*}
+    \sum_i \rho^1_i \rho^1_i = 1 \hspace{.5cm} \leftrightarrow \lambda_1
+  \end{equation*}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{PCA as optimisation problem}
+
+  KKT gives us from stationarity
+  \begin{equation*}
+    0 = \frac{\d \mathcal{L}}{\d \rho^1_i} = \frac{\d f}{\d \rho^1_i} - \lambda_1 \frac{\d g_1}{\d \rho^1_i} = 2\sum_j \rho^1_j \left\langle x_i(t)x_j(t) \right\rangle - 2\lambda_1 \rho^1_i
+  \end{equation*}
+  This is nothing other than the eigenvalue equation for the covariance matrix $\Sigma_{ij} = \left\langle x_i(t)x_j(t) \right\rangle$!
+
+  Now consider the remainder defined by
+  \begin{equation*}
+    \delta_i(t) = x_i(t) - a_1(t) \rho^1_i
+  \end{equation*}
+
+  Now let's find a second unit vector $\rho^2_i$ which is orthogonal to $\rho^1_i$ and points in the direction of greatest variance of the remainder $\delta_i(t)$
+  \begin{equation*}
+    \max_{\{\rho_i^2\}} \sum_{i,j} \left\langle (\delta_i (t) \cdot \rho^2)^2 \right\rangle =     \max_{\{\rho_i^2\}} \sum_{i,j} \left\langle (x_i (t) \cdot \rho^2)^2 \right\rangle
+  \end{equation*}
+  where we've used the fact that $\rho^1 \cdot \rho^2 = 0$. Repeating optimisation, we get another eigenvalue-eigenvector pair. Repeat until we have all eigenvalues and eigenvectors.
+
+\end{frame}
+
+
+
+
+\section{Application to Power System}
+
+
+
+\begin{frame}
+  \frametitle{Application to power injections for highly renewable European system}
+
+    \begin{columns}[T]
+      \begin{column}{7.5cm}
+
+        We're now going to apply PCA to the solved dispatch and network flows for a highly renewable European power system.
+
+        \vspace{.2cm}
+
+        First we apply PCA to the power injections $p_i(t) = \sum_s g_{i,s}(t) - d_i(t)$ (generation minus demand). We compute the power injection covariance matrix:
+        \begin{equation*}
+          \Sigma^p_{ij} = \langle p_i(t) p_j(t) \rangle -\langle p_i(t) \rangle \langle p_j (t) \rangle
+        \end{equation*}
+        NB: $i,j$ run over the $N$ different network nodes.
+
+        \vspace{.2cm}
+
+        Next we find the eigenvectors and eigenvalues $\lambda_k^p$ that represent the principal components.
+
+    \end{column}
+    \begin{column}{7cm}
+
+      Average power injection $\langle p_i(t) \rangle$ at each node:
+        \vspace{.1cm}
+        %https://www.forum-csr.net/News/7186/Marktwirtschaftparadox.html
+        \includegraphics[trim=0 0cm 0 0cm,width=7.5cm,clip=true]{pca-pi_mean.png}
+
+
+    \end{column}
+  \end{columns}
+
+    \source{\href{https://arxiv.org/abs/1807.07771}{Hofmann et al, 2018}}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Power injection components}
+
+  The first 3 principal components represent the major axes of weather variations (1st is coastal wind production, 2nd is North-South seasonal pattern, 3rd is East-West load and solar daily pattern - check by Fourier transforming projection onto components):
+
+  \vspace{.2cm}
+  \centering
+  \includegraphics[trim=0 0cm 0 0cm,width=14cm,clip=true]{pca-pi_components.png}
+
+  \source{\href{https://arxiv.org/abs/1807.07771}{Hofmann et al, 2018}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Application to resulting power flows}
+
+    \begin{columns}[T]
+      \begin{column}{7.5cm}
+
+        Next we apply PCA to the resulting power flows $f_\ell$, related via the Power Transfer Distribution Factors
+        \begin{equation*}
+          f_\ell = \sum_i H_{\ell i} p_i
+        \end{equation*}
+        (we use the notation $H =  K^t L^{-1}$ for the PTDF to make things easier later).
+
+        \vspace{.2cm}
+
+        We compute the power flow covariance matrix:
+        \begin{equation*}
+          \Sigma^f_{\ell m} = \langle f_\ell(t) f_m(t) \rangle -\langle f_\ell(t) \rangle \langle f_m (t) \rangle
+        \end{equation*}
+        NB: $\ell,m$ run over the $L$ different network lines.
+
+        \vspace{.2cm}
+
+        Next we find the eigenvectors and eigenvalues $\lambda_n^f$ that represent the principal components.
+
+    \end{column}
+    \begin{column}{7cm}
+
+      Average power flow $\langle f_\ell(t) \rangle$ at each line:
+        \vspace{.3cm}
+        %https://www.forum-csr.net/News/7186/Marktwirtschaftparadox.html
+        \includegraphics[trim=0 0cm 0 0cm,width=7.5cm,clip=true]{pca-fl_mean.png}
+
+
+    \end{column}
+  \end{columns}
+
+    \source{\href{https://arxiv.org/abs/1807.07771}{Hofmann et al, 2018}}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Power flow components}
+
+  The first 3 principal components represent the major flow (1st is flow to North-West, 2nd to North-East and 3rd shows multiple directions). Note that the first three make up a \alert{much larger share of the variance} than for the power injection case.
+
+  \vspace{.2cm}
+  \centering
+  \includegraphics[trim=0 0cm 0 0cm,width=14cm,clip=true]{pca-fl_components.png}
+
+  \source{\href{https://arxiv.org/abs/1807.07771}{Hofmann et al, 2018}}
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{Number of relevant components}
+
+  \begin{itemize}
+  \item How many principal components $K$ do we need to represent 95\% of the total variance?
+    \begin{equation*}
+      \sum_{k=1}^K \lambda_k \geq  0.95
+    \end{equation*}
+  \item How does this number depend on the spatial resolution, i.e. the number of network nodes $N$ used to represent the European grid?
+  \end{itemize}
+  \vspace{.2cm}
+  \centering
+  \includegraphics[trim=0 0cm 0 0cm,width=14cm,clip=true]{pca-p_v_f.png}
+
+  \source{\href{https://arxiv.org/abs/1807.07771}{Hofmann et al, 2018}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Number of relevant components}
+
+  \centering
+  \includegraphics[trim=0 0cm 0 0cm,width=14cm,clip=true]{pca-p_v_f.png}
+
+  \raggedright
+  This graph is odd for (at least) 3 reasons:
+  \begin{itemize}
+  \item Why does the number of components required for the power injection rise then saturate at several hundred nodes? (Answer: correlation length)
+  \item Why are so few components required to represent the power flow?
+    \item Why doesn't the number of components change for the power flow?
+  \end{itemize}
+
+  \source{\href{https://arxiv.org/abs/1807.07771}{Hofmann et al, 2018}}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Relation of injection to flow covariance matrix}
+
+  We have the following equations:
+  \begin{align*}
+    f_\ell & = \sum_i H_{\ell i} p_i \\
+    \Sigma^p_{ij} & = \langle p_i(t) p_j(t) \rangle -\langle p_i(t) \rangle \langle p_j (t) \rangle \\
+          \Sigma^f_{\ell m} & = \langle f_\ell(t) f_m(t) \rangle -\langle f_\ell(t) \rangle \langle f_m (t) \rangle
+  \end{align*}
+  So how are the flow covariance $\Sigma^f_{\ell m}$ and injection covariance $\Sigma^p_{ij}$ matrices related?
+
+  \pause
+  \begin{equation*}
+     \Sigma^f = H\Sigma^p H^t
+  \end{equation*}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Relation of injection to flow covariance matrix}
+  Now consider another $N\times N$ matrix $M$ defined by
+  \begin{equation*}
+    M = \Sigma^p H^tH
+  \end{equation*}
+  Note that the first term $\Sigma^p$ comes from the injection
+  pattern, whereas the second part $H^tH$ is entirely determined by
+  the topology of the matrix (built from $K$ and $L$).
+
+  If $\nu^k$ is an eigenvector of $M$ with eigenvalue $\eta_k$, $M\nu^k = \eta_k \nu^k$, show that $H\nu^k$ is an eigenvector of $\Sigma^f$ with eigenvalue $\eta_k$.
+  \pause
+  \begin{equation*}
+    \Sigma^f H\nu^k = H \Sigma^p H^t H \nu^k = H M \nu^k = \eta_k H\nu^k
+  \end{equation*}
+
+  So to analyse the principal components of the flow, it suffices to study the eigenvectors of matrix $M$.
+
+  It turns out that if the first few eigenvectors of $H^t H$ and
+  $\Sigma^p$ with the strongest eigenvalues strongly overlap, then they magnify each other to the
+  exclusion of other eigenvectors.
+
+  This is what happens for $M$ (and by extension $\Sigma^p$): the eigenvectors of $H^tH$ magnify only the first few principal components of $\Sigma^p$, which then dominate $\Sigma^f$.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Network Topology reinforces flow pattern}
+
+  \centering
+  \includegraphics[trim=0 0cm 0 0cm,width=14cm,clip=true]{pca_magnification.png}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Network Topology reinforces flow pattern}
+
+  To find out more, see our paper:
+
+  \href{https://arxiv.org/abs/1807.07771}{Fabian Hofmann, Mirko Schäfer, Tom Brown, Jonas Hörsch, Stefan Schramm, Martin Greiner, ``Principal Flow Patterns across renewable electricity networks,'' EPL, 2018}
+
+\end{frame}
+\end{document}
