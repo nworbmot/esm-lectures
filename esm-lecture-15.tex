@@ -149,7 +149,7 @@
 
 \begin{frame}{Who uses transmission lines?}
 
-  Basic answer: \alert{no}. Electricity gets \alert{thoroughly mixed} in the grid; electrons do not carry markers that say `from nuclear plant A' or `from wind plant B'.
+  Basic answer: \alert{not uniquely}. Electricity gets \alert{thoroughly mixed} in the grid; electrons do not carry markers that say `from nuclear plant A' or `from wind plant B'.
 
   \vspace{.3cm}
 
@@ -321,7 +321,7 @@
 \begin{frame}
   \frametitle{Flow tracing: Conservation of partial flows}
 \begin{columns}[T]
-  \begin{column}{7.5cm}
+  \begin{column}{8.5cm}
     \vspace{0.2cm}
 
     \alert{Power conservation} from KCL
@@ -335,12 +335,12 @@
     \end{equation*}
 
     \only<2>{
-    allows to \alert{label} the energy entering the network and determine its mixing $q_{m,\alpha}$
+    allows to \alert{label} the energy entering the network by source $\alpha$ and determine its mixing $q_{m,\alpha}$ at each node $m$
     \begin{equation*}
       [p_{n,\alpha}]_+ + \sum_m q_{m,\alpha} f_{m \to n,t} = q_{n,\alpha}\left(  [p_{n,t}]_- + \sum_m f_{n \to m,t} \right)
     \end{equation*}
 
-    Mixing is tracked all the way from sources to sinks.
+    Mixing is tracked all the way from sources to sinks, assuming that all in-flows are mixed equally in out-flows.
 
     }
   \end{column}
@@ -402,7 +402,7 @@
 
   This is already basically what we want - a \alert{sensitivity} of the flow in line $\ell$ to the power injection at node $i$.
 
-  But remember that the PTDF \alert{depends strongly on the slack node}, related to a freedom to add a constant $c_\ell$, $ \textrm{PTDF}_{\ell i} \to      \textrm{PTDF}_{\ell i} + c_\ell $. This has \alert{no effect} on the flow:
+  But remember that the PTDF \alert{depends strongly on the slack node}, related to a freedom to add a constant $c_\ell$, $ \textrm{PTDF}_{\ell i} \to      \textrm{PTDF}_{\ell i} + c_\ell $. This has \alert{no effect} on the physical flow:
   \begin{equation*}
      f_\ell =  \sum_i \textrm{PTDF}_{\ell i} p_i \to  \sum_i (\textrm{PTDF}_{\ell i} + c_\ell) p_i = \sum_i \textrm{PTDF}_{\ell i} p_i + c_\ell \sum_i p_i =  \sum_i \textrm{PTDF}_{\ell i} p_i
   \end{equation*}
@@ -421,7 +421,7 @@
 
 
   \centering
-  \includegraphics[width=12cm]{stacked-gen-loading.pdf}
+  \includegraphics[width=11.5cm]{stacked-gen-loading.pdf}
 
   \source{\href{https://doi.org/10.1049/iet-rpg.2014.0114}{Brown, 2014}}
 \end{frame}
@@ -453,6 +453,24 @@
   \source{\href{https://doi.org/10.1049/iet-rpg.2014.0114}{Brown, 2014}}
 
 \end{frame}
+
+
+\begin{frame}
+  \frametitle{Marginal participation: Application to high-renewable European power system}
+
+  Some country have lots of flows caused by other countries (SI:
+  Slovenia, CH: Switzerland, SK: Slovakia), others have mostly domestic use of their
+  tranmission grids (GB: United Kingdom, IE: Ireland, LU: Luxembourg).
+
+  \vspace{.5cm}
+
+  \centering
+  \includegraphics[width=14cm]{stacked-domestic-foreign-countries-2050.pdf}
+
+  \source{\href{https://doi.org/10.1049/iet-rpg.2014.0114}{Brown, 2014}}
+\end{frame}
+
+
 
 
 
