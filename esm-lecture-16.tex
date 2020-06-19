@@ -1,0 +1,381 @@
+% NB: use pdflatex to compile NOT pdftex.  Also make sure youngtab is
+% there...
+
+% converting eps graphics to pdf with ps2pdf generates way too much
+% whitespace in the resulting pdf, so crop with pdfcrop
+% cf. http://www.cora.nwra.com/~stockwel/rgspages/pdftips/pdftips.shtml
+
+
+
+
+\documentclass[10pt,aspectratio=169,dvipsnames]{beamer}
+\usetheme[color/block=transparent]{metropolis}
+
+\usepackage[absolute,overlay]{textpos}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[scale=2]{ccicons}
+
+\usepackage[official]{eurosym}
+
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+
+\usepackage{xcolor}
+
+\makeatletter
+\def\mathcolor#1#{\@mathcolor{#1}}
+\def\@mathcolor#1#2#3{%
+  \protect\leavevmode
+  \begingroup
+    \color#1{#2}#3%
+  \endgroup
+}
+\makeatother
+
+%use this to add space between rows
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+
+
+\setbeamerfont{alerted text}{series=\bfseries}
+\setbeamercolor{alerted text}{fg=Mahogany}
+\setbeamercolor{background canvas}{bg=white}
+
+
+\newcommand{\R}{\mathbb{R}}
+
+\def\l{\lambda}
+\def\m{\mu}
+\def\d{\partial}
+\def\cL{\mathcal{L}}
+\def\co2{CO${}_2$}
+
+
+
+% for sources http://tex.stackexchange.com/questions/48473/best-way-to-give-sources-of-images-used-in-a-beamer-presentation
+
+\setbeamercolor{framesource}{fg=gray}
+\setbeamerfont{framesource}{size=\tiny}
+
+
+\newcommand{\source}[1]{\begin{textblock*}{5cm}(10.5cm,8.35cm)
+    \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
+        \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
+    \end{beamercolorbox}
+\end{textblock*}}
+
+\usepackage{hyperref}
+
+
+%\usepackage[pdftex]{graphicx}
+
+
+\graphicspath{{graphics/}}
+
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png,.jpg}
+
+
+
+\def\goat#1{{\scriptsize\color{green}{[#1]}}}
+
+
+\newcommand{\ubar}[1]{\text{\b{$#1$}}}
+
+\let\olditem\item
+\renewcommand{\item}{%
+\olditem\vspace{5pt}}
+
+\title{Energy System Modelling\\ Summer Semester 2020, Lecture 16}
+%\subtitle{---}
+\author{
+  {\bf Dr. Tom Brown}, \href{mailto:tom.brown@kit.edu}{tom.brown@kit.edu}, \url{https://nworbmot.org/}\\
+  \emph{Karlsruhe Institute of Technology (KIT), Institute for Automation and Applied Informatics (IAI)}
+}
+
+\date{}
+
+
+\titlegraphic{
+  \vspace{0cm}
+  \hspace{10cm}
+    \includegraphics[trim=0 0cm 0 0cm,height=1.8cm,clip=true]{kit.png}
+
+\vspace{5.1cm}
+
+  {\footnotesize
+
+  Unless otherwise stated, graphics and text are Copyright \copyright Tom Brown, 2020.
+  Graphics and text for which no other attribution are given are licensed under a
+  \href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons
+  Attribution 4.0 International Licence}. \ccby}
+}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{frame}
+
+  \frametitle{Table of Contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+
+\section{The World is Not a Perfect Optimization Model}
+
+
+\begin{frame}
+  \frametitle{We should be skeptical about models and modellers}
+\begin{columns}[T]
+  \begin{column}{7.5cm}
+
+    \vspace{.2cm}
+    \centering
+    \includegraphics[width=7cm]{2019-01-10-IEEFA-EIA-coal-all-consumption-forecasts-470-x-395-v2-768x646}
+  \end{column}
+  \begin{column}{7.5cm}
+
+    \vspace{.2cm}
+    \centering
+    \includegraphics[width=7cm]{auke.jpg}
+  \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{We should be skeptical about models and modellers}
+
+\begin{columns}[T]
+  \begin{column}{9cm}
+
+    \vspace{.2cm}
+    \centering
+    \includegraphics[width=9.5cm]{hubbert.png}
+  \end{column}
+  \begin{column}{5cm}
+
+    \vspace{.2cm}
+    \begin{itemize}
+    \item Possible scenario projected from 1956 by US geologist M. King Hubbert
+    \item Oil production in the US did indeed peak in the 1970s, but returned to peak height in last decade thanks to shale oil extraction with fracking
+    \item Nuclear expanded but plateaued
+      \item \alert{What might we be getting wrong in 2020?}
+    \end{itemize}
+  \end{column}
+\end{columns}
+
+\source{\href{http://www.energycrisis.com/Hubbert/1956/1956.pdf}{Hubbert, 1956}}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{We should be skeptical about models and modellers}
+
+  Models can:
+  \vspace{-.3cm}
+    \begin{itemize}
+    \item \alert{under- or overestimate rates of change} (e.g. under: PV uptake, over: onshore wind in UK/Germany/Netherlands)
+    \item \alert{underestimate social factors} (e.g. concern about nuclear / transmission / wind)
+    \item \alert{extrapolate based on uncertain data} (e.g. oil reserves, learning curves for PV)
+    \item \alert{focus on easy-to-solve rather than policy-relevant problems} (e.g. most research)
+    \item \alert{neglect uncertainty} (e.g. in short-term due to weather forecasts, or in long-term due to cost, political uncertainty and technological development)
+    \item \alert{neglect need for robustness} (e.g. securing energy system against contingencies, attack)
+    \item \alert{neglect complex interactions of markets and incentive structures} (e.g. abuse of market power, non-linearities not represented in models, lumpiness, etc.)
+    \item \alert{neglect non-linearities and non-convexities} (e.g. power flow, or also learning curves, behavioural effects, perverse local optima, many, many more)
+    \end{itemize}
+
+\end{frame}
+
+
+\section{Robustness to Different Weather Years}
+
+
+\begin{frame}
+  \frametitle{Different Weather Years}
+
+  Many of the simulations we looked at in this course, and many in the literature, used single weather years to determine optimal investments.
+
+  This is problematic since:
+  \begin{itemize}
+  \item Weather changes from year to year
+  \item There are decadal variations of wind
+  \item Demand changes (particularly space heating demand during cold years)
+  \end{itemize}
+
+  But computing investments against 30 years of data (262,800 hours) is not feasible.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Different Weather Years}
+
+  If we use different weather years to optimize sector-coupled European model with net-zero CO$_2$ emissions (including industry) we see broadly stable technology choices but variations in total system costs of up to 20\%.  NB: In real world cannot reoptimize investment every year!
+
+  \centering
+    \includegraphics[width=13cm]{lin-total_costs.png}
+
+    \source{Lin Yang MA thesis}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Different Weather Years}
+
+  Biggest changes are driven by space heating demand. Cold years (like 2010) are more expensive.
+
+  \centering
+    \includegraphics[width=14cm]{lin-heating.png}
+
+
+    \source{Lin Yang MA thesis}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Different Weather Years}
+
+  Optimal technology investments do not change dramatically from year to year.
+
+  \centering
+    \includegraphics[width=14cm]{lin-generators.png}
+
+
+    \source{Lin Yang MA thesis}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Different Weather Years}
+
+  If we fix the optimal technology investments based on the weather of one year ($y$-axis), then run the dispatch over all 30 years (900 simulations in total), we can assess average curtailment and load-shedding. Using coldest year 2010 gives low load-shedding but high curtailment.
+
+  \centering
+    \includegraphics[width=14cm]{lin-run_30.png}
+
+    \source{Lin Yang MA thesis}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Using 2010 investments}
+
+  Using coldest year 2010 guarantees virtually no load-shedding in entire 30 years, but leads to excess energy in most years.
+  Better to store excess energy from warmer years (e.g. chemically).
+
+  \centering
+    \includegraphics[width=14cm]{lin-use_2010.png}
+
+    \source{Lin Yang MA thesis}
+
+\end{frame}
+
+
+
+\section{Robustness to Climate Change}
+
+\section{Myopic Foresight for Weather Uncertainty}
+
+%\section{Myopic Foresight for Multi-Decade Investment}
+
+\section{Cost and Political Uncertainty}
+
+
+\begin{frame}
+  \frametitle{Sensitivity of Optimisation to Cost, Weather Data and Policy Constraints}
+
+  See Schlachtberger et al, `Cost optimal scenarios of a future highly renewable European
+  electricity system: Exploring the influence of weather data, cost
+  parameters and policy constraints,' 2018,
+  \url{https://arxiv.org/abs/1803.09711}
+
+\end{frame}
+
+\section{Near-Optimal Energy Systems}
+
+
+
+\begin{frame}
+  \frametitle{Large Space of Near-Optimal Energy Systems}
+
+  There is a \alert{large degeneracy} of different possible energy systems close to the optimum.
+
+  \vspace{.2cm}
+
+  % epsilon constraint
+  \centering
+  \includegraphics[width=12cm]{graphics/sketch.png}
+
+  \source{\href{https://arxiv.org/abs/1910.01891}{Neumann \& Brown, 2020}}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Example: 100\% renewable electricity system for Europe}
+
+\begin{columns}[T]
+  \begin{column}{7cm}
+    Capacity expansion in optimum:
+
+    \includegraphics[width=7cm]{no-optimum.png}
+  \end{column}
+  \begin{column}{7cm}
+
+    $\varepsilon =$ 10\% above optimum, minimise new grid:
+
+    \includegraphics[width=7cm]{no-trans-10.png}
+  \end{column}
+\end{columns}
+
+
+
+  \source{\href{https://arxiv.org/abs/1910.01891}{Neumann \& Brown, 2020}}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Example: 100\% renewable electricity system for Europe}
+
+\begin{columns}[T]
+  \begin{column}{7cm}
+    \includegraphics[trim=0cm 0cm 0cm 0cm, clip, width=7cm]{graphics/space-00.pdf}
+  \end{column}
+  \begin{column}{6.5cm}
+
+    Within 10\% of the optimum we can:
+    \begin{itemize}
+    \item Eliminate most grid expansion
+    \item Exclude onshore or offshore wind or PV
+    \item Exclude battery or most hydrogen storage
+    \end{itemize}
+
+    \vspace{.2cm}
+
+    \alert{Robust conclusions}: wind, some transmission, some storage, preferably hydrogen storage, required for a cost-effective solution.
+
+    \vspace{.2cm}
+
+    This gives space to choose solutions with \alert{higher public acceptance}.
+  \end{column}
+\end{columns}
+
+
+  \source{\href{https://arxiv.org/abs/1910.01891}{Neumann \& Brown, 2020}}
+
+\end{frame}
+
+
+
+\end{document}
