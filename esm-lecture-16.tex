@@ -242,7 +242,7 @@
 \begin{frame}
   \frametitle{Different Weather Years}
 
-  Optimal technology investments do not change dramatically from year to year.
+  Optimal technology investments do not change dramatically from year to year. Here we show the mean capacities with standard deviation.
 
   \centering
     \includegraphics[width=14cm]{lin-generators.png}
@@ -256,7 +256,7 @@
 \begin{frame}
   \frametitle{Different Weather Years}
 
-  If we fix the optimal technology investments based on the weather of one year ($y$-axis), then run the dispatch over all 30 years (900 simulations in total), we can assess average curtailment and load-shedding. Using coldest year 2010 gives low load-shedding but high curtailment.
+  If we fix the optimal technology investments based on the weather of one year ($x$-axis), then run the dispatch over all 30 years (900 simulations in total), we can assess average curtailment and load-shedding. Using coldest year 2010 gives low load-shedding but high curtailment.
 
   \centering
     \includegraphics[width=14cm]{lin-run_30.png}
@@ -301,7 +301,7 @@
 
   Take a simulated dataset of how the weather would look
   between today and the year 2100 with a scenario of high
-  concentrations of greenhouse house gases.
+  concentrations of greenhouse gases.
 
   The scenario is called Representative Concentration Pathways 8.5
   (RCP~8.5), since it estimates a radiative forcing of $\Delta P = 8.5$~
@@ -445,7 +445,8 @@
     \item Most effects are small ($\sim 5-10\%$); total system costs increase by only 5\%.
      \item Longer correlation lengths see greater benefit from continental transmission.
      \item Impact of climate change is of a similar magnitude to the uncertainty between the different weather models.
-       \item Space heating and cooling demand changes may have bigger effect on overall energy system.
+       \item Not considered: Space heating and cooling demand changes may have bigger effect on overall energy system.
+       \item Not considered: Impact of extreme weather events (storms, fires, droughts).
     \end{itemize}
 
     For more results, see `The Impact of Climate Change on a Cost-Optimal Highly Renewable European Electricity Network,' \url{https://arxiv.org/abs/1805.11673}
@@ -466,11 +467,12 @@
   In 30-node European electricity system with 95\% CO$_2$ reduction, change solar
   capital cost relative to default. NB: Even at zero solar cost, there
   is still wind. Why? Seasonality.\\
-  LV0: No cross-border grid, LV125: compromise grid, LVOpt: optimal grid.
+  LV 0: No cross-border grid, LV 125: compromise grid, LV Opt: optimal grid.
 
 \centering
     \includegraphics[width=11cm]{sensitivity-solar_cost.png}
 
+    \source{\href{https://arxiv.org/abs/1803.09711}{Schlachtberger et al, 2018}}
 \end{frame}
 
 
@@ -485,6 +487,7 @@
 \centering
     \includegraphics[width=11cm]{sensitivity-onshore_wind.png}
 
+    \source{\href{https://arxiv.org/abs/1803.09711}{Schlachtberger et al, 2018}}
 \end{frame}
 
 
@@ -505,6 +508,8 @@
 
   Both for changing transmission expansion AND onshore wind installable potentials, we've seen that total system costs are \alert{flat around the optimum}.
 
+  Can we explore this \alert{near-optimal space} more systematically?
+
   \vspace{.5cm}
 \begin{columns}[T]
 
@@ -514,43 +519,6 @@
   \begin{column}{8cm}
     \includegraphics[width=8cm]{sensitivity-onshore_wind.png}
   \end{column}
-\end{columns}
-
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Flat directions allow society to choose based on other criteria}
-
-
-
-\begin{columns}[T]
-
-  \begin{column}{5cm}
-
-
-\centering
-\includegraphics[width=5cm]{nein_zur_monstertrasse}
-
-  \end{column}
-
-
-  \begin{column}{6.7cm}
-
-    \vspace{.5cm}
-
-    This flatness may allow us to choose solutions with \alert{higher
-      public acceptance} at only \alert{small extra cost}.
-
-    \vspace{.5cm}
-
-    These trade-offs will occupy us for the next 30 years!
-
-    \vspace{.5cm}
-
-\includegraphics[width=7cm]{Protestplakat-gegen-den-Bau-von-Windraedern-in-Hamburg-Deutschland.jpg}
-
-  \end{column}
-
 \end{columns}
 
 \end{frame}
@@ -682,6 +650,45 @@
 
 
   \source{\href{https://arxiv.org/abs/1910.01891}{Neumann \& Brown, 2020}}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Flat directions allow society to choose based on other criteria}
+
+
+
+\begin{columns}[T]
+
+  \begin{column}{5cm}
+
+
+\centering
+\includegraphics[width=5cm]{nein_zur_monstertrasse}
+
+  \end{column}
+
+
+  \begin{column}{6.7cm}
+
+    \vspace{.5cm}
+
+    This flatness may allow us to choose solutions with \alert{higher
+      public acceptance} at only \alert{small extra cost}.
+
+    \vspace{.5cm}
+
+    These trade-offs will occupy us for the next 30 years!
+
+    \vspace{.5cm}
+
+\includegraphics[width=7cm]{Protestplakat-gegen-den-Bau-von-Windraedern-in-Hamburg-Deutschland.jpg}
+
+  \end{column}
+
+\end{columns}
 
 \end{frame}
 
