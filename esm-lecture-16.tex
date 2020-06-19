@@ -454,11 +454,38 @@
 
 
 
-\section{Myopic Foresight for Weather Uncertainty}
+%\section{Myopic Foresight for Weather Uncertainty}
 
 %\section{Myopic Foresight for Multi-Decade Investment}
 
 \section{Cost and Political Uncertainty}
+
+\begin{frame}
+  \frametitle{Power System Model: Sensitivity to Changing Solar Cost}
+
+  In 30-node European electricity system with 95\% CO$_2$ reduction, change solar
+  capital cost relative to default. NB: Even at zero solar cost, there
+  is still wind. Why? Seasonality.\\
+  LV0: No cross-border grid, LV125: compromise grid, LVOpt: optimal grid.
+
+\centering
+    \includegraphics[width=11cm]{sensitivity-solar_cost.png}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Power System Model: Sensitivity to Onshore Wind Installable Potential}
+
+  In electricity system with 95\% CO$_2$ reduction, reduce installable
+  potential for onshore wind. Onshore substituted with offshore at only small
+  extra system cost. BUT assumes sufficient grid capacity within each country to get offshore from coast to load.
+
+\centering
+    \includegraphics[width=11cm]{sensitivity-onshore_wind.png}
+
+\end{frame}
 
 
 \begin{frame}
@@ -473,20 +500,131 @@
 
 \section{Near-Optimal Energy Systems}
 
+\begin{frame}
+  \frametitle{Flat directions near optimum}
+
+  Both for changing transmission expansion AND onshore wind installable potentials, we've seen that total system costs are \alert{flat around the optimum}.
+
+  \vspace{.5cm}
+\begin{columns}[T]
+
+  \begin{column}{6cm}
+  \includegraphics[width=6cm]{costs_per_cluster_181}
+  \end{column}
+  \begin{column}{8cm}
+    \includegraphics[width=8cm]{sensitivity-onshore_wind.png}
+  \end{column}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Flat directions allow society to choose based on other criteria}
 
 
+
+\begin{columns}[T]
+
+  \begin{column}{5cm}
+
+
+\centering
+\includegraphics[width=5cm]{nein_zur_monstertrasse}
+
+  \end{column}
+
+
+  \begin{column}{6.7cm}
+
+    \vspace{.5cm}
+
+    This flatness may allow us to choose solutions with \alert{higher
+      public acceptance} at only \alert{small extra cost}.
+
+    \vspace{.5cm}
+
+    These trade-offs will occupy us for the next 30 years!
+
+    \vspace{.5cm}
+
+\includegraphics[width=7cm]{Protestplakat-gegen-den-Bau-von-Windraedern-in-Hamburg-Deutschland.jpg}
+
+  \end{column}
+
+\end{columns}
+
+\end{frame}
+% optimal
 \begin{frame}
   \frametitle{Large Space of Near-Optimal Energy Systems}
 
   There is a \alert{large degeneracy} of different possible energy systems close to the optimum.
 
   \vspace{.2cm}
-
-  % epsilon constraint
   \centering
-  \includegraphics[width=12cm]{graphics/sketch.png}
+  \includegraphics[page=2, trim=0.3cm 16.02cm 0cm 3.05cm, clip, height=0.83\textheight]{graphics/sketch.pdf}
+  \source{Fabian Neumann}
+\end{frame}
 
-  \source{\href{https://arxiv.org/abs/1910.01891}{Neumann \& Brown, 2020}}
+% epsilon constraint
+\begin{frame}
+  \frametitle{Large Space of Near-Optimal Energy Systems}
+
+  Consider the part of the feasible space within $\varepsilon$ of the optimum $f(x^*)$.
+
+  \vspace{.2cm}
+  \centering
+  \includegraphics[page=1, trim=0.3cm 0.7cm 0cm 18.35cm, clip, height=0.83\textheight]{graphics/sketch.pdf}
+  \source{Fabian Neumann}
+\end{frame}
+
+% mga
+\begin{frame}
+  \frametitle{Large Space of Near-Optimal Energy Systems}
+
+  Now within $\varepsilon$ of the optimum $f(x^*)$, try minimising or maximising $x$, to probe space.
+
+  \vspace{.2cm}
+  \centering
+  \includegraphics[page=1, trim=0.3cm 15.45cm 0cm 3.6cm, clip, height=0.83\textheight]{graphics/sketch.pdf}
+  \source{Fabian Neumann}
+\end{frame}
+
+
+
+% 2-dimensional
+\begin{frame}
+  \frametitle{Large Space of Near-Optimal Energy Systems}
+
+  NB: Decision space of variables is multi-dimensional, so can probe only one direction at a time.
+
+  \vspace{.2cm}
+  \centering
+  \includegraphics[page=1, trim=8.8cm 11.5cm 9.4cm 14.8cm, clip, height=0.83\textheight]{graphics/sketch.pdf}
+  \source{Fabian Neumann}
+\end{frame}
+
+
+
+\begin{frame}{Application: Highly-Renewable European Electricity System}
+
+  Apply this technique to a 100-node model of the European electricity with 100\% renewable energy.
+  \begin{enumerate}
+    \item Find the \alert{least-cost power system}.
+    ~\\
+    \item For $\varepsilon\in\{0.5,1,\dots,10\} \%$ \alert{minimise/maximise} investment in
+    \begin{itemize}
+      \item generation capacity {(onshore and/or offshore wind, solar)},
+      \item storage capacity {(hydrogen, batteries, total storage)} and
+      \item transmission volume {(HVAC lines and HVDC links)}
+    \end{itemize}
+    such that \alert{total annual system costs increase by less than $\varepsilon$}.
+  \end{enumerate}
+
+  \vspace{.5cm}
+  Methodology adapted from Method to Generate Alternatives (MGA) but `alternatives' are forced in politically-interesting directions.
+
+  \source{Fabian Neumann}
 
 \end{frame}
 
@@ -548,5 +686,43 @@
 \end{frame}
 
 
+\begin{frame}{\textbf{Dependencies:} Extremes cannot be achieved simultaneously}
 
+  \begin{columns}
+
+    \begin{column}{0.4\textwidth}
+      \begin{center}
+        \vspace{-0.5cm}
+        \footnotesize Optimal System Layout\\
+        \includegraphics[height=0.8\textheight]{graphics/capacity-bar.pdf}
+      \end{center}
+    \end{column}
+    %\vrule
+    \begin{column}{0.6\textwidth}
+      \begin{center}
+        \vspace{.3cm}
+        \includegraphics[height=0.9\textheight]{graphics/capacity-bars.pdf}
+      \end{center}
+    \end{column}
+
+  \end{columns}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Near-Optimal Systems: Conclusions}
+
+  \begin{itemize}
+  \item Optimizing a single model gives a \alert{false sense of exactness}.
+  \item There are many uncertainties about cost assumptions and political targets.
+  \item There are also \alert{structural model uncertainties} since the feasible space can be very \alert{flat} near the optimum, such that the solution chosen is random within flat area.
+  \item We can use these techniques to probe the \alert{near-optimal space}.
+  \item This gives us fuzzier but \alert{more robust} conclusions (e.g. need wind, some transmission and some long-term storage for a cost-effective solution).
+    \item It also allows us to find cost-effective solutions with \alert{higher public acceptance}.
+
+  \end{itemize}
+
+  More details: Fabian Neumann, Tom Brown, ``The Near-Optimal Feasible Space of a Renewable Power System Model,'' 2020, accepted to PSCC 2020, \url{https://arxiv.org/abs/1910.01891}.
+
+\end{frame}
 \end{document}
