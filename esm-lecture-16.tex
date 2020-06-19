@@ -281,7 +281,178 @@
 
 
 
-\section{Robustness to Climate Change}
+\section{Effects of Climate Change on Energy System}
+
+
+\begin{frame}
+  \frametitle{Climate change}
+
+  \begin{itemize}
+  \item   What are the consequences of climate change for highly renewable energy systems?
+  \item How will generation patterns for wind and solar change?
+    \item What will be the effects on the dimensioning of wind,
+      solar, storage, networks and backup generation?
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Climate change scenarios: RCP 8.5}
+
+  Take a simulated dataset of how the weather would look
+  between today and the year 2100 with a scenario of high
+  concentrations of greenhouse house gases.
+
+  The scenario is called Representative Concentration Pathways 8.5
+  (RCP~8.5), since it estimates a radiative forcing of $\Delta P = 8.5$~
+  $\mathrm{W}/ \mathrm{m}^2$ (difference between insolation and energy
+  radiated into space) at the end of the century. It is a \alert{worst-case scenario} and extrapolates current greenhouse gas emissions
+  without reduction efforts (improbable given current trajectories of coal, renewables and EVs). This corresponds to a
+  CO$_2$-equivalent-concentration (including all forcing agents) of
+  approximately 1250 ppm (today around 410~pmm for CO$_2$) and an
+  average temperature increase of $\Delta T = 3.7 \pm 1.1$~C at the
+  end of the century, dependent on the model used.
+
+  Compare historical values (HIS) to begin/middle/end of the century (B/M/EOC).
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Changes to wind capacity factors}
+
+  Left: historic (HIS) wind capacity factors 1970-2005
+
+  Right: change at end of century (EOC) 2070-2100
+  \begin{columns}[T]
+    \begin{column}{9.5cm}
+
+      \includegraphics[width=10cm]{cc-wind.png}
+  \end{column}
+  \begin{column}{4.5cm}
+    \vspace{0.5cm}
+    \begin{itemize}
+    \item Small ($\sim 5\%$) average increase in Northern Europe
+    \item Small ($\sim 5\%$) average decrease in Southern Europe
+    \end{itemize}
+
+  \end{column}
+\end{columns}
+
+      %corr_ensemble_sfcWind_abs.eps
+
+  \source{\href{https://arxiv.org/abs/1805.11673}{Schlott et al, 2018}}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Changes to solar capacity factors}
+
+  \begin{columns}[T]
+  \begin{column}{9.5cm}
+    \includegraphics[width=10cm]{cc-solar.png}
+  \end{column}
+  \begin{column}{4.5cm}
+    \vspace{0.5cm}
+    \begin{itemize}
+    \item Small ($\sim 5\%$) increase in
+      in Southern Europe around Mediterranean
+    \item Smallish ($\sim 10\%$) decrease in Northern Europe (due to
+      increased cloud cover)
+    \item Solar results known to be a little unreliable because of
+      cloud modelling etc.
+    \end{itemize}
+
+  \end{column}
+\end{columns}
+
+
+    %mean_ensemble_sfcWind_abs.eps
+      %corr_ensemble_sfcWind_abs.eps
+
+
+  \source{\href{https://arxiv.org/abs/1805.11673}{Schlott et al, 2018}}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Correlation Length}
+
+
+  \begin{columns}[T]
+  \begin{column}{5.5cm}
+    \includegraphics[height=7.5cm]{simeon-correlation}
+  \end{column}
+  \begin{column}{8.5cm}
+    The Pearson correlation coefficient of wind time series with a point in
+        northern Germany decays exponentially with distance.
+    Determine the \alert{correlation length} $L$ by fitting the
+        function:
+        \begin{equation*}
+          \rho \sim e^{-\frac{x}{L}}
+        \end{equation*}
+        to the radial decay with distance $x$.
+
+        \vspace{.2cm}
+  \centering
+    \includegraphics[height=4.5cm]{correlation_length.png}
+
+
+
+  \end{column}
+\end{columns}
+
+
+  \source{\href{https://doi.org/10.1016/j.apenergy.2011.10.039}{Hagspiel et al, 2012}}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Changes to wind speed correlation lengths}
+
+  \begin{columns}[T]
+  \begin{column}{9.5cm}
+    \includegraphics[width=10cm]{cc-correlation.png}
+  \end{column}
+  \begin{column}{5.3cm}
+    \begin{itemize}
+      \item Correlation lengths are longer in the North than
+        the South because of big weather systems that roll in from
+        the Atlantic to the North (in the South they get dissipated).
+      \item With global warming, correlation lengths grow
+        longer in the North and shorter in the South.
+      \item This is because weather systems have more energy and are
+        bigger in the North.
+    \end{itemize}
+
+  \end{column}
+\end{columns}
+
+
+  \source{\href{https://arxiv.org/abs/1805.11673}{Schlott et al, 2018}}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Effects of climate change on power system}
+
+  Conclusions from study of effects on the power system:
+
+    \begin{itemize}
+    \item Most effects are small ($\sim 5-10\%$); total system costs increase by only 5\%.
+     \item Longer correlation lengths see greater benefit from continental transmission.
+     \item Impact of climate change is of a similar magnitude to the uncertainty between the different weather models.
+       \item Space heating and cooling demand changes may have bigger effect on overall energy system.
+    \end{itemize}
+
+    For more results, see `The Impact of Climate Change on a Cost-Optimal Highly Renewable European Electricity Network,' \url{https://arxiv.org/abs/1805.11673}
+
+\end{frame}
+
+
 
 \section{Myopic Foresight for Weather Uncertainty}
 
