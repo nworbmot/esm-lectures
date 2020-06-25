@@ -7,7 +7,11 @@ See the [course website](https://nworbmot.org/courses/esm-2020/) for compiled sl
 
 All related files can be found in the [lectures directory](https://nworbmot.org/courses/esm-2020/lectures/).
 
-Graphics are in the [graphics directory](https://nworbmot.org/courses/esm-2020/lectures/graphics/).
+Graphics are in the [graphics
+directory](https://nworbmot.org/courses/esm-2020/lectures/graphics/)
+and available in a single [compressed archive
+file](https://nworbmot.org/courses/esm-2020/lectures/graphics.tar.gz).
+
 
 Unless otherwise stated, graphics and text are Copyright Tom Brown,
 2020.  Graphics and text for which no other attribution are given are
